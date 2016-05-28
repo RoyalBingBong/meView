@@ -2,7 +2,7 @@ import {remote} from 'electron';
 
 const {Menu, MenuItem} = remote;
 
-import * as commands from "./commands.js"
+import * as controller from "./controller.js"
 
 export default class AppMenu {
   constructor(viewer) {
@@ -17,8 +17,6 @@ export default class AppMenu {
     this.menu.append(this.buildWindowMenu());
     this.menu.append(this.buildAboutMenu());
     Menu.setApplicationMenu(this.menu);
-
-
   }
 
   buildFileMenu() {
@@ -32,7 +30,7 @@ export default class AppMenu {
       accelerator: "CommandOrControl+Shift+O",
       click: function clickOpenFile(menuItem, browserWindow) {
         console.log("##### clickOpenFile #####");
-        commands.openFile(function(filepath) {
+        controller.openFile(function(filepath) {
           viewer.hideDropzone();
           viewer.container.open(filepath);
         })
@@ -46,7 +44,7 @@ export default class AppMenu {
       accelerator: "CommandOrControl+O",
       click: function clickOpenFolder(menuItem, browserWindow) {
         console.log("##### clickOpenFolder #####");
-        commands.openDir(function(dirpath) {
+        controller.openDir(function(dirpath) {
           console.log("###### visibility", viewer.hideDropzone);
           viewer.hideDropzone();
           viewer.container.open(dirpath);
@@ -64,7 +62,7 @@ export default class AppMenu {
       click: function clickShowFileInExplorer(menuItem, browserWindow) {
         let currentFile = viewer.container.current()
         let filepath = currentFile.filepath;
-        commands.openFileInExplorer(filepath);
+        controller.openFileInExplorer(filepath);
       }
     })
     filemenu.append(item);
@@ -76,7 +74,7 @@ export default class AppMenu {
       click: function clickShowFileInViewer(menuItem, browserWindow) {
         let currentFile = viewer.container.current()
         let filepath = currentFile.filepath;
-        commands.openFileInViewer(filepath)
+        controller.openFileInViewer(filepath)
       }
     })
     filemenu.append(item);
@@ -89,7 +87,7 @@ export default class AppMenu {
     //   label: "Settings",
     //   // accelerator: "CommandOrControl+Shift+O",
     //   click: function clickSettings(menuItem, browserWindow) {
-    //     commands.openSettings();
+    //     controller.openSettings();
     //   }
     // })
     filemenu.append(item);
@@ -129,7 +127,7 @@ export default class AppMenu {
     item = new MenuItem({
       label: "Previous",
       accelerator: "Left",
-      click: function clickNextFile(menuItem, browserWindow) {
+      click: function clickPreviousFile(menuItem, browserWindow) {
         if (browserWindow) {
           viewer.container.previous()
         }
@@ -139,10 +137,21 @@ export default class AppMenu {
 
     item = new MenuItem({
       label: "First",
-      // accelerator: "Left",
-      click: function clickNextFile(menuItem, browserWindow) {
+      accelerator: "Home",
+      click: function clickFirstFile(menuItem, browserWindow) {
         if (browserWindow) {
           viewer.container.first()
+        }
+      }
+    })
+    viewmenu.append(item);
+
+    item = new MenuItem({
+      label: "Last",
+      accelerator: "End",
+      click: function clickLastFile(menuItem, browserWindow) {
+        if (browserWindow) {
+          viewer.container.last();
         }
       }
     })
@@ -153,7 +162,7 @@ export default class AppMenu {
     item = new MenuItem({
       label: "Open First Child",
       // accelerator: "Left",
-      click: function clickNextFile(menuItem, browserWindow) {
+      click: function clickOpenFirstChild(menuItem, browserWindow) {
         if (browserWindow) {
           viewer.container.openFirstChild()
         }
@@ -162,9 +171,9 @@ export default class AppMenu {
     viewmenu.append(item);
 
     item = new MenuItem({
-      label: "Next Sibling",
+      label: "Next Folder/Archive",
       accelerator: "Shift+Right",
-      click: function clickNextFile(menuItem, browserWindow) {
+      click: function clickNextFolder(menuItem, browserWindow) {
         if (browserWindow) {
           viewer.container.openNextSibling()
         }
@@ -173,9 +182,9 @@ export default class AppMenu {
     viewmenu.append(item);
 
     item = new MenuItem({
-      label: "Previous Sibling",
+      label: "Previous Folder/Archive",
       accelerator: "Shift+Left",
-      click: function clickNextFile(menuItem, browserWindow) {
+      click: function clickPreviousFolder(menuItem, browserWindow) {
         if (browserWindow) {
           viewer.container.openPreviousSibling()
         }
@@ -278,7 +287,7 @@ export default class AppMenu {
       label: "meView on github",
       click: function clickGithub(menuItem, browserWindow) {
         if (browserWindow) {
-          commands.openRepository()
+          controller.openRepository()
         }
       }
     })
@@ -288,7 +297,7 @@ export default class AppMenu {
       label: "Report a Bug",
       click: function clickBug(menuItem, browserWindow) {
         if (browserWindow) {
-          commands.openRepositoryIssues()
+          controller.openRepositoryIssues()
         }
       }
     })
@@ -300,7 +309,7 @@ export default class AppMenu {
       label: "meView",
       click: function clickAbout(menuItem, browserWindow) {
         if (browserWindow) {
-          commands.openAbout()
+          controller.openAbout()
         }
       }
     })
@@ -317,13 +326,16 @@ export default class AppMenu {
     var settingsmenu = new Menu();
     var item;
 
+    item = this.buildVideoSettingsMenu();
+    settingsmenu.append(item);
+
     item = new MenuItem({
       label: "Save last Search Path",
       type: "checkbox",
-      checked: commands.isSavingPath(),
+      checked: controller.isSavingPath(),
       click: function clickSavePath(menuItem, browserWindow) {
         if(browserWindow) {
-          commands.toggleSavePath(menuItem.checked);
+          controller.toggleSavePath(menuItem.checked);
         }
       }
     })
@@ -334,4 +346,51 @@ export default class AppMenu {
       submenu: settingsmenu
     })
   }
+
+  buildVideoSettingsMenu() {
+    var videomenu = new Menu();
+    var item;
+
+    item = new MenuItem({
+      label: "Loop",
+      type: "checkbox",
+      checked: controller.isVideoLooping(),
+      click: function clickLoopvideo(menuItem, browserWindow) {
+        if(browserWindow) {
+          controller.toggleVideoLoop(menuItem.checked);
+        }
+      }
+    })
+    videomenu.append(item);
+
+    item = new MenuItem({
+      label: "Mute",
+      type: "checkbox",
+      checked: controller.isVideoMuted(),
+      click: function clickLoopvideo(menuItem, browserWindow) {
+        if(browserWindow) {
+          controller.toggleVideoMute(menuItem.checked);
+        }
+      }
+    })
+    videomenu.append(item);
+
+    item = new MenuItem({
+      label: "Autoplay",
+      type: "checkbox",
+      checked: controller.isVideoAutoplayed(),
+      click: function clickLoopvideo(menuItem, browserWindow) {
+        if(browserWindow) {
+          controller.toggleVideoAutoplay(menuItem.checked);
+        }
+      }
+    })
+    videomenu.append(item);
+
+    return new MenuItem({
+      label: "Video",
+      submenu: videomenu
+    })
+  }
+
 }

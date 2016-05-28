@@ -1,7 +1,7 @@
-export const videosettings = {
-    "autoplay": false
-  , "loop": true
-  // , "className": "fit-to-window"
+export const defaultVideoSettings = {
+    "autoplay": true
+  , "loop":     true
+  , "muted":    true
 }
 
 export const imagesettings = {

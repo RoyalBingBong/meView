@@ -5,6 +5,8 @@ html, body{
   height: 100%;
   background-color: #282828;
   cursor:default;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 ::-webkit-scrollbar {

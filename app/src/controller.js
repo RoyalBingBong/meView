@@ -1,15 +1,14 @@
 import {shell,remote} from 'electron';
-
 import {dirname} from "path";
 
 import ElectronSettings from "electron-settings";
+import {isEmpty} from "lodash";
 
-// const dialog = require('electron').remote.dialog;
 import * as config from "./config/config.js";
 
 const dialog = remote.dialog;
 
-var settings = new ElectronSettings();
+global.settings = new ElectronSettings();
 
 export function openDir(callback){
   var files = dialog.showOpenDialog({
@@ -19,6 +18,9 @@ export function openDir(callback){
   if(files) {
     if(settings.get("savePath")) {
       settings.set("lastSearchPath", files[0])
+    } else {
+      // remove preiovusly saved path in case user decides against saving
+      settings.unset("lastSearchPath")
     }
     callback(files[0]);
   }
@@ -36,6 +38,41 @@ export function openFile(callback) {
     }
     callback(files[0]);
   }
+}
+
+export function writeDefaultSettings() {
+  if(isEmpty(settings.get())) {
+    // wreite default config stuff:
+    console.log("writing default user config");
+    settings.set("videoSettings", config.defaultVideoSettings)
+  }
+}
+
+export function toggleVideoLoop(shouldLoop) {
+  console.log("toggleVideoLoop: ", shouldLoop);
+  settings.set("videoSettings.loop", shouldLoop);
+}
+
+export function toggleVideoMute(shouldMute) {
+  console.log("toggleVideoMute: ", shouldMute);
+  settings.set("videoSettings.muted", shouldMute);
+}
+
+export function toggleVideoAutoplay(shouldAutoplay) {
+  console.log("toggleVideoAutoplay: ", shouldAutoplay);
+  settings.set("videoSettings.autoplay", shouldAutoplay);
+}
+
+export function isVideoLooping() {
+  return settings.get("videoSettings.loop");
+}
+
+export function isVideoMuted() {
+  return settings.get("videoSettings.muted");
+}
+
+export function isVideoAutoplayed() {
+  return settings.get("videoSettings.autoplay");
 }
 
 export function openFileInExplorer(filepath) {

@@ -16,6 +16,8 @@
     "asar": "^0.11.0",
     "babel": "^6.5.2",
     "babel-cli": "^6.9.0",
+    "babel-plugin-remove-comments": "^2.0.0",
+    "babel-plugin-transform-remove-console": "^6.8.0",
     "babel-preset-es2015": "^6.9.0",
     "electron-prebuilt": "^1.1.1"
   }

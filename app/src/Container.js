@@ -1,8 +1,9 @@
 import EventEmitter from "events";
 
-import * as fs from  "fs";
+// import * as fs from "fs";
+import {readdir as fsreaddir, stat as fsstat} from "fs";
 import * as path from "path"
-import * as util from "util";
+import {format} from "util";
 
 // import * as AdmZip from "adm-zip"
 var AdmZip = require('adm-zip');
@@ -17,6 +18,7 @@ export default class Container extends EventEmitter {
   constructor() {
     super();
     this.cwd = ".";       // current directory
+    this.parentDir = ".";
     this.siblings = [];  // all sibling directories
     this.children = [];  // all directories and zips
     this.files = [];     // all MediaFiles
@@ -28,30 +30,39 @@ export default class Container extends EventEmitter {
     console.log("open: ", fileorpath);
     var self = this;
     var oldCWD = this.cwd;
-    fs.stat(fileorpath, function(err, stats) {
+    var oldParendDir = this.parentDir;
+
+    fsstat(fileorpath, function(err, stats) {
       if(err) {
-        var message = util.format('Viewer#open: could not get stats for "%s"', fileorpath)
+        var message = format('Viewer#open: could not get stats for "%s"', fileorpath)
         throw new Error(message)
       }
       if(stats.isFile()) {
         if(helper.isArchive(fileorpath)) {
           console.log("open isFile and isArchive: ", fileorpath);
+          self.parentDir = path.dirname(fileorpath);
           self.cwd = fileorpath;
           self.viewArchive(fileorpath);
         } else {
+          self.parentDir = path.join(path.dirname(fileorpath), "..");
           self.cwd = path.dirname(fileorpath);
           self.viewDirectory(self.cwd, fileorpath);
         }
       } else if(stats.isDirectory()) {
+        self.parentDir = path.join(fileorpath, "..");
         self.cwd = fileorpath;
         self.viewDirectory(self.cwd);
+      }
+
+      if(oldParendDir != self.parentDir) {
+        console.log('parentDir changed from "%s" to "%s"', oldParendDir, self.parentDir);
+        self.fetchSiblings();
       }
 
       if(oldCWD != self.cwd) { // cwd changed thus update siblings
         self.emit("cwdChanged", {
           cwd: self.cwd
         });
-        self.fetchSiblings();
       }
     })
   }
@@ -60,9 +71,9 @@ export default class Container extends EventEmitter {
     console.log("viewDirectory");
     var self = this;
     var firstTriggered = false;
-    fs.readdir(dir, function(err, files) {
+    fsreaddir(dir, function(err, files) {
       if(err) {
-        var message = util.format('failed to read directory "%s"', dir)
+        var message = format('failed to read directory "%s"', dir)
         throw new Error(message);
       }
       if(files.length == 0) {
@@ -81,7 +92,7 @@ export default class Container extends EventEmitter {
       files = helper.sortFiles(files);
 
       files.forEach(function(file) {
-        fs.stat(file, function(err,stats) {
+        fsstat(file, function(err,stats) {
           if(stats.isFile()) {
             var ext = path.extname(file);
             var mimetype = helper.getMIMEType(file);
@@ -90,7 +101,7 @@ export default class Container extends EventEmitter {
               self.files.push(mf);
               // fire events
               // if there is a file that has to be shown instantly do stuff
-              if(showfile && !firstTriggered) {
+              if(!firstTriggered && showfile) {
                 if(showfile == file) {
                   var idx = self.files.indexOf(mf);
                   self._currentIndex = idx;
@@ -98,6 +109,11 @@ export default class Container extends EventEmitter {
                     index: idx,
                     mediafile: mf
                   });
+                  if(idx > 0) {
+                    self.preloadPrevious(idx)
+                  }
+                  self.preloadNext(idx);
+
                   firstTriggered = true;
                 }
               } else if (self.files.length == 1) {
@@ -175,16 +191,16 @@ export default class Container extends EventEmitter {
     var self = this;
     var parentDir = path.join(this.cwd, "..");
     self.siblings = []
-    fs.readdir(parentDir, function(err, files) {
+    fsreaddir(parentDir, function(err, files) {
       files = files.map(function(f) {
         return path.join(parentDir, f);
       })
 
       // files = files.sort();
       files = helper.sortFiles(files);
-
+      console.log(files);
       files.forEach(function(file) {
-        fs.stat(file, function(err, stats) {
+        fsstat(file, function(err, stats) {
           if(stats.isDirectory()) {
             self.siblings.push(file);
           } else if (stats.isFile() && helper.isArchive(file)) {
@@ -210,6 +226,17 @@ export default class Container extends EventEmitter {
     return mf;
   }
 
+  last() {
+    console.log("last");
+    this._currentIndex = this.files.length - 1;
+    var mf = this.files[this._currentIndex];
+    this.emit("currenFileChanged", {
+      index: this._currentIndex,
+      mediafile: mf
+    });
+    return mf;
+  }
+
   next() {
     console.log("next");
     if(this._currentIndex + 1 < this.files.length) {
@@ -218,7 +245,7 @@ export default class Container extends EventEmitter {
         index: this._currentIndex,
         mediafile: mf
       });
-      this.preloadNext(this._currentIndex + 1, PRELOADRANGE);
+      this.preloadNext(this._currentIndex, PRELOADRANGE);
       return mf;
     } else {
       this.emit("folderEnd", {
@@ -236,7 +263,7 @@ export default class Container extends EventEmitter {
         mediafile: mf
       });
       // we're going backwards so maybe preload some stuff
-      this.preloadPrevious(this._currentIndex - 1, PRELOADRANGE);
+      this.preloadPrevious(this._currentIndex, PRELOADRANGE);
       return mf;
     } else {
       this.emit("folderEnd", {
@@ -245,25 +272,26 @@ export default class Container extends EventEmitter {
     }
   }
 
-  preloadNext(nextidx, range) {
+  preloadNext(idx, range) {
     console.log("preloadNext");
-    if(nextidx < this.files.length) {
-      var mf = this.files[nextidx];
+    if(idx + 1 < this.files.length) {
+      var mf = this.files[idx + 1];
       var elem = mf.getElement();
       if(range) {
-        this.preloadNext(++nextidx, --range);
+        this.preloadNext(++idx, --range);
       }
       return elem;
     }
   }
 
-  preloadPrevious(previdx, range) {
+  preloadPrevious(idx, range) {
     console.log("preloadPrevious");
-    if(previdx >= 0) {
-      var mf = this.files[previdx];
+    if(idx - 1 >= 0) {
+      var mf = this.files[idx - 1];
+      console.log("preloading: ", mf.filename);
       var elem = mf.getElement();
       if(range) {
-        this.preloadNext(--previdx, --range);
+        this.preloadNext(--idx, --range);
       }
       return elem;
     }
@@ -275,16 +303,15 @@ export default class Container extends EventEmitter {
     console.log(this.cwd);
     console.log(cidx);
     if(cidx + 1 < this.siblings.length) {
-
-        console.log("nextSibling: ", this.siblings[cidx + 1] );
+      console.log("nextSibling: ", this.siblings[cidx + 1] );
       this.open(this.siblings[cidx + 1])
     }
   }
 
   openPreviousSibling() {
     var cidx = this.siblings.indexOf(this.cwd);
-    console.log(this.cwd);
-    console.log(cidx);
+    console.log("CWD: ", this.cwd);
+    console.log("cwd idx: ", cidx);
     if(cidx - 1 >= 0) {
       console.log("previousSibling: ", this.siblings[cidx - 1] );
       this.open(this.siblings[cidx - 1])

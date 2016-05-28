@@ -8,7 +8,7 @@ import * as config from "./config/config.js";
 export default class Viewer {
   constructor(viewelemid, indexid, countid, nameid, dropareaid) {
     this.container = new Container();
-    this.settings = new ElectronSettings();
+    // this.settings = new ElectronSettings();
 
     this.initEventlisteners();
 
@@ -32,7 +32,8 @@ export default class Viewer {
       var elem = mediafile.getElement();
       this.showElement(elem);
 
-      if(mediafile.isVideo()) {
+      console.log("is autoplay on? ", global.settings.get());
+      if(mediafile.isVideo() && global.settings.get("videoSettings.autoplay")) {
         elem.play();
       }
     }

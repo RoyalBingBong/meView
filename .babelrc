@@ -1,3 +1,11 @@
 {
+  "env": {
+    "production": {
+      "plugins": [
+          "remove-comments"
+        , "transform-remove-console"
+      ]
+    }
+  },
   "presets": ["es2015"]
 }

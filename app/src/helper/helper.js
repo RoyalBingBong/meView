@@ -1,5 +1,10 @@
+import ElectronSettings from "electron-settings";
+
 import * as config from "../config/config.js";
 import mime from "mime"
+
+const settings = new ElectronSettings();
+
 
 export function errorElement(obj) {
   let errElem = document-createElement("pre");
@@ -9,14 +14,19 @@ export function errorElement(obj) {
 }
 
 export function applyVideoSettings(videoelement) {
-  return applySettings(videoelement, config.videosettings);
+  var videosettings = global.settings.get("videoSettings")
+  console.log("videosettings ", videosettings);
+  videoelement = applySettings(videoelement, videosettings);
+  // disable autoplay so we can preload files that might have auto
+  videoelement.autoplay = false;
+  return videoelement
 }
-export function applyImageSettings(videoelement) {
-  return applySettings(videoelement, config.imagesettings);
+export function applyImageSettings(imageelement) {
+  return applySettings(imageelement, config.imagesettings);
 }
 function applySettings(elem, setting) {
+  console.log("apply settigns to: ", elem);
   for (let key in setting) {
-    console.log("key:", key);
     elem[key] = setting[key];
   }
   return elem;
