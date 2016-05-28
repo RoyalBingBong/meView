@@ -10,25 +10,50 @@ const dialog = remote.dialog;
 
 global.settings = new ElectronSettings();
 
+
+/**
+ * openDir - Opens the "Open Directory" dialog of the OS
+ * Applies a search path defined by usersettings ('user home' or 'last path')
+ *
+ * @param  {openDirCallback} callback The callback that handles the path returned by showOpenDialog
+ */
 export function openDir(callback){
+  var searchPath;
+  if(settings.get("savePath") && !!settings.get("lastSearchPath")) {
+    searchPath = settings.get("lastSearchPath");
+  } else {
+    searchPath = remote.app.getPath("home");
+  }
+  console.log("using searchpath: ", searchPath);
   var files = dialog.showOpenDialog({
-    defaultPath: settings.get("savePath") ? settings.get("lastSearchPath") : remote.app.getPath("home"),
+    defaultPath: searchPath,
     properties: [ 'openDirectory']
   });
   if(files) {
     if(settings.get("savePath")) {
       settings.set("lastSearchPath", files[0])
-    } else {
-      // remove preiovusly saved path in case user decides against saving
-      settings.unset("lastSearchPath")
     }
     callback(files[0]);
   }
 }
 
+
+/**
+ * openFile - Opens the "Open File" dialog of the OS
+ * Applies a search path defined by usersettings ('user home' or 'last path')
+ *
+ * @param  {openDirCallback} callback The callback that handles the path returned by showOpenDialog
+ */
 export function openFile(callback) {
+  var searchPath;
+  if(settings.get("savePath") && !!settings.get("lastSearchPath")) {
+    searchPath = settings.get("lastSearchPath");
+  } else {
+    searchPath = remote.app.getPath("home");
+  }
+  console.log("using searchpath: ", searchPath);
   var files = remote.dialog.showOpenDialog({
-    defaultPath: settings.get("savePath") ? settings.get("lastSearchPath") : remote.app.getPath("home"),
+    defaultPath: searchPath,
     properties: [ 'openFile'],
     filters: config.fileFilter
   });
@@ -40,6 +65,13 @@ export function openFile(callback) {
   }
 }
 
+
+/**
+ * writeDefaultSettings - Write default settings to user-config.
+ * Only used once at startup and only writes on first application start.
+ *
+ * @return {type}  description
+ */
 export function writeDefaultSettings() {
   if(isEmpty(settings.get())) {
     // wreite default config stuff:
@@ -83,26 +115,27 @@ export function openFileInViewer(filepath) {
   shell.openItem(filepath);
 }
 
-export function openSettings() {
-  // TODO: open new browser window with settings
-  console.log("openSettings");
-}
-
 export function openAbout() {
   // TODO: open new browser window with about
   console.log("openAbout");
 }
 
 export function openRepository() {
-  shell.openExternal(config.github, {activate: true})
+  var repo = require("../package.json").repository.url
+  shell.openExternal(repo, {activate: true})
 }
 
 export function openRepositoryIssues() {
-  shell.openExternal(config.githubIssue, {activate: true})
+  var bugs = require("../package.json").bugs.url
+  shell.openExternal(bugs, {activate: true})
 }
 
 export function toggleSavePath(isSaving) {
   settings.set("savePath", isSaving);
+  if(!isSaving) {
+    // remove preiovusly saved path bceause privacy
+    settings.unset("lastSearchPath");
+  }
 }
 
 export function isSavingPath() {

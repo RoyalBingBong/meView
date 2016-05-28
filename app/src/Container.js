@@ -2,7 +2,7 @@ import EventEmitter from "events";
 
 // import * as fs from "fs";
 import {readdir as fsreaddir, stat as fsstat} from "fs";
-import * as path from "path"
+import {basename, dirname, extname, join} from "path"
 import {format} from "util";
 
 // import * as AdmZip from "adm-zip"
@@ -40,16 +40,16 @@ export default class Container extends EventEmitter {
       if(stats.isFile()) {
         if(helper.isArchive(fileorpath)) {
           console.log("open isFile and isArchive: ", fileorpath);
-          self.parentDir = path.dirname(fileorpath);
+          self.parentDir = dirname(fileorpath);
           self.cwd = fileorpath;
           self.viewArchive(fileorpath);
         } else {
-          self.parentDir = path.join(path.dirname(fileorpath), "..");
-          self.cwd = path.dirname(fileorpath);
+          self.parentDir = join(dirname(fileorpath), "..");
+          self.cwd = dirname(fileorpath);
           self.viewDirectory(self.cwd, fileorpath);
         }
       } else if(stats.isDirectory()) {
-        self.parentDir = path.join(fileorpath, "..");
+        self.parentDir = join(fileorpath, "..");
         self.cwd = fileorpath;
         self.viewDirectory(self.cwd);
       }
@@ -76,6 +76,7 @@ export default class Container extends EventEmitter {
         var message = format('failed to read directory "%s"', dir)
         throw new Error(message);
       }
+
       if(files.length == 0) {
         self.emit("emptyDirectory", {
           filepath: dir
@@ -85,7 +86,7 @@ export default class Container extends EventEmitter {
       self.files = [];
       self.children = [];
       files = files.map(function(f) {
-        return path.join(self.cwd, f);
+        return join(self.cwd, f);
       })
 
       // files = files.sort();
@@ -94,10 +95,10 @@ export default class Container extends EventEmitter {
       files.forEach(function(file) {
         fsstat(file, function(err,stats) {
           if(stats.isFile()) {
-            var ext = path.extname(file);
+            var ext = extname(file);
             var mimetype = helper.getMIMEType(file);
             if(helper.isSupportedMIMEType(mimetype)) {
-              let mf = new MediaFile(path.basename(file), file, mimetype);
+              let mf = new MediaFile(basename(file), file, mimetype);
               self.files.push(mf);
               // fire events
               // if there is a file that has to be shown instantly do stuff
@@ -165,7 +166,7 @@ export default class Container extends EventEmitter {
         var mimetype = helper.getMIMEType(file.entryName);
 
         if(helper.isSupportedMIMEType(mimetype)) {
-          var fullpath = path.join(archivepath, file.entryName);
+          var fullpath = join(archivepath, file.entryName);
           // pass zipentry instead of buffer, because it's faster (IRC)
           var mf = new MediaFile(file.entryName, fullpath, mimetype, file);
           self.files.push(mf);
@@ -189,16 +190,15 @@ export default class Container extends EventEmitter {
   fetchSiblings() {
     console.log("fetchSiblings");
     var self = this;
-    var parentDir = path.join(this.cwd, "..");
+    var parentDir = join(this.cwd, "..");
     self.siblings = []
     fsreaddir(parentDir, function(err, files) {
       files = files.map(function(f) {
-        return path.join(parentDir, f);
+        return join(parentDir, f);
       })
 
-      // files = files.sort();
       files = helper.sortFiles(files);
-      console.log(files);
+
       files.forEach(function(file) {
         fsstat(file, function(err, stats) {
           if(stats.isDirectory()) {
@@ -330,7 +330,7 @@ export default class Container extends EventEmitter {
 
   goUp() {
     console.log("goUp");
-    var cwdnew = path.join(this.cwd, "..");
+    var cwdnew = join(this.cwd, "..");
     this.open(cwdnew);
   }
 }

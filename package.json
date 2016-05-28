@@ -3,14 +3,21 @@
   "version": "1.0.0",
   "description": "",
   "main": "app/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RoyalBingBong/meView"
+  },
+  "bugs": {
+    "url": "https://github.com/RoyalBingBong/meView/issues"
+  },
+  "homepage": "https://github.com/RoyalBingBong/meView#readme",
   "scripts": {
-    "start": "electron .",
+    "start": "electron app/",
     "compile": "babel -d app/dist app/src",
-    "compilewatcher": "babel -w -d app/dist app/src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watcher": "babel -w -d app/dist app/src"
   },
   "keywords": [],
-  "author": "",
+  "author": "David Koch <david-k@mail.de>",
   "license": "ISC",
   "devDependencies": {
     "asar": "^0.11.0",

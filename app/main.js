@@ -1,7 +1,5 @@
 'use strict';
-
 const electron = require("electron");
-
 const app = electron.app;  // Module to control application life.
 const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
 
@@ -9,13 +7,7 @@ const BrowserWindow = electron.BrowserWindow;  // Module to create native browse
 // be closed automatically when the JavaScript object is garbage collected.
 var mainWindow = null;
 
-
-let passedPath = process.argv[2] || undefined;
-console.log(process.argv);
-// if(process.argv.length > 1) {
-//   passedPath = ;
-// }
-
+// let passedPath = process.argv[2] || undefined;
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
@@ -26,29 +18,25 @@ app.on('window-all-closed', function() {
   }
 });
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
 app.on('ready', function() {
-  // create config if it does not exist
-  // if (!userconfig.readSettings('')) {
-  //   userconfig.saveSettings('shortcutKeys', ['ctrl', 'shift']);
-  // }
-
-
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 1200, height: 800});
-  mainWindow.passedFilepath = passedPath;
-  // and load the index.html of the app.
+
+
+  // pass args to renderer
+  mainWindow.passedArgs = process.argv;
+
   mainWindow.loadURL('file://' + __dirname + '/index.html');
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // Open the DevTools if in debug mode
+  var debugMode = require("./config.json").debug
+  if(debugMode) {
+    mainWindow.webContents.openDevTools();
+  }
+
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     mainWindow = null;
   });
 });

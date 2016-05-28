@@ -10,7 +10,7 @@ export const imagesettings = {
 
 export const defaultStyle = "fit-to-window";
 
-export const defaulSearchPath = (process.platform == "win32" ? "%USERPROFILE%" : "$HOME");
+// export const defaulSearchPath = process.env["HOMEPATH]"]; //process.platform == "win32" ? "%USERPROFILE%" : "$HOME");
 
 export const supportedMIMEType = [
   "video/ogg",
@@ -23,6 +23,3 @@ export const fileFilter = [
   {name: 'Archives', extensions: ["zip", "cbz"]},
   {name: 'All Types', extensions: ['*']}
 ]
-
-export const github = "https://github.com/RoyalBingBong/_derp_"
-export const githubIssue = "https://github.com/RoyalBingBong/_derp_/issues"

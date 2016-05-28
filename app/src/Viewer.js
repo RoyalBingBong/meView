@@ -56,6 +56,7 @@ export default class Viewer {
   openFile(file) {
     if(file) {
       this.container.open(file);
+      this.hideDropzone();
     }
   }
 
@@ -73,7 +74,7 @@ export default class Viewer {
 
   updateCurrentDirectory(dirname) {
     console.log("updateCurrentDirectory");
-    var appname = require("../package.json").appname;
+    var appname = require("../package.json").productName;
     document.title = appname + " - " + dirname;
   }
 
@@ -134,6 +135,7 @@ export default class Viewer {
     var self = this;
     var hidden = false;
 
+    // prevent opening media directly in the window
     window.addEventListener("dragover",function(e){
       e = e || event;
       e.preventDefault();
@@ -143,15 +145,6 @@ export default class Viewer {
       e.preventDefault();
     },false);
 
-    // document.body.ondrop = function() {
-    //   e.preventDefault()
-    //   return false;
-    // }
-    //
-    // document.body.ondragover = function() {
-    //   e.preventDefault()
-    //   return false;
-    // }
 
     this.dropzone.ondragover = function() {
       self.showDropzone();
@@ -161,8 +154,6 @@ export default class Viewer {
       console.log("ondragend hidden? ", this.isHidden);
       if(this.isHidden) {
         self.hideDropzone();
-        // this.className = 'hide';
-        // this.visibility = "hidden";
       } else {
         this.className = 'message';
       }
@@ -172,8 +163,6 @@ export default class Viewer {
       console.log("ondragleave hidden? ", this.isHidden);
       if(this.isHidden) {
         self.hideDropzone();
-        // this.className = 'hide';
-        // this.visibility = "hidden";
       } else {
         this.className = 'message';
       }

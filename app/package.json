@@ -1,8 +1,16 @@
 {
   "name": "meview",
-  "appname": "meView",
+  "productName": "meView",
   "version": "1.0.0",
   "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RoyalBingBong/meView"
+  },
+  "bugs": {
+    "url": "https://github.com/RoyalBingBong/meView/issues"
+  },
+  "homepage": "https://github.com/RoyalBingBong/meView#readme",
   "dependencies": {
     "adm-zip": "^0.4.7",
     "electron-settings": "^1.0.4",
