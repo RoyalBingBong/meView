@@ -1,0 +1,167 @@
+html, body{
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: #282828;
+  cursor:default;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+video::-webkit-media-controls-panel {
+  display: flex !important;
+  opacity: 1 !important;
+}
+
+
+img, video {
+  /* freaking css magic right here */
+  position: absolute;
+  top: 50%; left: 0;  right: 0;
+  -webkit-transform: translateY(-50%);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  /* freaking css magic right here */
+
+  padding-bottom: 25px; /* 25px for status bar */
+}
+
+
+/*img.fit-to-window {
+  max-width: 100% !important;
+  max-height: 100% !important;
+}*/
+
+video.fit-to-window {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+
+/*.fit-to-window {
+  max-width: 100% !important;
+  max-height: 100% !important;
+}*/
+
+.fit-to-window {
+  max-width: 100% !important;
+  max-height: -webkit-calc(100% - 25px) !important;
+}
+
+
+
+.fit-width {
+  max-width: 100%;
+  height: auto;
+}
+
+.fit-height {
+  max-height: 100%;
+  width: auto;
+}
+
+.fit {
+  position: absolute;;
+  top: 0; bottom:0; left: 0; right:0;
+}
+
+.fit-content {
+  top: 0; bottom: 25; left: 0; right:0;
+  margin-bottom: 30px;
+}
+
+
+
+
+.message {
+  /* freaking css magic right here */
+  position: absolute;
+  top: 50%; left: 0;  right: 0;
+  -webkit-transform: translateY(-50%);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  /* freaking css magic right here */
+
+  padding: 20px;
+  padding-top: 80px;
+  padding-bottom: 80px;
+  width: 300px;
+  height: auto;
+  border: 5px solid;
+  border-radius: 20px;
+  color: silver;
+  font-size: 20px;
+  text-align: center;
+}
+
+
+#dropzone.message {
+  padding: 20px;
+  color: silver;
+  border: 10px dashed;
+  border-radius: 20px;
+  font-size: 30px;
+  opacity: 0.4;
+  cursor: "default";
+  background-color: #282828;
+}
+
+#dropzone.hover {
+  opacity: 0.8;
+}
+
+#dropzone.hide {
+  opacity: 0;
+}
+
+#dropzone p {
+  text-align: center;
+  font-size: 50px;
+}
+
+
+#status {
+  position: fixed;
+  display:block;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 25px;
+  background-color: lightgray;
+  padding-left: 5px;
+}
+
+#status span{
+  color: black;
+  font-size: 20px;
+}
+
+.lefty {
+  text-align: center;
+  vertical-align: middle;
+  display: inline-block;
+  width: 75px;
+}
+
+.righty {
+  display: inline-block;
+  vertical-align: middle;
+  width: auto;
+  width: -webkit-calc(100% - 100px) !important;
+}
+
+span.counter {
+  font-weight: bold;
+}
+
+#currentFile {
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  padding-left: 3px;
+}

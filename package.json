@@ -1,0 +1,22 @@
+{
+  "name": "meview",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app/main.js",
+  "scripts": {
+    "start": "electron .",
+    "compile": "babel -d app/dist app/src",
+    "compilewatcher": "babel -w -d app/dist app/src",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "asar": "^0.11.0",
+    "babel": "^6.5.2",
+    "babel-cli": "^6.9.0",
+    "babel-preset-es2015": "^6.9.0",
+    "electron-prebuilt": "^1.1.1"
+  }
+}
