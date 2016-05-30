@@ -22,12 +22,11 @@ const viewer = new Viewer(
 // open file if it was passed as process argv
 if(remote.getCurrentWindow().passedArgs.length > 1) {
   var last = remote.getCurrentWindow().passedArgs.length - 1;
-  viewer.openFile(remote.getCurrentWindow().passedArgs[last])
+  var arg = remote.getCurrentWindow().passedArgs[last];
+  if(!arg.startsWith("app")) { // hacky, but needed for dev
+    viewer.openFile(arg);
+  }
 }
-
-// if(remote.getCurrentWindow().passedFilepath) {
-//   viewer.openFile(remote.getCurrentWindow().passedFilepath)
-// }
 
 // enable double click to toggle fullscreen
 document.body.ondblclick = function() {

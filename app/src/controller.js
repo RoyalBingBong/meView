@@ -141,3 +141,32 @@ export function toggleSavePath(isSaving) {
 export function isSavingPath() {
   return !!settings.get("savePath");
 }
+
+export function windowsInstallContextMenu(callback) {
+  var registry = require("./windows/registry.js");
+  registry.installContextMenu(function(err, std) {
+    if(err) {
+      console.log(err);
+      var message = "Failed to install context menu entries!";
+      dialog.showErrorBox("meView Windows Integration", message);
+      showErrorDialog(message)
+      callback(new Error(message))
+    } else {
+      settings.set("windowsContextMenuInstalled", true);
+    }
+  })
+}
+
+export function windowsUninstallContextMenu() {
+  var registry = require("./windows/registry.js");
+  registry.uninstallContextMenu(function(err, std) {
+    if(err) {
+      console.log(err);
+      var message = "Failed to uninstall context menu entries!";
+      dialog.showErrorBox("meView Windows Integration", message);
+      callback(new Error(message))
+    } else {
+      settings.set("windowsContextMenuInstalled", false);
+    }
+  })
+}

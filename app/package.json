@@ -1,8 +1,10 @@
 {
   "name": "meview",
   "productName": "meView",
+  "description": "Image/Video viewer for typical web media formats. Also supports zip-archives.",
   "version": "1.0.0",
   "main": "main.js",
+  "license": "ISC",
   "repository": {
     "type": "git",
     "url": "https://github.com/RoyalBingBong/meView"

@@ -341,6 +341,11 @@ export default class AppMenu {
     })
     settingsmenu.append(item);
 
+    if(process.platform == "win32") {
+      settingsmenu.append(this.buildWindowsMenu());
+    }
+
+
     return new MenuItem({
       label: "Settings",
       submenu: settingsmenu
@@ -393,4 +398,37 @@ export default class AppMenu {
     })
   }
 
+  buildWindowsMenu() {
+    var windowsmenu = new Menu();
+    var item;
+    item = new MenuItem({
+      label: "Add to context menu in Explorer",
+      type: "checkbox",
+      checked: settings.get("windowsContextMenuInstalled"),
+      click: function clickWinContext(menuItem, browserWindow) {
+        if(browserWindow) {
+          if(menuItem.checked) {
+            controller.windowsInstallContextMenu(function(err) {
+              if(err) {
+                menuItem.checked = false;
+              }
+            });
+          } else {
+            controller.windowsUninstallContextMenu(function(err) {
+              if(err) {
+                menuItem.checked = true;
+              }
+            });
+          }
+        }
+      }
+    })
+    windowsmenu.append(item);
+
+
+    return new MenuItem({
+      label: "Windows",
+      submenu: windowsmenu
+    })
+  }
 }
