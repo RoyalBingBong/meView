@@ -81,7 +81,7 @@ export default class Container extends EventEmitter {
         self.emit("emptyDirectory", {
           filepath: dir
         });
-      }
+      }     
 
       self.files = [];
       self.children = [];

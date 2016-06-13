@@ -18,10 +18,18 @@ video::-webkit-media-controls-panel {
   opacity: 1 !important;
 }
 
+#viewercontainer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 25px;
+  text-align: center;
+}
 
 img, video {
   /* freaking css magic right here */
-  position: absolute;
+  position: inherit;
   top: 50%; left: 0;  right: 0;
   -webkit-transform: translateY(-50%);
   display: block;
@@ -33,10 +41,10 @@ img, video {
 }
 
 
-/*img.fit-to-window {
-  max-width: 100% !important;
-  max-height: 100% !important;
-}*/
+img.fit-to-window {
+  max-width: 100%;
+  max-height: 100%;
+}
 
 video.fit-to-window {
   width: 100%;
@@ -71,7 +79,7 @@ video.fit-to-window {
   top: 0; bottom:0; left: 0; right:0;
 }
 
-.fit-content {
+div.fit-content {
   top: 0; bottom: 25; left: 0; right:0;
   margin-bottom: 30px;
 }
@@ -147,14 +155,14 @@ video.fit-to-window {
   text-align: center;
   vertical-align: middle;
   display: inline-block;
-  width: 75px;
+  width: 100px;
 }
 
 .righty {
   display: inline-block;
   vertical-align: middle;
   width: auto;
-  width: -webkit-calc(100% - 100px) !important;
+  width: -webkit-calc(100% - 125px) !important;
 }
 
 span.counter {

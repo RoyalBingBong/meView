@@ -7,6 +7,7 @@ import {isEmpty} from "lodash";
 import * as config from "./config/config.js";
 
 const dialog = remote.dialog;
+const BrowserWindow = remote.BrowserWindow;
 
 global.settings = new ElectronSettings();
 
@@ -169,4 +170,43 @@ export function windowsUninstallContextMenu() {
       settings.set("windowsContextMenuInstalled", false);
     }
   })
+}
+
+var selectFolderWindow;
+export function showSelectFolder(cwd, callback) {
+  selectFolderWindow = new BrowserWindow({
+    width: 450,
+    height: 350,
+    fullscreenable: false,
+    resizable: false,
+    show: false,
+    webPreferences: {
+      webSecurity: false
+    }
+  }); // frame: false
+  selectFolderWindow.center();
+
+  selectFolderWindow.setMenu(null);
+  // selectFolderWindow.webContents.openDevTools();
+  var url = require("url");
+  var path = require("path");
+
+  var p = path.join(__dirname, ".." , "tree.html");
+  p = "file://"+p;
+  localStorage.setItem("cwd", cwd);
+  selectFolderWindow.currentDir = cwd;
+  selectFolderWindow.loadURL(p);
+
+  selectFolderWindow.show();
+
+
+  // Emitted when the window is closed.
+  selectFolderWindow.on('closed', function() {
+    selectFolderWindow = null;
+    var newcwd = localStorage.getItem("cwd");
+    if(cwd != newcwd) {
+      localStorage.setItem("cwd", "");
+      callback(newcwd);
+    }
+  });
 }

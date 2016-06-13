@@ -114,6 +114,24 @@ export default class AppMenu {
     var item;
 
     item = new MenuItem({
+      label: "Selct Folder",
+      accelerator: "Up",
+      click: function clickNextFile(menuItem, browserWindow) {
+        if (browserWindow) {
+          var cwd = viewer.container.cwd;
+          console.log("passing: ", cwd);
+          controller.showSelectFolder(cwd, function(newcwd) {
+            console.log("clickNextFile data:", newcwd );
+            viewer.openFile(newcwd)
+
+          })
+        }
+      }
+    })
+    viewmenu.append(item);
+
+    viewmenu.append(new MenuItem({type: "separator"}))
+    item = new MenuItem({
       label: "Next",
       accelerator: "Right",
       click: function clickNextFile(menuItem, browserWindow) {

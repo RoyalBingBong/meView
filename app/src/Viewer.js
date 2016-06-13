@@ -1,9 +1,12 @@
 import ElectronSettings from "electron-settings";
 
 import Container from "./Container.js";
+import * as controller from "./controller.js";
 import AppMenu from "./AppMenu.js"
 
 import * as config from "./config/config.js";
+
+
 
 export default class Viewer {
   constructor(viewelemid, indexid, countid, nameid, dropareaid) {
@@ -27,12 +30,8 @@ export default class Viewer {
 
   showFile(mediafile) {
     if(mediafile) {
-      console.log("showing file");
-      console.log(mediafile);
       var elem = mediafile.getElement();
       this.showElement(elem);
-
-      console.log("is autoplay on? ", global.settings.get());
       if(mediafile.isVideo() && global.settings.get("videoSettings.autoplay")) {
         elem.play();
       }
@@ -89,19 +88,15 @@ export default class Viewer {
         // self.updateCurrentFileName(data.mediafile.getFilename());
         self.updateCurrentFileName(data.mediafile.filepath);
         self.showFile(data.mediafile);
-        self.container.preloadNext(data.index+1)
-        self.container.preloadPrevious(data.index-1)
+        self.container.preloadNext(data.index)
+        self.container.preloadPrevious(data.index)
       }
     });
     this.container.on("folderEnd", function onFolderEnd(data) {
       console.log("onFolderEnd");
-      if(data) {
-        if(data.isEnd) {
-          console.log("End-end of file list");
-        } else {
-          console.log("Start-end of file list");
-        }
-      }
+      controller.showSelectFolder(self.container.cwd, function(newcwd) {
+        self.container.open(newcwd)
+      })
     });
     this.container.on("fileAdded", function onFileAdded(data) {
       console.log("onFileAdded");

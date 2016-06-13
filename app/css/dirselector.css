@@ -1,0 +1,86 @@
+html, body{
+  margin: 0px;
+  padding: 0px;
+  background-color: #F5F5F5;
+  cursor:default;
+  overflow: hidden;
+}
+
+/*::-webkit-scrollbar {
+    display: none;
+}*/
+
+.fit {
+  top: 0; bottom: 0;
+  left: 0; right: 0;
+}
+
+
+
+.wrapper {
+  margin: 0;
+  padding: 0;
+  /*border: 1px solid blue;*/
+  width: 100%;
+  height: 100vh;
+}
+
+.lefty {
+  vertical-align: top;
+  display: inline-block;
+  /*border: 1px solid red;*/
+  width: auto;
+  height: 100%;
+}
+
+.righty {
+  vertical-align: top;
+  display: inline-block;
+  width: 100px;
+  /*border: 1px solid green;*/
+}
+
+select {
+  color: #000;
+  color: rgba(0,0,0,0);
+  text-shadow: 0 0 0 #000;
+}
+
+#folderselect {
+  overflow:scroll;
+  overflow-x: hidden;
+  padding: 5px;
+  width: 325px;
+  height: 100%;
+  font-size: 12pt;
+}
+#folderselect:focus {
+  outline: none;
+}
+
+#controls {
+  display:inline-block;
+  vertical-align: top;
+  padding-top: 20px;
+}
+
+#controls button {
+  padding: 5px;
+  margin: 2px;
+  width: 86px;
+}
+
+option {
+  background-size: 16px 16px;
+    background-repeat:no-repeat;
+    background-position: left middle;
+    padding-left: 18px;
+}
+
+select#folderselect option[value] {
+  background-image:url("../assets/normal_folder.png");
+}
+
+select#folderselect option[value$="zip"] {
+  background-image:url("../assets/archive.png");
+}
