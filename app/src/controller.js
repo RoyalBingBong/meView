@@ -1,15 +1,16 @@
-import {shell,remote} from 'electron';
-import {dirname} from "path";
+import {shell, remote} from 'electron'
+import {dirname, join} from 'path'
 
-import ElectronSettings from "electron-settings";
-import {isEmpty} from "lodash";
+import ElectronSettings from 'electron-settings'
+import {isEmpty} from 'lodash'
 
-import * as config from "./config/config.js";
+import * as config from './config/config.js'
 
-const dialog = remote.dialog;
-const BrowserWindow = remote.BrowserWindow;
+const dialog = remote.dialog
+const BrowserWindow = remote.BrowserWindow
 
-global.settings = new ElectronSettings();
+/*global settings*/
+global.settings = new ElectronSettings()
 
 
 /**
@@ -19,22 +20,22 @@ global.settings = new ElectronSettings();
  * @param  {openDirCallback} callback The callback that handles the path returned by showOpenDialog
  */
 export function openDir(callback){
-  var searchPath;
-  if(settings.get("savePath") && !!settings.get("lastSearchPath")) {
-    searchPath = settings.get("lastSearchPath");
+  let searchPath
+  if(settings.get('savePath') && !!settings.get('lastSearchPath')) {
+    searchPath = settings.get('lastSearchPath')
   } else {
-    searchPath = remote.app.getPath("home");
+    searchPath = remote.app.getPath('home')
   }
-  console.log("using searchpath: ", searchPath);
-  var files = dialog.showOpenDialog({
+  console.log('using searchpath: ', searchPath)
+  let files = dialog.showOpenDialog({
     defaultPath: searchPath,
     properties: [ 'openDirectory']
-  });
+  })
   if(files) {
-    if(settings.get("savePath")) {
-      settings.set("lastSearchPath", files[0])
+    if(settings.get('savePath')) {
+      settings.set('lastSearchPath', files[0])
     }
-    callback(files[0]);
+    callback(files[0])
   }
 }
 
@@ -46,23 +47,23 @@ export function openDir(callback){
  * @param  {openDirCallback} callback The callback that handles the path returned by showOpenDialog
  */
 export function openFile(callback) {
-  var searchPath;
-  if(settings.get("savePath") && !!settings.get("lastSearchPath")) {
-    searchPath = settings.get("lastSearchPath");
+  let searchPath
+  if(settings.get('savePath') && !!settings.get('lastSearchPath')) {
+    searchPath = settings.get('lastSearchPath')
   } else {
-    searchPath = remote.app.getPath("home");
+    searchPath = remote.app.getPath('home')
   }
-  console.log("using searchpath: ", searchPath);
-  var files = remote.dialog.showOpenDialog({
+  console.log('using searchpath: ', searchPath)
+  let files = remote.dialog.showOpenDialog({
     defaultPath: searchPath,
     properties: [ 'openFile'],
     filters: config.fileFilter
-  });
+  })
   if(files) {
-    if(settings.get("savePath")) {
-      settings.set("lastSearchPath", dirname(files[0]))
+    if(settings.get('savePath')) {
+      settings.set('lastSearchPath', dirname(files[0]))
     }
-    callback(files[0]);
+    callback(files[0])
   }
 }
 
@@ -76,104 +77,106 @@ export function openFile(callback) {
 export function writeDefaultSettings() {
   if(isEmpty(settings.get())) {
     // wreite default config stuff:
-    console.log("writing default user config");
-    settings.set("videoSettings", config.defaultVideoSettings)
+    console.log('writing default user config')
+    settings.set('videoSettings', config.defaultVideoSettings)
+    settings.set('videoSkipValue', 5)
   }
 }
 
 export function toggleVideoLoop(shouldLoop) {
-  console.log("toggleVideoLoop: ", shouldLoop);
-  settings.set("videoSettings.loop", shouldLoop);
+  console.log('toggleVideoLoop: ', shouldLoop)
+  settings.set('videoSettings.loop', shouldLoop)
 }
 
 export function toggleVideoMute(shouldMute) {
-  console.log("toggleVideoMute: ", shouldMute);
-  settings.set("videoSettings.muted", shouldMute);
+  console.log('toggleVideoMute: ', shouldMute)
+  settings.set('videoSettings.muted', shouldMute)
 }
 
 export function toggleVideoAutoplay(shouldAutoplay) {
-  console.log("toggleVideoAutoplay: ", shouldAutoplay);
-  settings.set("videoSettings.autoplay", shouldAutoplay);
+  console.log('toggleVideoAutoplay: ', shouldAutoplay)
+  settings.set('videoSettings.autoplay', shouldAutoplay)
 }
 
 export function isVideoLooping() {
-  return settings.get("videoSettings.loop");
+  return settings.get('videoSettings.loop')
 }
 
 export function isVideoMuted() {
-  return settings.get("videoSettings.muted");
+  return settings.get('videoSettings.muted')
 }
 
 export function isVideoAutoplayed() {
-  return settings.get("videoSettings.autoplay");
+  return settings.get('videoSettings.autoplay')
 }
 
 export function openFileInExplorer(filepath) {
-  shell.showItemInFolder(filepath);
+  shell.showItemInFolder(filepath)
 }
 
 export function openFileInViewer(filepath) {
-  shell.openItem(filepath);
+  shell.openItem(filepath)
 }
 
 export function openAbout() {
   // TODO: open new browser window with about
-  console.log("openAbout");
+  console.log('openAbout')
 }
 
 export function openRepository() {
-  var repo = require("../package.json").repository.url
+  let repo = require('../package.json').repository.url
   shell.openExternal(repo, {activate: true})
 }
 
 export function openRepositoryIssues() {
-  var bugs = require("../package.json").bugs.url
+  let bugs = require('../package.json').bugs.url
   shell.openExternal(bugs, {activate: true})
 }
 
 export function toggleSavePath(isSaving) {
-  settings.set("savePath", isSaving);
+  settings.set('savePath', isSaving)
   if(!isSaving) {
     // remove preiovusly saved path bceause privacy
-    settings.unset("lastSearchPath");
+    settings.unset('lastSearchPath')
   }
 }
 
 export function isSavingPath() {
-  return !!settings.get("savePath");
+  return !!settings.get('savePath')
 }
 
 export function windowsInstallContextMenu(callback) {
-  var registry = require("./windows/registry.js");
-  registry.installContextMenu(function(err, std) {
+  let registry = require('./windows/registry.js')
+  registry.installContextMenu((err, std) => {
     if(err) {
-      console.log(err);
-      var message = "Failed to install context menu entries!";
-      dialog.showErrorBox("meView Windows Integration", message);
-      showErrorDialog(message)
+      console.log(err)
+      let message = 'Failed to install context menu entries!'
+      dialog.showErrorBox('meView Windows Integration', message)
+      // showErrorDialog(message)
       callback(new Error(message))
     } else {
-      settings.set("windowsContextMenuInstalled", true);
+      settings.set('windowsContextMenuInstalled', true)
     }
   })
 }
 
-export function windowsUninstallContextMenu() {
-  var registry = require("./windows/registry.js");
-  registry.uninstallContextMenu(function(err, std) {
+export function windowsUninstallContextMenu(callback) {
+  let registry = require('./windows/registry.js')
+  registry.uninstallContextMenu((err, std) => {
     if(err) {
-      console.log(err);
-      var message = "Failed to uninstall context menu entries!";
-      dialog.showErrorBox("meView Windows Integration", message);
+      console.log(err)
+      let message = 'Failed to uninstall context menu entries!'
+      dialog.showErrorBox('meView Windows Integration', message)
       callback(new Error(message))
     } else {
-      settings.set("windowsContextMenuInstalled", false);
+      settings.set('windowsContextMenuInstalled', false)
     }
   })
 }
 
-var selectFolderWindow;
+let selectFolderWindow
 export function showSelectFolder(cwd, callback) {
+  if (selectFolderWindow) return selectFolderWindow.focus()
   selectFolderWindow = new BrowserWindow({
     width: 450,
     height: 350,
@@ -183,30 +186,61 @@ export function showSelectFolder(cwd, callback) {
     webPreferences: {
       webSecurity: false
     }
-  }); // frame: false
-  selectFolderWindow.center();
+  }) // frame: false
+  selectFolderWindow.center()
 
-  selectFolderWindow.setMenu(null);
-  // selectFolderWindow.webContents.openDevTools();
-  var url = require("url");
-  var path = require("path");
+  selectFolderWindow.setMenu(null)
+  // selectFolderWindow.webContents.openDevTools()
 
-  var p = path.join(__dirname, ".." , "tree.html");
-  p = "file://"+p;
-  localStorage.setItem("cwd", cwd);
-  selectFolderWindow.currentDir = cwd;
-  selectFolderWindow.loadURL(p);
+  let p = join('file://', __dirname, '..', 'tree.html')
+  // p = 'file://'+p
+  if (cwd == '.') { // app dir
+    cwd = (isSavingPath() ? settings.get('lastSearchPath') : remote.app.getPath('home'))
+  }
+  localStorage.setItem('cwd', cwd)
+  // selectFolderWindow.currentDir = cwd
+  console.log('cwd: ', cwd)
+  selectFolderWindow.loadURL(p)
 
-  selectFolderWindow.show();
+  selectFolderWindow.show()
 
+
+  selectFolderWindow.on('close', () => {
+    let newcwd = localStorage.getItem('cwd')
+    // if(cwd != newcwd) {
+    //   localStorage.setItem('cwd', '')
+    //   callback(newcwd)
+    // }
+    if (newcwd !== '') {
+      callback(newcwd)  
+    }
+  })
 
   // Emitted when the window is closed.
-  selectFolderWindow.on('closed', function() {
-    selectFolderWindow = null;
-    var newcwd = localStorage.getItem("cwd");
-    if(cwd != newcwd) {
-      localStorage.setItem("cwd", "");
-      callback(newcwd);
-    }
-  });
+  selectFolderWindow.on('closed', () => {
+    selectFolderWindow = null
+  })
 }
+
+
+export function closeAllWindows() {
+  let allWindows = BrowserWindow.getAllWindows()
+  allWindows.forEach((win) => {
+    if (win.id > 1) {
+      win.close()
+    }
+  })
+}
+
+export function isCurrentSkipValue(val) {
+  return settings.get('videoSkipValue') === val
+}
+
+export function setSkipValue(val) {  
+  settings.set('videoSkipValue', val)
+}
+
+export function getSkipValue() {  
+  return settings.get('videoSkipValue') || 0
+}
+

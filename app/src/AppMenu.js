@@ -1,88 +1,92 @@
-import {remote} from 'electron';
+import {remote} from 'electron'
 
-const {Menu, MenuItem} = remote;
+const {Menu, MenuItem} = remote
 
-import * as controller from "./controller.js"
+import * as controller from './controller.js'
+import {skipValues} from './config/config.js'
+
+/* global settings */
 
 export default class AppMenu {
   constructor(viewer) {
-    this.viewer = viewer;
-    this.initMenu();
+    this.viewer = viewer
+    this.initMenu()
   }
 
   initMenu() {
-    this.menu = new Menu();
-    this.menu.append(this.buildFileMenu());
-    this.menu.append(this.buildViewMenu());
-    this.menu.append(this.buildWindowMenu());
-    this.menu.append(this.buildAboutMenu());
-    Menu.setApplicationMenu(this.menu);
+    this.menu = new Menu()
+    this.menu.append(this.buildFileMenu())
+    this.menu.append(this.buildViewMenu())
+    this.menu.append(this.buildSettingsMenu())
+    this.menu.append(this.buildWindowMenu())
+    this.menu.append(this.buildAboutMenu())
+    Menu.setApplicationMenu(this.menu)
   }
 
   buildFileMenu() {
-    var viewer = this.viewer;
-    var filemenu = new Menu();
-    var item;
+    let viewer = this.viewer
+    let filemenu = new Menu()
+    let item
 
     // Open File
     item = new MenuItem({
-      label: "Open File",
-      accelerator: "CommandOrControl+Shift+O",
+      label: 'Open File',
+      accelerator: 'CommandOrControl+Shift+O',
       click: function clickOpenFile(menuItem, browserWindow) {
-        console.log("##### clickOpenFile #####");
-        controller.openFile(function(filepath) {
-          viewer.hideDropzone();
-          viewer.container.open(filepath);
+        console.log('##### clickOpenFile #####')
+        controller.openFile((filepath) => {
+          viewer.hideDropzone()
+          viewer.container.open(filepath)
         })
       }
     })
-    filemenu.append(item);
+    filemenu.append(item)
 
     // Open Folder
     item = new MenuItem({
-      label: "Open Folder",
-      accelerator: "CommandOrControl+O",
+      label: 'Open Folder',
+      accelerator: 'CommandOrControl+O',
       click: function clickOpenFolder(menuItem, browserWindow) {
-        console.log("##### clickOpenFolder #####");
-        controller.openDir(function(dirpath) {
-          console.log("###### visibility", viewer.hideDropzone);
-          viewer.hideDropzone();
-          viewer.container.open(dirpath);
+        console.log('##### clickOpenFolder #####')
+        controller.openDir((dirpath) => {
+          console.log('###### visibility', viewer.hideDropzone)
+          viewer.hideDropzone()
+          viewer.container.open(dirpath)
         })
       }
     })
-    filemenu.append(item);
+    filemenu.append(item)
 
-    filemenu.append(new MenuItem({type: "separator"}))
-
+    filemenu.append(new MenuItem({ type: 'separator' }))
+    
     // Open File
     item = new MenuItem({
-      label: "Show in File Explorer",
+      label: 'Show in File Explorer',
       // accelerator: "CommandOrControl+Shift+O",
       click: function clickShowFileInExplorer(menuItem, browserWindow) {
         let currentFile = viewer.container.current()
-        let filepath = currentFile.filepath;
-        controller.openFileInExplorer(filepath);
+        let filepath = currentFile.filepath
+        controller.openFileInExplorer(filepath)
       }
     })
-    filemenu.append(item);
+    filemenu.append(item)
 
     // Open Folder
     item = new MenuItem({
-      label: "Show in Default Viewer",
+      label: 'Show in Default Viewer',
       // accelerator: "CommandOrControl+O",
       click: function clickShowFileInViewer(menuItem, browserWindow) {
         let currentFile = viewer.container.current()
-        let filepath = currentFile.filepath;
+        let filepath = currentFile.filepath
         controller.openFileInViewer(filepath)
       }
     })
-    filemenu.append(item);
+    filemenu.append(item)
 
-    filemenu.append(new MenuItem({type: "separator"}))
+    filemenu.append(new MenuItem({type: 'separator'}))
 
     // Settings
-    item = this.buildSettingsMenu();
+    // item = this.buildSettingsMenu()
     // item = new MenuItem({
     //   label: "Settings",
     //   // accelerator: "CommandOrControl+Shift+O",
@@ -90,362 +94,401 @@ export default class AppMenu {
     //     controller.openSettings();
     //   }
     // })
-    filemenu.append(item);
+    // filemenu.append(item)
 
-    filemenu.append(new MenuItem({type: "separator"}))
+    filemenu.append(new MenuItem({type: 'separator'}))
 
     // Close
     item = new MenuItem({
-      label: "Quit",
-      accelerator: "Alt+Q",
-      role: "close"
+      label: 'Quit',
+      accelerator: 'Alt+Q',
+      role: 'close'
     })
-    filemenu.append(item);
+    filemenu.append(item)
 
     return new MenuItem({
-      label: "File",
+      label: 'File',
       submenu: filemenu
-    });
+    })
   }
 
   buildViewMenu() {
-    var viewer = this.viewer;
-    var viewmenu = new Menu();
-    var item;
+    let viewer = this.viewer
+    let viewmenu = new Menu()
+    let item
 
     item = new MenuItem({
-      label: "Selct Folder",
-      accelerator: "Up",
+      label: 'Select Folder',
+      accelerator: 'Up',
       click: function clickNextFile(menuItem, browserWindow) {
         if (browserWindow) {
-          var cwd = viewer.container.cwd;
-          console.log("passing: ", cwd);
-          controller.showSelectFolder(cwd, function(newcwd) {
-            console.log("clickNextFile data:", newcwd );
+          let cwd = viewer.container.cwd
+          console.log('passing: ', cwd)
+          controller.showSelectFolder(cwd, (newcwd) => {
+            console.log('clickNextFile data:', newcwd )
             viewer.openFile(newcwd)
-
           })
         }
       }
     })
-    viewmenu.append(item);
+    viewmenu.append(item)
 
-    viewmenu.append(new MenuItem({type: "separator"}))
+    viewmenu.append(new MenuItem({ type: 'separator' }))
+
+
     item = new MenuItem({
-      label: "Next",
-      accelerator: "Right",
+      label: 'Next',
+      accelerator: 'Right',
       click: function clickNextFile(menuItem, browserWindow) {
         if (browserWindow) {
           viewer.container.next()
         }
       }
     })
-    viewmenu.append(item);
+    viewmenu.append(item)
 
     item = new MenuItem({
-      label: "Previous",
-      accelerator: "Left",
+      label: 'Previous',
+      accelerator: 'Left',
       click: function clickPreviousFile(menuItem, browserWindow) {
         if (browserWindow) {
           viewer.container.previous()
         }
       }
     })
-    viewmenu.append(item);
+    viewmenu.append(item)
 
     item = new MenuItem({
-      label: "First",
-      accelerator: "Home",
+      label: 'First',
+      accelerator: 'Home',
       click: function clickFirstFile(menuItem, browserWindow) {
         if (browserWindow) {
           viewer.container.first()
         }
       }
     })
-    viewmenu.append(item);
+    viewmenu.append(item)
 
     item = new MenuItem({
-      label: "Last",
-      accelerator: "End",
+      label: 'Last',
+      accelerator: 'End',
       click: function clickLastFile(menuItem, browserWindow) {
         if (browserWindow) {
-          viewer.container.last();
+          viewer.container.last()
         }
       }
     })
-    viewmenu.append(item);
+    viewmenu.append(item)
 
-    viewmenu.append(new MenuItem({type: "separator"}))
+    viewmenu.append(new MenuItem({type: 'separator'}))
 
+    /**
+     * Video Playback controls:
+     */
+
+    // Play/Pause video
     item = new MenuItem({
-      label: "Open First Child",
-      // accelerator: "Left",
-      click: function clickOpenFirstChild(menuItem, browserWindow) {
+      label: 'Play/Pause',
+      accelerator: 'Space',
+      click: function clickPlayPause(menuItem, browserWindow) {
+        console.log('##### clickPlayPause #####')
         if (browserWindow) {
-          viewer.container.openFirstChild()
+          viewer.togglePlayPause()
         }
       }
     })
-    viewmenu.append(item);
+    viewmenu.append(item)
 
+    // Skip N seconds
     item = new MenuItem({
-      label: "Next Folder/Archive",
-      accelerator: "Shift+Right",
-      click: function clickNextFolder(menuItem, browserWindow) {
+      label: 'Forward',
+      accelerator: 'Shift+Right',
+      click: function clickForwwardVideo(menuItem, browserWindow) {
         if (browserWindow) {
-          viewer.container.openNextSibling()
+          let skipVal = controller.getSkipValue()
+          viewer.forwardVideo(skipVal)
         }
       }
     })
-    viewmenu.append(item);
+    viewmenu.append(item)
 
+    // Rewind N seconds
     item = new MenuItem({
-      label: "Previous Folder/Archive",
-      accelerator: "Shift+Left",
-      click: function clickPreviousFolder(menuItem, browserWindow) {
+      label: 'Rewind',
+      accelerator: 'Shift+Left',
+      click: function clickRewindVideo(menuItem, browserWindow) {
         if (browserWindow) {
-          viewer.container.openPreviousSibling()
+          let skipVal = controller.getSkipValue()
+          viewer.rewindVideo(skipVal)
         }
       }
     })
-    viewmenu.append(item);
+    viewmenu.append(item)
 
-    viewmenu.append(new MenuItem({type: "separator"}))
-    var viewoptionssubmenu = new Menu();
-
-    item = new MenuItem({
-      label: "Fit to Window",
-      type: "radio",
-      checked: true,
-    })
-    viewoptionssubmenu.append(item);
-    item = new MenuItem({
-      label: "View Options",
-      submenu: viewoptionssubmenu
-    })
-
-    viewmenu.append(item);
-
-    viewmenu.append(new MenuItem({type: "separator"}))
+    viewmenu.append(new MenuItem({ type: 'separator' }))
 
     item = new MenuItem({
-      label: "Reload",
-      accelerator: "CommandOrControl+R",
+      label: 'Reload',
+      accelerator: 'CommandOrControl+R',
       click: function clickReload(menuItem, browserWindow) {
         if (browserWindow) {
-          browserWindow.reload();
+          browserWindow.reload()
         }
       }
     })
-    viewmenu.append(item);
+    viewmenu.append(item)
 
-    viewmenu.append(new MenuItem({type: "separator"}))
-
-    item = new MenuItem({
-      label: "Toggle Full Screen",
-      accelerator: "F11",
-      click: function clickSettings(menuItem, browserWindow) {
-        if (browserWindow) {
-          browserWindow.setFullScreen(!browserWindow.isFullScreen());
-        }
-      }
-    })
-    viewmenu.append(item);
+    viewmenu.append(new MenuItem({type: 'separator'}))
 
     item = new MenuItem({
-      label: "Toggle Developer Tools",
-      accelerator: "F12",
+      label: 'Toggle Full Screen',
+      accelerator: 'F11',
       click: function clickSettings(menuItem, browserWindow) {
         if (browserWindow) {
-          browserWindow.webContents.toggleDevTools();
+          browserWindow.setFullScreen(!browserWindow.isFullScreen())
         }
       }
     })
-    viewmenu.append(item);
+    viewmenu.append(item)
+
+    item = new MenuItem({
+      label: 'Toggle Developer Tools',
+      accelerator: 'F12',
+      click: function clickSettings(menuItem, browserWindow) {
+        if (browserWindow) {
+          browserWindow.webContents.toggleDevTools()
+        }
+      }
+    })
+    viewmenu.append(item)
 
     return new MenuItem({
-      label: "View",
+      label: 'View',
       submenu: viewmenu
-    });;
+    })
   }
 
   buildWindowMenu() {
-    var viewer = this.viewer;
-    var windowmenu = new Menu();
-    var item;
+    let viewer = this.viewer
+    let windowmenu = new Menu()
+    let item
 
     // minimize
     item = new MenuItem({
-      label: "Minimize",
-      accelerator: "CommandOrControl+M",
-      role: "minimize"
+      label: 'Minimize',
+      accelerator: 'CommandOrControl+M',
+      role: 'minimize'
     })
-    windowmenu.append(item);
+    windowmenu.append(item)
 
     // Open File
     item = new MenuItem({
-      label: "Close",
-      accelerator: "CommandOrControl+W",
-      role: "close"
+      label: 'Close',
+      accelerator: 'CommandOrControl+W',
+      role: 'close'
     })
-    windowmenu.append(item);
+    windowmenu.append(item)
 
     return new MenuItem({
-      label: "Window",
-      role: "window",
+      label: 'Window',
+      role: 'window',
       submenu: windowmenu
     })
   }
 
   buildAboutMenu() {
-    var aboutmenu = new Menu();
-    var item;
+    let aboutmenu = new Menu()
+    let item
 
     item = new MenuItem({
-      label: "meView on github",
+      label: 'meView on github',
       click: function clickGithub(menuItem, browserWindow) {
         if (browserWindow) {
           controller.openRepository()
         }
       }
     })
-    aboutmenu.append(item);
+    aboutmenu.append(item)
 
     item = new MenuItem({
-      label: "Report a Bug",
+      label: 'Report a Bug',
       click: function clickBug(menuItem, browserWindow) {
         if (browserWindow) {
           controller.openRepositoryIssues()
         }
       }
     })
-    aboutmenu.append(item);
+    aboutmenu.append(item)
 
-    aboutmenu.append(new MenuItem({type: "separator"}))
+    aboutmenu.append(new MenuItem({type: 'separator'}))
 
     item = new MenuItem({
-      label: "meView",
+      label: 'meView',
       click: function clickAbout(menuItem, browserWindow) {
         if (browserWindow) {
           controller.openAbout()
         }
       }
     })
-    aboutmenu.append(item);
+    aboutmenu.append(item)
 
     return new MenuItem({
-      label: "About",
-      role: "about",
+      label: 'About',
+      role: 'about',
       submenu: aboutmenu
     })
   }
 
   buildSettingsMenu() {
-    var settingsmenu = new Menu();
-    var item;
+    let settingsmenu = new Menu()
+    let item
 
-    item = this.buildVideoSettingsMenu();
-    settingsmenu.append(item);
+    let viewoptionssubmenu = new Menu()
 
     item = new MenuItem({
-      label: "Save last Search Path",
-      type: "checkbox",
+      label: 'Fit to Window',
+      type: 'radio',
+      checked: true,
+    })
+    viewoptionssubmenu.append(item)
+    
+    item = new MenuItem({
+      label: 'Viewport',
+      submenu: viewoptionssubmenu
+    })
+
+    settingsmenu.append(item)
+
+
+    item = this.buildVideoSettingsMenu()
+    settingsmenu.append(item)
+
+    item = new MenuItem({
+      label: 'Save last Search Path',
+      type: 'checkbox',
       checked: controller.isSavingPath(),
       click: function clickSavePath(menuItem, browserWindow) {
         if(browserWindow) {
-          controller.toggleSavePath(menuItem.checked);
+          controller.toggleSavePath(menuItem.checked)
         }
       }
     })
-    settingsmenu.append(item);
+    settingsmenu.append(item)
 
-    if(process.platform == "win32") {
-      settingsmenu.append(this.buildWindowsMenu());
+    if(process.platform == 'win32') {
+      settingsmenu.append(this.buildWindowsMenu())
     }
 
 
     return new MenuItem({
-      label: "Settings",
+      label: 'Settings',
       submenu: settingsmenu
     })
   }
 
   buildVideoSettingsMenu() {
-    var videomenu = new Menu();
-    var item;
+    let videomenu = new Menu()
+    let item
+
+    item = this.buildVideoSettingsSkipMenu()
+    videomenu.append(item)
 
     item = new MenuItem({
-      label: "Loop",
-      type: "checkbox",
+      label: 'Loop',
+      type: 'checkbox',
       checked: controller.isVideoLooping(),
       click: function clickLoopvideo(menuItem, browserWindow) {
         if(browserWindow) {
-          controller.toggleVideoLoop(menuItem.checked);
+          controller.toggleVideoLoop(menuItem.checked)
         }
       }
     })
-    videomenu.append(item);
+    videomenu.append(item)
 
     item = new MenuItem({
-      label: "Mute",
-      type: "checkbox",
+      label: 'Mute',
+      type: 'checkbox',
       checked: controller.isVideoMuted(),
       click: function clickLoopvideo(menuItem, browserWindow) {
         if(browserWindow) {
-          controller.toggleVideoMute(menuItem.checked);
+          controller.toggleVideoMute(menuItem.checked)
         }
       }
     })
-    videomenu.append(item);
+    videomenu.append(item)
 
     item = new MenuItem({
-      label: "Autoplay",
-      type: "checkbox",
+      label: 'Autoplay',
+      type: 'checkbox',
       checked: controller.isVideoAutoplayed(),
       click: function clickLoopvideo(menuItem, browserWindow) {
         if(browserWindow) {
-          controller.toggleVideoAutoplay(menuItem.checked);
+          controller.toggleVideoAutoplay(menuItem.checked)
         }
       }
     })
-    videomenu.append(item);
+    videomenu.append(item)
 
     return new MenuItem({
-      label: "Video",
+      label: 'Video',
       submenu: videomenu
     })
   }
 
+  buildVideoSettingsSkipMenu() {
+    let videoskipmenu = new Menu()
+    let item
+
+    for (let key in skipValues) {
+      item = new MenuItem({
+        label: key,
+        type: 'radio',
+        checked: controller.isCurrentSkipValue(skipValues[key]),
+        click: function clickLoopvideo(menuItem, browserWindow) {
+          if(browserWindow) {
+            controller.setSkipValue(skipValues[key])
+          }
+        }
+      })
+      videoskipmenu.append(item)
+    }
+
+    return new MenuItem({
+      label: 'Skip time',
+      submenu: videoskipmenu
+    })
+  }
+
   buildWindowsMenu() {
-    var windowsmenu = new Menu();
-    var item;
+    let windowsmenu = new Menu()
+    let item
     item = new MenuItem({
-      label: "Add to context menu in Explorer",
-      type: "checkbox",
-      checked: settings.get("windowsContextMenuInstalled"),
+      label: 'Add to context menu in Explorer',
+      type: 'checkbox',
+      checked: settings.get('windowsContextMenuInstalled'),
       click: function clickWinContext(menuItem, browserWindow) {
         if(browserWindow) {
           if(menuItem.checked) {
-            controller.windowsInstallContextMenu(function(err) {
+            controller.windowsInstallContextMenu((err) => {
               if(err) {
-                menuItem.checked = false;
+                menuItem.checked = false
               }
-            });
+            })
           } else {
-            controller.windowsUninstallContextMenu(function(err) {
+            controller.windowsUninstallContextMenu((err) => {
               if(err) {
-                menuItem.checked = true;
+                menuItem.checked = true
               }
-            });
+            })
           }
         }
       }
     })
-    windowsmenu.append(item);
+    windowsmenu.append(item)
 
 
     return new MenuItem({
-      label: "Windows",
+      label: 'Windows',
       submenu: windowsmenu
     })
   }

@@ -59,10 +59,8 @@ video.fit-to-window {
 
 .fit-to-window {
   max-width: 100% !important;
-  max-height: -webkit-calc(100% - 25px) !important;
+  max-height: -webkit-calc(100% - 30px) !important;
 }
-
-
 
 .fit-width {
   max-width: 100%;
@@ -141,7 +139,7 @@ div.fit-content {
   bottom: -2px;
   left: 0;
   right: 0;
-  height: 25px;
+  height: 30px;
   background-color: lightgray;
   padding-left: 5px;
 }
@@ -155,14 +153,14 @@ div.fit-content {
   text-align: center;
   vertical-align: middle;
   display: inline-block;
-  width: 100px;
+  width: 120px;
 }
 
 .righty {
   display: inline-block;
   vertical-align: middle;
   width: auto;
-  width: -webkit-calc(100% - 125px) !important;
+  width: -webkit-calc(100% - 145px) !important;
 }
 
 span.counter {
@@ -175,3 +173,16 @@ span.counter {
   width: 100%;
   padding-left: 3px;
 }
+
+input.counter {
+  width: 50px;
+  left: 2px;
+}
+
+.leftButton {
+  left: 1px
+}
+.rightButton {
+  right: 1px
+}
+

@@ -1,146 +1,143 @@
-import EventEmitter from "events";
+import EventEmitter from 'events'
 
 // import * as fs from "fs";
-import {readdir as fsreaddir, stat as fsstat} from "fs";
-import {basename, dirname, extname, join} from "path"
-import {format} from "util";
+import {readdir as fsreaddir, stat as fsstat} from 'fs'
+import {basename, dirname, join} from 'path'
+import {format} from 'util'
 
 // import * as AdmZip from "adm-zip"
-var AdmZip = require('adm-zip');
+let AdmZip = require('adm-zip')
 
-import MediaFile from "./MediaFile.js";
-import * as helper from "./helper/helper.js"
+import MediaFile from './MediaFile.js'
+import * as helper from './helper/helper.js'
 
 
-const PRELOADRANGE = 0;
+const PRELOADRANGE = 0
 
 export default class Container extends EventEmitter {
   constructor() {
-    super();
-    this.cwd = ".";       // current directory
-    this.parentDir = ".";
-    this.siblings = [];  // all sibling directories
-    this.children = [];  // all directories and zips
-    this.files = [];     // all MediaFiles
-    this._currentIndex = 0;
-    console.log("Container created");
+    super()
+    this.cwd = '.'       // current directory
+    this.parentDir = '.'
+    this.siblings = []  // all sibling directories
+    this.children = []  // all directories and zips
+    this.files = []     // all MediaFiles
+    this._currentIndex = 0
+    console.log('Container created')
   }
 
   open(fileorpath) {
-    console.log("open: ", fileorpath);
-    var self = this;
-    var oldCWD = this.cwd;
-    var oldParendDir = this.parentDir;
+    console.log('open: ', fileorpath)
+    let oldCWD = this.cwd
+    let oldParendDir = this.parentDir
 
-    fsstat(fileorpath, function(err, stats) {
+    fsstat(fileorpath, (err, stats) => {
       if(err) {
-        var message = format('Viewer#open: could not get stats for "%s"', fileorpath)
+        let message = format('Viewer#open: could not get stats for "%s"', fileorpath)
         throw new Error(message)
       }
       if(stats.isFile()) {
         if(helper.isArchive(fileorpath)) {
-          console.log("open isFile and isArchive: ", fileorpath);
-          self.parentDir = dirname(fileorpath);
-          self.cwd = fileorpath;
-          self.viewArchive(fileorpath);
+          console.log('open isFile and isArchive: ', fileorpath)
+          this.parentDir = dirname(fileorpath)
+          this.cwd = fileorpath
+          this.viewArchive(fileorpath)
         } else {
-          self.parentDir = join(dirname(fileorpath), "..");
-          self.cwd = dirname(fileorpath);
-          self.viewDirectory(self.cwd, fileorpath);
+          this.parentDir = join(dirname(fileorpath), '..')
+          this.cwd = dirname(fileorpath)
+          this.viewDirectory(this.cwd, fileorpath)
         }
       } else if(stats.isDirectory()) {
-        self.parentDir = join(fileorpath, "..");
-        self.cwd = fileorpath;
-        self.viewDirectory(self.cwd);
+        this.parentDir = join(fileorpath, '..')
+        this.cwd = fileorpath
+        this.viewDirectory(this.cwd)
       }
 
-      if(oldParendDir != self.parentDir) {
-        console.log('parentDir changed from "%s" to "%s"', oldParendDir, self.parentDir);
-        self.fetchSiblings();
+      if(oldParendDir != this.parentDir) {
+        console.log('parentDir changed from "%s" to "%s"', oldParendDir, this.parentDir)
+        this.fetchSiblings()
       }
 
-      if(oldCWD != self.cwd) { // cwd changed thus update siblings
-        self.emit("cwdChanged", {
-          cwd: self.cwd
-        });
+      if(oldCWD != this.cwd) { // cwd changed thus update siblings
+        this.emit('cwdChanged', {
+          cwd: this.cwd
+        })
       }
     })
   }
 
   viewDirectory(dir, showfile) {
-    console.log("viewDirectory");
-    var self = this;
-    var firstTriggered = false;
-    fsreaddir(dir, function(err, files) {
+    console.log('viewDirectory')
+    let firstTriggered = false
+    fsreaddir(dir, (err, files) => {
       if(err) {
-        var message = format('failed to read directory "%s"', dir)
-        throw new Error(message);
+        let message = format('failed to read directory "%s"', dir)
+        throw new Error(message)
       }
 
       if(files.length == 0) {
-        self.emit("emptyDirectory", {
+        this.emit('emptyDirectory', {
           filepath: dir
-        });
+        })
       }     
 
-      self.files = [];
-      self.children = [];
-      files = files.map(function(f) {
-        return join(self.cwd, f);
+      this.files = []
+      this.children = []
+      files = files.map((f) => {
+        return join(this.cwd, f)
       })
 
       // files = files.sort();
-      files = helper.sortFiles(files);
+      files = helper.sortFiles(files)
 
-      files.forEach(function(file) {
-        fsstat(file, function(err,stats) {
+      files.forEach((file) => {
+        fsstat(file, (err, stats) => {
           if(stats.isFile()) {
-            var ext = extname(file);
-            var mimetype = helper.getMIMEType(file);
+            let mimetype = helper.getMIMEType(file)
             if(helper.isSupportedMIMEType(mimetype)) {
-              let mf = new MediaFile(basename(file), file, mimetype);
-              self.files.push(mf);
+              let mf = new MediaFile(basename(file), file, mimetype)
+              this.files.push(mf)
               // fire events
               // if there is a file that has to be shown instantly do stuff
               if(!firstTriggered && showfile) {
                 if(showfile == file) {
-                  var idx = self.files.indexOf(mf);
-                  self._currentIndex = idx;
-                  self.emit("firstFile", {
+                  let idx = this.files.indexOf(mf)
+                  this._currentIndex = idx
+                  this.emit('firstFile', {
                     index: idx,
                     mediafile: mf
-                  });
+                  })
                   if(idx > 0) {
-                    self.preloadPrevious(idx)
+                    this.preloadPrevious(idx)
                   }
-                  self.preloadNext(idx);
+                  this.preloadNext(idx)
 
-                  firstTriggered = true;
+                  firstTriggered = true
                 }
-              } else if (self.files.length == 1) {
-                self._currentIndex = 0;
-                self.emit("firstFile", {
+              } else if (this.files.length == 1) {
+                this._currentIndex = 0
+                this.emit('firstFile', {
                   index: 0,
                   mediafile: mf
-                });
+                })
               }
 
               // always emit a fileAdded!
-              self.emit("fileAdded", {
-                filecount: self.files.length,
+              this.emit('fileAdded', {
+                filecount: this.files.length,
                 mediafile: mf
-              });
+              })
 
             } else if(helper.isArchive(file)) {
-              self.children.push(file);
-              self.emit("addedFolder", {
+              this.children.push(file)
+              this.emit('addedFolder', {
                 folder: file,
                 isZip: true
               })
             }
           } else if(stats.isDirectory()) {
-            self.children.push(file);
-            self.emit("addedFolder", {
+            this.children.push(file)
+            this.emit('addedFolder', {
               folder: file
             })
           }
@@ -150,61 +147,59 @@ export default class Container extends EventEmitter {
   }
 
   viewArchive(archivepath) {
-    console.log("viewArchive");
-    var self = this;
-    var zip = new AdmZip(archivepath);
-    var zipEntries = zip.getEntries();
-    zipEntries = zipEntries.sort(function(a,b) {
-      if(a.entryName < b.entryName) return -1;
-      if(a.entryName > b.entryName) return 1;
-      return 0;
+    console.log('viewArchive')
+    let zip = new AdmZip(archivepath)
+    let zipEntries = zip.getEntries()
+    zipEntries = zipEntries.sort((a, b) => {
+      if(a.entryName < b.entryName) return -1
+      if(a.entryName > b.entryName) return 1
+      return 0
     })
-    this.files = [];
-    this.siblings = [];
-    zipEntries.forEach(function(file) {
+    this.files = []
+    this.siblings = []
+    zipEntries.forEach((file) => {
       if(!file.isDirectory) {
-        var mimetype = helper.getMIMEType(file.entryName);
+        let mimetype = helper.getMIMEType(file.entryName)
 
         if(helper.isSupportedMIMEType(mimetype)) {
-          var fullpath = join(archivepath, file.entryName);
+          let fullpath = join(archivepath, file.entryName)
           // pass zipentry instead of buffer, because it's faster (IRC)
-          var mf = new MediaFile(file.entryName, fullpath, mimetype, file);
-          self.files.push(mf);
-          console.log("len: ", self.files.length);
-          if(self.files.length == 1) {
-            self.emit("firstFile", {
+          let mf = new MediaFile(file.entryName, fullpath, mimetype, file)
+          this.files.push(mf)
+          if(this.files.length == 1) {
+            this._currentIndex = 0
+            this.emit('firstFile', {
               index: 0,
-              filecount: self.files.length,
+              filecount: this.files.length,
               mediafile: mf
-            });
+            })
           }
-          self.emit("fileAdded", {
-            filecount: self.files.length,
+          this.emit('fileAdded', {
+            filecount: this.files.length,
             mediafile: mf
-          });
+          })
         }
       }
     })
   }
 
   fetchSiblings() {
-    console.log("fetchSiblings");
-    var self = this;
-    var parentDir = join(this.cwd, "..");
-    self.siblings = []
-    fsreaddir(parentDir, function(err, files) {
-      files = files.map(function(f) {
-        return join(parentDir, f);
+    console.log('fetchSiblings')
+    let parentDir = join(this.cwd, '..')
+    this.siblings = []
+    fsreaddir(parentDir, (err, files) => {
+      files = files.map((f) => {
+        return join(parentDir, f)
       })
 
-      files = helper.sortFiles(files);
+      files = helper.sortFiles(files)
 
-      files.forEach(function(file) {
-        fsstat(file, function(err, stats) {
+      files.forEach((file) => {
+        fsstat(file, (err, stats) => {
           if(stats.isDirectory()) {
-            self.siblings.push(file);
+            this.siblings.push(file)
           } else if (stats.isFile() && helper.isArchive(file)) {
-            self.siblings.push(file); // we see zip as normal folders
+            this.siblings.push(file) // we see zip as normal folders
           }
         })
       })
@@ -212,108 +207,108 @@ export default class Container extends EventEmitter {
   }
 
   current() {
-    return this.files[this._currentIndex];
+    return this.files[this._currentIndex]
   }
 
   first() {
-    console.log("first");
-    this._currentIndex = 0;
-    var mf = this.files[this._currentIndex];
-    this.emit("currenFileChanged", {
+    console.log('first')
+    this._currentIndex = 0
+    let mf = this.files[this._currentIndex]
+    this.emit('currenFileChanged', {
       index: this._currentIndex,
       mediafile: mf
-    });
-    return mf;
+    })
+    return mf
   }
 
   last() {
-    console.log("last");
-    this._currentIndex = this.files.length - 1;
-    var mf = this.files[this._currentIndex];
-    this.emit("currenFileChanged", {
+    console.log('last')
+    this._currentIndex = this.files.length - 1
+    let mf = this.files[this._currentIndex]
+    this.emit('currenFileChanged', {
       index: this._currentIndex,
       mediafile: mf
-    });
-    return mf;
+    })
+    return mf
   }
 
   next() {
-    console.log("next");
+    console.log('next')
     if(this._currentIndex + 1 < this.files.length) {
-      var mf = this.files[++this._currentIndex];
-      this.emit("currenFileChanged", {
+      let mf = this.files[++this._currentIndex]
+      this.emit('currenFileChanged', {
         index: this._currentIndex,
         mediafile: mf
-      });
-      this.preloadNext(this._currentIndex, PRELOADRANGE);
-      return mf;
+      })
+      this.preloadNext(this._currentIndex, PRELOADRANGE)
+      return mf
     } else {
-      this.emit("folderEnd", {
+      this.emit('folderEnd', {
         isEnd: true
-      });
+      })
     }
   }
 
   previous() {
-    console.log("previous");
+    console.log('previous')
     if(this._currentIndex - 1 >= 0) {
-      var mf = this.files[--this._currentIndex];
-      this.emit("currenFileChanged", {
+      let mf = this.files[--this._currentIndex]
+      this.emit('currenFileChanged', {
         index: this._currentIndex,
         mediafile: mf
-      });
+      })
       // we're going backwards so maybe preload some stuff
-      this.preloadPrevious(this._currentIndex, PRELOADRANGE);
-      return mf;
+      this.preloadPrevious(this._currentIndex, PRELOADRANGE)
+      return mf
     } else {
-      this.emit("folderEnd", {
+      this.emit('folderEnd', {
         isEnd: false  // false because we can't get more "previous"
-      });
+      })
     }
   }
 
   preloadNext(idx, range) {
-    console.log("preloadNext");
+    console.log('preloadNext')
     if(idx + 1 < this.files.length) {
-      var mf = this.files[idx + 1];
-      var elem = mf.getElement();
+      let mf = this.files[idx + 1]
+      let elem = mf.getElement()
       if(range) {
-        this.preloadNext(++idx, --range);
+        this.preloadNext(++idx, --range)
       }
-      return elem;
+      return elem
     }
   }
 
   preloadPrevious(idx, range) {
-    console.log("preloadPrevious");
+    console.log('preloadPrevious')
     if(idx - 1 >= 0) {
-      var mf = this.files[idx - 1];
-      console.log("preloading: ", mf.filename);
-      var elem = mf.getElement();
+      let mf = this.files[idx - 1]
+      console.log('preloading: ', mf.filename)
+      let elem = mf.getElement()
       if(range) {
-        this.preloadNext(--idx, --range);
+        this.preloadNext(--idx, --range)
       }
-      return elem;
+      return elem
     }
   }
 
   openNextSibling() {
-    console.log("openNextSibling");
-    var cidx = this.siblings.indexOf(this.cwd);
-    console.log(this.cwd);
-    console.log(cidx);
+    console.log('openNextSibling')
+    let cidx = this.siblings.indexOf(this.cwd)
+    console.log(this.cwd)
+    console.log(cidx)
     if(cidx + 1 < this.siblings.length) {
-      console.log("nextSibling: ", this.siblings[cidx + 1] );
+      console.log('nextSibling: ', this.siblings[cidx + 1] )
       this.open(this.siblings[cidx + 1])
     }
   }
 
   openPreviousSibling() {
-    var cidx = this.siblings.indexOf(this.cwd);
-    console.log("CWD: ", this.cwd);
-    console.log("cwd idx: ", cidx);
+    let cidx = this.siblings.indexOf(this.cwd)
+    console.log('CWD: ', this.cwd)
+    console.log('cwd idx: ', cidx)
     if(cidx - 1 >= 0) {
-      console.log("previousSibling: ", this.siblings[cidx - 1] );
+      console.log('previousSibling: ', this.siblings[cidx - 1] )
       this.open(this.siblings[cidx - 1])
     }
   }
@@ -321,16 +316,16 @@ export default class Container extends EventEmitter {
   // this will change the cwd
   openFirstChild() {
     if(this.children.length > 0) {
-      console.log("openFirstChild: ", this.children[0]);
+      console.log('openFirstChild: ', this.children[0])
       this.open(this.children[0])
     } else {
-      console.log("no children");
+      console.log('no children')
     }
   }
 
   goUp() {
-    console.log("goUp");
-    var cwdnew = join(this.cwd, "..");
-    this.open(cwdnew);
+    console.log('goUp')
+    let cwdnew = join(this.cwd, '..')
+    this.open(cwdnew)
   }
 }

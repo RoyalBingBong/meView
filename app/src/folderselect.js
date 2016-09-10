@@ -1,132 +1,141 @@
-import {remote} from 'electron';
+import {remote} from 'electron'
 
-import {DirectoryTraverser} from "./DirectoryTraverser.js";
-
-
-var currentDir = localStorage.getItem("cwd");
-
-var travis = new DirectoryTraverser(currentDir);
-
-var self = this;
-
-var curDir = document.createElement("option");
-curDir.value = ".";
-curDir.innerText = ". (Current Directory)";
-var parDir = document.createElement("option");
-parDir.value = "..";
-parDir.innerText = ".. (Parent Directory)";
+import {DirectoryTraverser} from './DirectoryTraverser.js'
 
 
+let currentDir = localStorage.getItem('cwd')
 
-var selector = document.getElementById("folderselect");
+let travis = new DirectoryTraverser(currentDir)
+
+let self = this
+
+let curDir = document.createElement('option')
+curDir.value = '.'
+curDir.innerText = '. (Current Directory)'
+let parDir = document.createElement('option')
+parDir.value = '..'
+parDir.innerText = '.. (Parent Directory)'
+
+let selector = document.getElementById('folderselect')
 
 selector.ondblclick = function() {
-  console.log(event.target.file);
+  console.log(event.target.file)
   if(event.target.file) {
-    console.log("dbl click on: ", event.target.file);
+    console.log('dbl click on: ', event.target.file)
     travis.cd(event.target.file.name)
-    updateDir();
+    updateDir()
   } else {
-    if(event.target.value == "..") {
-      travis.cd("..")
-      updateDir();
+    if(event.target.value == '..') {
+      travis.cd('..')
+      updateDir()
     }
-    if(event.target.value == ".") {
-      self.nextDir = travis.cwd;
+    if(event.target.value == '.') {
+      self.nextDir = travis.cwd
     }
   }
 }
 
-selector.addEventListener("keypress", function() {
-  console.log(event);
-  var key = event.which;
+selector.addEventListener('keypress', () => {
+  console.log(event)
+  let key = event.which
   // pressing 'return'
   if(key == 13) {
-    console.log("13");
-    var val = selector.options[selector.selectedIndex].value;
-    updateDir(val);
+    console.log('13')
+    let val = selector.options[selector.selectedIndex].value
+    updateDir(val)
   }
 })
 
-selector.addEventListener("keyup", function() {
-  console.log("keyup");
-  var key = event.which;
+selector.addEventListener('keyup', () => {
+  console.log('keyup')
+  let key = event.which
   //pressesd "left arrow"
   if(key == 37) {
-    updateDir("..");
+    updateDir('..')
   }
   // "right arrow"
   if(key == 39) {
-    var val = selector.options[selector.selectedIndex].value;
-    updateDir(val);
+    let val = selector.options[selector.selectedIndex].value
+    updateDir(val)
   }
 })
 
 function updateDir(dir) {
-  var prevPath;
+  let prevPath
   if(dir) {
-    if(dir == ".") {
-      localStorage.setItem("cwd", travis.cwd);
-      remote.getCurrentWindow().close();
+    if(dir == '.') {
+      localStorage.setItem('cwd', travis.cwd)
+      remote.getCurrentWindow().close()
     } else {
-      prevPath = travis.cd(dir);
+      prevPath = travis.cd(dir)
     }
   }
-  travis.filterDirectory(["zip"])
-    .then(function(files) {
-      fillSelect(files, prevPath);
+  travis.filterDirectory(['zip'])
+    .then((files) => {
+      fillSelect(files, prevPath)
     })
 }
 
 function fillSelect(files, selectitem) {
   while (selector.firstChild) {
-    selector.removeChild(selector.firstChild);
+    selector.removeChild(selector.firstChild)
   }
 
-  selector.appendChild(curDir);
-  selector.appendChild(parDir);
-  var selected = false;
-  files.forEach(function(file) {
-    var opt = document.createElement("option");
-    opt.value = file.name;
+  selector.appendChild(curDir)
+  selector.appendChild(parDir)
+  let selected = false
+  files.forEach((file) => {
+    let opt = document.createElement('option')
+    // let i = document.createElement('i')
+    // opt.appendChild(i)
+    
+    opt.value = file.name
     if(file.name == selectitem) {
-      selected = true;
-      opt.selected = "selected";
+      selected = true
+      opt.selected = 'selected'
     }
-    opt.file = file;
-    opt.innerText = file.name;
-    selector.appendChild(opt);
+    opt.file = file
+    opt.innerText = file.name
+    selector.appendChild(opt)
   })
 
   if(!selected) {
-    curDir.selected = "selected";
+    curDir.selected = 'selected'
   }
 }
 
+// close window without chaning cwd, if ESC key was pressed
+document.addEventListener('keyup', (evt) => {
+  evt = evt || window.event
+  if (evt.keyCode == 27) {
+    remote.getCurrentWindow().destroy()
+  }
+})
 
-var openButton = document.getElementById("btnOpen");
-var cancelButton = document.getElementById("btnCancel");
 
-openButton.addEventListener("click", function() {
-  console.log("cancel click");
-  var val = selector.options[selector.selectedIndex].value;
-  console.log(val);
-  if(val == ".") {
+let openButton = document.getElementById('btnOpen')
+let cancelButton = document.getElementById('btnCancel')
+
+openButton.addEventListener('click', () => {
+  console.log('cancel click')
+  let val = selector.options[selector.selectedIndex].value
+  console.log(val)
+  if(val == '.') {
     // clsoe window and return cwd
-    localStorage.setItem("cwd", travis.cwd);
+    localStorage.setItem('cwd', travis.cwd)
     remote.getCurrentWindow().close()
   } else {
-    travis.cd(val);
-    updateDir();
+    travis.cd(val)
+    updateDir()
   }
 
 })
 
-
-btnCancel.addEventListener("click", function() {
-  console.log("cancel click");
-  remote.getCurrentWindow().close()
+// close window without new cwd if cancel button is clicked
+cancelButton.addEventListener('click', () => {
+  console.log('cancel click')  
+  remote.getCurrentWindow().destroy()
 })
 
 
-updateDir();
+updateDir()

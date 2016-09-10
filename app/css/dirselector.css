@@ -15,8 +15,6 @@ html, body{
   left: 0; right: 0;
 }
 
-
-
 .wrapper {
   margin: 0;
   padding: 0;
@@ -54,6 +52,7 @@ select {
   height: 100%;
   font-size: 12pt;
 }
+
 #folderselect:focus {
   outline: none;
 }
@@ -72,15 +71,15 @@ select {
 
 option {
   background-size: 16px 16px;
-    background-repeat:no-repeat;
-    background-position: left middle;
-    padding-left: 18px;
+  background-repeat:no-repeat;
+  background-position: left middle;
+  padding-left: 18px;
 }
 
 select#folderselect option[value] {
-  background-image:url("../assets/normal_folder.png");
+  background-image:url("../assets/folder-icon_24px.png");
 }
 
 select#folderselect option[value$="zip"] {
-  background-image:url("../assets/archive.png");
+  background-image:url("../assets/archive-icon_24px.png");
 }
