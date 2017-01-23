@@ -5,6 +5,7 @@
 import {join} from 'path'
 import {spawn} from './spawner.js'
 import {format} from 'util'
+
 let system32Path, regPath
 
 

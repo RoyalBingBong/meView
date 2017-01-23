@@ -1,3 +1,7 @@
 app/dist
 builds
 **/node_modules
+app/js
+*.log
+.vscode/
+meView*/

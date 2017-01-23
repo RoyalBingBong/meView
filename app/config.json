@@ -1,3 +1,38 @@
 {
-  "debug": true
+  "debug": true,
+  "defaultSettings": {
+    "video": {
+      "autoplay": true,
+      "loop": true,
+      "muted": true,
+      "skipInterval": 5
+    },
+    "display": "fit-to-window",
+    "savePath": false
+  },
+  "elements": {
+    "view": "viewer",
+    "counter": "counter",
+    "file": "filetext",
+    "statusbar": "statusbar",
+    "dropzone": "dropzone"
+  },
+  "PRELOADRANGE": 0,
+  "skipIntervalValues": {
+    "1s": 1,
+    "5s": 5,
+    "10s": 10,
+    "30s": 30,
+    "60s": 60
+  },
+  "supportedMIMETypes": [
+    "video/ogg",
+    "video/webm",
+    "video/mp4"
+  ],
+  "fileFilter":[
+    {"name": "Mediafiles", "extensions": ["jpg", "jpeg", "png", "gif", "bmp", "webm", "mp4"]},
+    {"name": "Archives", "extensions": ["zip", "cbz"]},
+    {"name": "All Types", "extensions": ["*"]}
+  ]
 }

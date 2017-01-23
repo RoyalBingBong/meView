@@ -7,83 +7,75 @@ html, body{
   cursor:default;
   -webkit-user-select: none;
   user-select: none;
+  overflow: hidden;
 }
 
 ::-webkit-scrollbar {
     display: none;
 }
 
+/* Always show video controls */
 video::-webkit-media-controls-panel {
   display: flex !important;
   opacity: 1 !important;
 }
 
-#viewercontainer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 25px;
-  text-align: center;
+
+#mainview {
+  width: 100%;
+  height: 100%;
+  background-color: #282828;
 }
+
+#container {
+  width: 100%;
+  height: 100%;  
+}
+
+.autoheight {  
+  height: calc(100% - 30px);
+  width:100%;
+  overflow:hidden;
+  -webkit-box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -ms-box-sizing:border-box;
+  box-sizing:border-box;
+}
+
+div#viewer {
+  display: flex;
+  height: 100%;
+}
+
+div#statusbar {
+  height: 30px;
+  display: flex;
+  width: 100%;
+}
+
+input#filetext {
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input#counter {
+  text-align: center;  
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+
 
 img, video {
-  /* freaking css magic right here */
-  position: inherit;
-  top: 50%; left: 0;  right: 0;
-  -webkit-transform: translateY(-50%);
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  /* freaking css magic right here */
-
-  padding-bottom: 25px; /* 25px for status bar */
-}
-
-
-img.fit-to-window {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-video.fit-to-window {
   width: 100%;
-  height: auto;
-  max-height: 100%;
+  object-fit: contain;
 }
-
-/*.fit-to-window {
-  max-width: 100% !important;
-  max-height: 100% !important;
-}*/
-
-.fit-to-window {
-  max-width: 100% !important;
-  max-height: -webkit-calc(100% - 30px) !important;
-}
-
-.fit-width {
-  max-width: 100%;
-  height: auto;
-}
-
-.fit-height {
-  max-height: 100%;
-  width: auto;
-}
-
-.fit {
-  position: absolute;;
-  top: 0; bottom:0; left: 0; right:0;
-}
-
-div.fit-content {
-  top: 0; bottom: 25; left: 0; right:0;
-  margin-bottom: 30px;
-}
-
-
-
 
 .message {
   /* freaking css magic right here */
@@ -132,57 +124,4 @@ div.fit-content {
   font-size: 50px;
 }
 
-
-#status {
-  position: fixed;
-  display:block;
-  bottom: -2px;
-  left: 0;
-  right: 0;
-  height: 30px;
-  background-color: lightgray;
-  padding-left: 5px;
-}
-
-#status span{
-  color: black;
-  font-size: 20px;
-}
-
-.lefty {
-  text-align: center;
-  vertical-align: middle;
-  display: inline-block;
-  width: 120px;
-}
-
-.righty {
-  display: inline-block;
-  vertical-align: middle;
-  width: auto;
-  width: -webkit-calc(100% - 145px) !important;
-}
-
-span.counter {
-  font-weight: bold;
-}
-
-#currentFile {
-  top: 0;
-  bottom: 0;
-  width: 100%;
-  padding-left: 3px;
-}
-
-input.counter {
-  width: 50px;
-  left: 2px;
-}
-
-.leftButton {
-  left: 1px
-}
-.rightButton {
-  right: 1px
-}
 

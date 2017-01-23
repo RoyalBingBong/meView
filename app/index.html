@@ -4,37 +4,28 @@
     <meta charset="UTF-8">
     <title>meView</title>
     <link rel="stylesheet" href="css/main.css">
-    <!-- <link rel="stylesheet" href="vendor/css/font-awesome.min.css"> -->
   </head>
-  <!-- <body onresize="onResize()"> -->
   <body>
-    <div id="content" class="fit">
-      <div id="viewercontainer" class="fit-content">
-
+    <div id="mainview">
+      <div id="container">
+        <div class="autoheight">
+          <div id="viewer">
+            
+          </div>
+        </div>
+        <div id="statusbar">
+          <input id="counter" type="text" size="12">  
+          <input id="filetext" type="text" placeholder="No file selected" readonly />
+        </div>
       </div>
       <div id="dropzone" class="message">
         <p>
           Drop file or folder here
         </p>
       </div>
-
-      <div id="status">
-        <div class="lefty">
-          <button id="btnPrev" class="leftButton" disabled>&#60;</button>
-          <span id="currentIndex" class="counter">-</span>
-          <span class="counter">&nbsp;/&nbsp;</span>
-          <span id="mediaCount" class="counter">-</span>
-          <button id="btnNext" class="rightButton" disabled>&#62;</button>
-        </div>
-        <div class="righty">
-          <!-- span id="currentFile" class="textinfo"></span> -->
-          <input id="currentFile" class="textinfo" type="text" value="" readonly />
-        </div>
-      </div>
-    </div>
+    </div>    
     <script>
-      require("./dist/index.js");
+      require("./js/index.js");
     </script>
-    <!-- <script type="text/javascript" src="dist/index.js"></script> -->
   </body>
 </html>

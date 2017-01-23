@@ -1,0 +1,29 @@
+html, body {
+  overflow: hidden;
+  background-color: lightgray
+}
+
+#aboutwindow {
+  width: 700px;
+}
+
+th {
+  text-align: left;
+  vertical-align: top;
+}
+
+.wrapper {
+  overflow: hidden;
+}
+
+#logo {
+  width: 300px
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  overflow: hidden;
+}

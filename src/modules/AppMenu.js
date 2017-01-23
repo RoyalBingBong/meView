@@ -1,15 +1,19 @@
 import {remote} from 'electron'
-
 const {Menu, MenuItem} = remote
 
-import * as controller from './controller.js'
-import {skipValues} from './config/config.js'
+import * as controller from '../controller.js'
+import {debug, skipIntervalValues} from '../../config.json'
 
-/* global settings */
-
+/**
+ * Generates the application menu and submenus, and creates the
+ * click handlers for every MenuItem, which are basically calls
+ * to the controller.
+ * 
+ * @export
+ * @class AppMenu
+ */
 export default class AppMenu {
-  constructor(viewer) {
-    this.viewer = viewer
+  constructor() {
     this.initMenu()
   }
 
@@ -23,8 +27,11 @@ export default class AppMenu {
     Menu.setApplicationMenu(this.menu)
   }
 
+  reload() {
+    this.initMenu()
+  }
+
   buildFileMenu() {
-    let viewer = this.viewer
     let filemenu = new Menu()
     let item
 
@@ -32,12 +39,8 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Open File',
       accelerator: 'CommandOrControl+Shift+O',
-      click: function clickOpenFile(menuItem, browserWindow) {
-        console.log('##### clickOpenFile #####')
-        controller.openFile((filepath) => {
-          viewer.hideDropzone()
-          viewer.container.open(filepath)
-        })
+      click() {
+        controller.open()
       }
     })
     filemenu.append(item)
@@ -46,57 +49,50 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Open Folder',
       accelerator: 'CommandOrControl+O',
-      click: function clickOpenFolder(menuItem, browserWindow) {
-        console.log('##### clickOpenFolder #####')
-        controller.openDir((dirpath) => {
-          console.log('###### visibility', viewer.hideDropzone)
-          viewer.hideDropzone()
-          viewer.container.open(dirpath)
-        })
+      click() {
+        controller.open(true)
       }
     })
     filemenu.append(item)
 
     filemenu.append(new MenuItem({ type: 'separator' }))
     
-    // Open File
+    // Open in File Browser
     item = new MenuItem({
-      label: 'Show in File Explorer',
+      label: 'Show in File Browser',
       // accelerator: "CommandOrControl+Shift+O",
-      click: function clickShowFileInExplorer(menuItem, browserWindow) {
-        let currentFile = viewer.container.current()
-        let filepath = currentFile.filepath
-        controller.openFileInExplorer(filepath)
+      click() {
+        controller.showInFileBrowser()
       }
     })
     filemenu.append(item)
 
-    // Open Folder
+    // Open in default viweer
     item = new MenuItem({
       label: 'Show in Default Viewer',
       // accelerator: "CommandOrControl+O",
-      click: function clickShowFileInViewer(menuItem, browserWindow) {
-        let currentFile = viewer.container.current()
-        let filepath = currentFile.filepath
-        controller.openFileInViewer(filepath)
+      click() {
+        controller.openInDefaultViewer()
       }
     })
     filemenu.append(item)
 
     filemenu.append(new MenuItem({type: 'separator'}))
 
+    // In case I want the settings dedicated window
     // Settings
+
     // item = this.buildSettingsMenu()
     // item = new MenuItem({
     //   label: "Settings",
     //   // accelerator: "CommandOrControl+Shift+O",
-    //   click: function clickSettings(menuItem, browserWindow) {
+    //   click() {
     //     controller.openSettings();
     //   }
     // })
     // filemenu.append(item)
 
-    filemenu.append(new MenuItem({type: 'separator'}))
+    // filemenu.append(new MenuItem({type: 'separator'}))
 
     // Close
     item = new MenuItem({
@@ -113,69 +109,57 @@ export default class AppMenu {
   }
 
   buildViewMenu() {
-    let viewer = this.viewer
     let viewmenu = new Menu()
     let item
 
+    // Select Folder
     item = new MenuItem({
       label: 'Select Folder',
       accelerator: 'Up',
-      click: function clickNextFile(menuItem, browserWindow) {
-        if (browserWindow) {
-          let cwd = viewer.container.cwd
-          console.log('passing: ', cwd)
-          controller.showSelectFolder(cwd, (newcwd) => {
-            console.log('clickNextFile data:', newcwd )
-            viewer.openFile(newcwd)
-          })
-        }
+      click() {
+        controller.showSelectFolder()        
       }
     })
     viewmenu.append(item)
 
     viewmenu.append(new MenuItem({ type: 'separator' }))
 
-
+    // Next image/video
     item = new MenuItem({
       label: 'Next',
       accelerator: 'Right',
-      click: function clickNextFile(menuItem, browserWindow) {
-        if (browserWindow) {
-          viewer.container.next()
-        }
+      click() {
+        controller.viewNext()
       }
     })
     viewmenu.append(item)
 
+    // Previous image/video
     item = new MenuItem({
       label: 'Previous',
       accelerator: 'Left',
-      click: function clickPreviousFile(menuItem, browserWindow) {
-        if (browserWindow) {
-          viewer.container.previous()
-        }
+      click() {
+        controller.viewPrevious()
       }
     })
     viewmenu.append(item)
 
+    // First image/video in current folder/zip
     item = new MenuItem({
       label: 'First',
       accelerator: 'Home',
-      click: function clickFirstFile(menuItem, browserWindow) {
-        if (browserWindow) {
-          viewer.container.first()
-        }
+      click() {
+        controller.viewFirst()
       }
     })
     viewmenu.append(item)
 
+    // Last image/video in current folder/zip
     item = new MenuItem({
       label: 'Last',
       accelerator: 'End',
-      click: function clickLastFile(menuItem, browserWindow) {
-        if (browserWindow) {
-          viewer.container.last()
-        }
+      click() {
+        controller.viewLast()
       }
     })
     viewmenu.append(item)
@@ -190,77 +174,61 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Play/Pause',
       accelerator: 'Space',
-      click: function clickPlayPause(menuItem, browserWindow) {
-        console.log('##### clickPlayPause #####')
-        if (browserWindow) {
-          viewer.togglePlayPause()
-        }
+      click() {
+        controller.videoPlayPause()
       }
     })
     viewmenu.append(item)
 
-    // Skip N seconds
+    // Forward video
     item = new MenuItem({
       label: 'Forward',
       accelerator: 'Shift+Right',
-      click: function clickForwwardVideo(menuItem, browserWindow) {
-        if (browserWindow) {
-          let skipVal = controller.getSkipValue()
-          viewer.forwardVideo(skipVal)
-        }
+      click() {
+        controller.videoForward()
       }
     })
     viewmenu.append(item)
 
-    // Rewind N seconds
+    // Rewind video
     item = new MenuItem({
       label: 'Rewind',
       accelerator: 'Shift+Left',
-      click: function clickRewindVideo(menuItem, browserWindow) {
-        if (browserWindow) {
-          let skipVal = controller.getSkipValue()
-          viewer.rewindVideo(skipVal)
-        }
+      click() {
+        controller.videoRewind()
       }
     })
     viewmenu.append(item)
 
-    viewmenu.append(new MenuItem({ type: 'separator' }))
+    // debug settings
+    if(debug) {
+      viewmenu.append(new MenuItem({type: 'separator'}))
 
-    item = new MenuItem({
-      label: 'Reload',
-      accelerator: 'CommandOrControl+R',
-      click: function clickReload(menuItem, browserWindow) {
-        if (browserWindow) {
-          browserWindow.reload()
+      item = new MenuItem({
+        label: 'Reload',
+        accelerator: 'CommandOrControl+R',
+        click(menuItem, browserWindow) {        
+          if (browserWindow) {
+            controller.appRelaod(browserWindow)
+          }
         }
-      }
-    })
-    viewmenu.append(item)
-
-    viewmenu.append(new MenuItem({type: 'separator'}))
-
-    item = new MenuItem({
-      label: 'Toggle Full Screen',
-      accelerator: 'F11',
-      click: function clickSettings(menuItem, browserWindow) {
-        if (browserWindow) {
-          browserWindow.setFullScreen(!browserWindow.isFullScreen())
+      })
+      viewmenu.append(item)
+      
+      item = new MenuItem({
+        label: 'Toggle Developer Tools',
+        accelerator: 'F12',
+        click(menuItem, browserWindow) {
+          if (browserWindow) {
+            browserWindow.webContents.toggleDevTools()
+          }
         }
-      }
-    })
-    viewmenu.append(item)
+      })
+      viewmenu.append(item)
+    }
+    
 
-    item = new MenuItem({
-      label: 'Toggle Developer Tools',
-      accelerator: 'F12',
-      click: function clickSettings(menuItem, browserWindow) {
-        if (browserWindow) {
-          browserWindow.webContents.toggleDevTools()
-        }
-      }
-    })
-    viewmenu.append(item)
+    
 
     return new MenuItem({
       label: 'View',
@@ -269,7 +237,6 @@ export default class AppMenu {
   }
 
   buildWindowMenu() {
-    let viewer = this.viewer
     let windowmenu = new Menu()
     let item
 
@@ -281,7 +248,17 @@ export default class AppMenu {
     })
     windowmenu.append(item)
 
-    // Open File
+    // Toggle fullscreen
+    item = new MenuItem({
+      label: 'Toggle Fullscreen',
+      accelerator: 'F11',
+      click() {  
+        controller.appToggleFullscreen()
+      }
+    })
+    windowmenu.append(item)
+
+    // Close app
     item = new MenuItem({
       label: 'Close',
       accelerator: 'CommandOrControl+W',
@@ -302,20 +279,16 @@ export default class AppMenu {
 
     item = new MenuItem({
       label: 'meView on github',
-      click: function clickGithub(menuItem, browserWindow) {
-        if (browserWindow) {
-          controller.openRepository()
-        }
+      click() {
+        controller.openRepository()
       }
     })
     aboutmenu.append(item)
 
     item = new MenuItem({
       label: 'Report a Bug',
-      click: function clickBug(menuItem, browserWindow) {
-        if (browserWindow) {
-          controller.openRepositoryIssues()
-        }
+      click() {
+        controller.openRepositoryIssues()
       }
     })
     aboutmenu.append(item)
@@ -324,10 +297,8 @@ export default class AppMenu {
 
     item = new MenuItem({
       label: 'meView',
-      click: function clickAbout(menuItem, browserWindow) {
-        if (browserWindow) {
-          controller.openAbout()
-        }
+      click() {
+        controller.openAbout()
       }
     })
     aboutmenu.append(item)
@@ -353,7 +324,7 @@ export default class AppMenu {
     viewoptionssubmenu.append(item)
     
     item = new MenuItem({
-      label: 'Viewport',
+      label: 'Display options',
       submenu: viewoptionssubmenu
     })
 
@@ -367,7 +338,7 @@ export default class AppMenu {
       label: 'Save last Search Path',
       type: 'checkbox',
       checked: controller.isSavingPath(),
-      click: function clickSavePath(menuItem, browserWindow) {
+      click(menuItem, browserWindow) {
         if(browserWindow) {
           controller.toggleSavePath(menuItem.checked)
         }
@@ -375,9 +346,23 @@ export default class AppMenu {
     })
     settingsmenu.append(item)
 
-    if(process.platform == 'win32') {
+    if(process.platform === 'win32') {
+      settingsmenu.append(new MenuItem({ type: 'separator' }))
       settingsmenu.append(this.buildWindowsMenu())
     }
+
+    settingsmenu.append(new MenuItem({ type: 'separator' }))
+
+    item = new MenuItem({
+      label: 'Reset to defaults',
+      checked: controller.isSavingPath(),
+      click(menuItem, browserWindow) {
+        if(browserWindow) {
+          controller.resetToDefaultSettings(browserWindow)
+        }
+      }
+    })
+    settingsmenu.append(item) 
 
 
     return new MenuItem({
@@ -397,7 +382,7 @@ export default class AppMenu {
       label: 'Loop',
       type: 'checkbox',
       checked: controller.isVideoLooping(),
-      click: function clickLoopvideo(menuItem, browserWindow) {
+      click(menuItem, browserWindow) {
         if(browserWindow) {
           controller.toggleVideoLoop(menuItem.checked)
         }
@@ -409,7 +394,7 @@ export default class AppMenu {
       label: 'Mute',
       type: 'checkbox',
       checked: controller.isVideoMuted(),
-      click: function clickLoopvideo(menuItem, browserWindow) {
+      click(menuItem, browserWindow) {
         if(browserWindow) {
           controller.toggleVideoMute(menuItem.checked)
         }
@@ -421,7 +406,7 @@ export default class AppMenu {
       label: 'Autoplay',
       type: 'checkbox',
       checked: controller.isVideoAutoplayed(),
-      click: function clickLoopvideo(menuItem, browserWindow) {
+      click(menuItem, browserWindow) {
         if(browserWindow) {
           controller.toggleVideoAutoplay(menuItem.checked)
         }
@@ -439,14 +424,14 @@ export default class AppMenu {
     let videoskipmenu = new Menu()
     let item
 
-    for (let key in skipValues) {
+    for (let key in skipIntervalValues) {
       item = new MenuItem({
         label: key,
         type: 'radio',
-        checked: controller.isCurrentSkipValue(skipValues[key]),
-        click: function clickLoopvideo(menuItem, browserWindow) {
+        checked: controller.isCurrentSkipValue(skipIntervalValues[key]),
+        click(menuItem, browserWindow) {
           if(browserWindow) {
-            controller.setSkipValue(skipValues[key])
+            controller.setSkipValue(skipIntervalValues[key])
           }
         }
       })
@@ -454,7 +439,7 @@ export default class AppMenu {
     }
 
     return new MenuItem({
-      label: 'Skip time',
+      label: 'Skip interval',
       submenu: videoskipmenu
     })
   }
@@ -465,8 +450,8 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Add to context menu in Explorer',
       type: 'checkbox',
-      checked: settings.get('windowsContextMenuInstalled'),
-      click: function clickWinContext(menuItem, browserWindow) {
+      checked: controller.isWinContextMenuInstalled(),
+      click(menuItem, browserWindow) {
         if(browserWindow) {
           if(menuItem.checked) {
             controller.windowsInstallContextMenu((err) => {

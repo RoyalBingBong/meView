@@ -70,16 +70,24 @@ select {
 }
 
 option {
-  background-size: 16px 16px;
+  background-size: 20px 20px;
   background-repeat:no-repeat;
   background-position: left middle;
-  padding-left: 18px;
+  padding-left: 22px;
 }
 
 select#folderselect option[value] {
-  background-image:url("../assets/folder-icon_24px.png");
+  background-image:url("../assets/Folder-48.png");
+}
+
+select#folderselect option[value$="."] {
+  background-image:url("../assets/Open Folder-48.png");
+}
+
+select#folderselect option[value$=".."] {
+  background-image:url("../assets/Folder-48.png");
 }
 
 select#folderselect option[value$="zip"] {
-  background-image:url("../assets/archive-icon_24px.png");
+  background-image:url("../assets/WinRAR-48.png");
 }

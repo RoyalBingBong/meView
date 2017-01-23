@@ -1,13 +1,10 @@
 import {remote} from 'electron'
 
-import {DirectoryTraverser} from './DirectoryTraverser.js'
-
+import {DirectoryTraverser} from './modules/DirectoryTraverser.js'
 
 let currentDir = localStorage.getItem('cwd')
 
 let travis = new DirectoryTraverser(currentDir)
-
-let self = this
 
 let curDir = document.createElement('option')
 curDir.value = '.'
@@ -18,7 +15,10 @@ parDir.innerText = '.. (Parent Directory)'
 
 let selector = document.getElementById('folderselect')
 
-selector.ondblclick = function() {
+
+console.log(remote.getCurrentWindow())
+
+selector.ondblclick = (event) => {
   console.log(event.target.file)
   if(event.target.file) {
     console.log('dbl click on: ', event.target.file)
@@ -30,7 +30,7 @@ selector.ondblclick = function() {
       updateDir()
     }
     if(event.target.value == '.') {
-      self.nextDir = travis.cwd
+      updateDir('.')
     }
   }
 }
@@ -73,6 +73,9 @@ function updateDir(dir) {
   travis.filterDirectory(['zip'])
     .then((files) => {
       fillSelect(files, prevPath)
+    })
+    .catch((err) => {
+      console.log('filterDirectory', err)
     })
 }
 

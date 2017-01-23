@@ -1,19 +1,29 @@
 import EventEmitter from 'events'
 
-// import * as fs from "fs";
 import {readdir as fsreaddir, stat as fsstat} from 'fs'
 import {basename, dirname, join} from 'path'
 import {format} from 'util'
 
-// import * as AdmZip from "adm-zip"
-let AdmZip = require('adm-zip')
+import AdmZip from 'adm-zip'
 
 import MediaFile from './MediaFile.js'
-import * as helper from './helper/helper.js'
+import * as helper from '../helper.js'
 
+import {PRELOADRANGE} from '../../config.json'
 
-const PRELOADRANGE = 0
-
+/**
+ * Container is the class that handles all the file stuff.
+ * It opens a directory, looks for all the images and videos and
+ * add them to the list of mediafiles.
+ * Also keeps a list of sibling folders/zip, so it's possible to jump
+ * from folder to folder.
+ * zip-Archives are treated like folders, although only one deep.
+ * The class emits events when certain things happen
+ * 
+ * @export
+ * @class Container
+ * @extends {EventEmitter}
+ */
 export default class Container extends EventEmitter {
   constructor() {
     super()
@@ -26,6 +36,13 @@ export default class Container extends EventEmitter {
     console.log('Container created')
   }
 
+  /**
+   * Opens a file or folder and sets the variables accordingly
+   * 
+   * @param {string} fileorpath
+   * 
+   * @memberOf Container
+   */
   open(fileorpath) {
     console.log('open: ', fileorpath)
     let oldCWD = this.cwd
@@ -33,8 +50,7 @@ export default class Container extends EventEmitter {
 
     fsstat(fileorpath, (err, stats) => {
       if(err) {
-        let message = format('Viewer#open: could not get stats for "%s"', fileorpath)
-        throw new Error(message)
+        throw new Error(`Viewer#open: could not get stats for "${fileorpath}"`)
       }
       if(stats.isFile()) {
         if(helper.isArchive(fileorpath)) {
@@ -54,7 +70,7 @@ export default class Container extends EventEmitter {
       }
 
       if(oldParendDir != this.parentDir) {
-        console.log('parentDir changed from "%s" to "%s"', oldParendDir, this.parentDir)
+        console.log(`parentDir changed from "${oldParendDir}" to "${this.parentDir}"`)
         this.fetchSiblings()
       }
 
@@ -66,6 +82,17 @@ export default class Container extends EventEmitter {
     })
   }
 
+  /**
+   * Opens a directory with media files. If showfile is specified, then the
+   * firstFile event is fired when we reach that file whil parsing the filelist.
+   * This is needed because we want to open specific files directly and don't want
+   * to look at each file before that.
+   * 
+   * @param {string} dir
+   * @param {string} [showfile]
+   * 
+   * @memberOf Container
+   */
   viewDirectory(dir, showfile) {
     console.log('viewDirectory')
     let firstTriggered = false
@@ -87,11 +114,15 @@ export default class Container extends EventEmitter {
         return join(this.cwd, f)
       })
 
-      // files = files.sort();
+      // Windows style sorting, e.g a1.jpg before A2.jpg
       files = helper.sortFiles(files)
 
       files.forEach((file) => {
         fsstat(file, (err, stats) => {
+          if(err) {
+            console.error(err)
+            return
+          }
           if(stats.isFile()) {
             let mimetype = helper.getMIMEType(file)
             if(helper.isSupportedMIMEType(mimetype)) {
@@ -107,9 +138,8 @@ export default class Container extends EventEmitter {
                     index: idx,
                     mediafile: mf
                   })
-                  if(idx > 0) {
-                    this.preloadPrevious(idx)
-                  }
+
+                  this.preloadPrevious(idx)
                   this.preloadNext(idx)
 
                   firstTriggered = true
@@ -146,6 +176,14 @@ export default class Container extends EventEmitter {
     })
   }
 
+  /**
+   * Opens a zip archive, similar to viewDirectory. We use ADm-zip to handles
+   * zip-archives. 
+   * 
+   * @param {string} archivepath
+   * 
+   * @memberOf Container
+   */
   viewArchive(archivepath) {
     console.log('viewArchive')
     let zip = new AdmZip(archivepath)
@@ -183,6 +221,13 @@ export default class Container extends EventEmitter {
     })
   }
 
+  /**
+   * Read all the folders in the parent directy to retrieve all the siblings.
+   * Needed to jump from the current directory to the adjacent ones (siblings)
+   * @todo: called, but the information is not process or used any further
+   * 
+   * @memberOf Container
+   */
   fetchSiblings() {
     console.log('fetchSiblings')
     let parentDir = join(this.cwd, '..')
@@ -196,9 +241,9 @@ export default class Container extends EventEmitter {
 
       files.forEach((file) => {
         fsstat(file, (err, stats) => {
-          if(stats.isDirectory()) {
+          if(stats && stats.isDirectory()) {
             this.siblings.push(file)
-          } else if (stats.isFile() && helper.isArchive(file)) {
+          } else if (stats && stats.isFile() && helper.isArchive(file)) {
             this.siblings.push(file) // we see zip as normal folders
           }
         })
@@ -206,10 +251,48 @@ export default class Container extends EventEmitter {
     })
   }
 
+  /**
+   * Returns the currently viewed file
+   * 
+   * @returns {MediaFile} The currently viewed file
+   * 
+   * @memberOf Container
+   */
   current() {
     return this.files[this._currentIndex]
   }
 
+  /**
+   * Jumps to a MediaFile specified by index. Will return the first file,
+   * if the index is out of bounds.
+   * 
+   * @param {number} index
+   * @returns {MediaFile} The media file at that index, or the first one
+   * 
+   * @memberOf Container
+   */
+  goto(index) {
+    console.log('goto', index)
+    if(index > 0 && index < this.files.length) {
+      this._currentIndex = index
+      let mf = this.files[this._currentIndex]
+      this.emit('currenFileChanged', {
+        index: this._currentIndex,
+        mediafile: mf
+      })
+      return mf
+    } else {
+      return this.first()
+    }   
+  }
+
+  /**
+   * Returns the first file in the list
+   * 
+   * @returns {MediaFile} First file
+   * 
+   * @memberOf Container
+   */
   first() {
     console.log('first')
     this._currentIndex = 0
@@ -221,6 +304,13 @@ export default class Container extends EventEmitter {
     return mf
   }
 
+  /**
+   * Returns the last file in the list
+   * 
+   * @returns {MediaFile} Last file
+   * 
+   * @memberOf Container
+   */
   last() {
     console.log('last')
     this._currentIndex = this.files.length - 1
@@ -232,6 +322,14 @@ export default class Container extends EventEmitter {
     return mf
   }
 
+  /**
+   * Returns the next file in the list or nothing if we reach the end
+   * of the folder, in which case we fire the folderEnd event.
+   * 
+   * @returns {MediaFile|undefined} Next file or nothing (on folder end)
+   * 
+   * @memberOf Container
+   */
   next() {
     console.log('next')
     if(this._currentIndex + 1 < this.files.length) {
@@ -249,6 +347,14 @@ export default class Container extends EventEmitter {
     }
   }
 
+  /**
+   * Returns the previous file in the list or nothing if we reached the upper end
+   * of the folder, in which case we emit the folderEnd event.
+   * 
+   * @returns {MediaFile|undefined} Previous file or nothing (on upper folder end)
+   * 
+   * @memberOf Container
+   */
   previous() {
     console.log('previous')
     if(this._currentIndex - 1 >= 0) {
@@ -267,6 +373,17 @@ export default class Container extends EventEmitter {
     }
   }
 
+  /**
+   * Preloades the files after the current idx for a better UX
+   * If range is specified then the range-amount of files will be
+   * preloaded.
+   * 
+   * @param {number} idx Current file index
+   * @param {number} [range] Depth of preloading
+   * @returns {HTMLElement}
+   * 
+   * @memberOf Container
+   */
   preloadNext(idx, range) {
     console.log('preloadNext')
     if(idx + 1 < this.files.length) {
@@ -279,6 +396,17 @@ export default class Container extends EventEmitter {
     }
   }
 
+  /**
+   * Preloades the files before the current index for a better UX.
+   * If range is specified then the range-amount of files will be
+   * preloaded.
+   * 
+   * @param {any} idx
+   * @param {any} range
+   * @returns
+   * 
+   * @memberOf Container
+   */
   preloadPrevious(idx, range) {
     console.log('preloadPrevious')
     if(idx - 1 >= 0) {
@@ -286,12 +414,18 @@ export default class Container extends EventEmitter {
       console.log('preloading: ', mf.filename)
       let elem = mf.getElement()
       if(range) {
-        this.preloadNext(--idx, --range)
+        this.preloadPrevious(--idx, --range)
       }
       return elem
     }
   }
 
+  /**
+   * Opens the next sibling folder/archive to view
+   * @todo: unused
+   * 
+   * @memberOf Container
+   */
   openNextSibling() {
     console.log('openNextSibling')
     let cidx = this.siblings.indexOf(this.cwd)
@@ -303,6 +437,12 @@ export default class Container extends EventEmitter {
     }
   }
 
+  /**
+   * Opens the previous sibling folder/archive to view
+   * @todo: unused
+   * 
+   * @memberOf Container
+   */
   openPreviousSibling() {
     let cidx = this.siblings.indexOf(this.cwd)
     console.log('CWD: ', this.cwd)
@@ -313,7 +453,13 @@ export default class Container extends EventEmitter {
     }
   }
 
-  // this will change the cwd
+  
+  /**
+   * Opens the first directory in the current one
+   * @todo: unused
+   * 
+   * @memberOf Container
+   */
   openFirstChild() {
     if(this.children.length > 0) {
       console.log('openFirstChild: ', this.children[0])
@@ -323,9 +469,86 @@ export default class Container extends EventEmitter {
     }
   }
 
+  /**
+   * Goes to the parent directoy
+   * @todo: unused
+   * 
+   * @memberOf Container
+   */
   goUp() {
     console.log('goUp')
     let cwdnew = join(this.cwd, '..')
     this.open(cwdnew)
   }
 }
+
+
+/**
+ * cwdChanged event.
+ * Fired when the cwd changes (duh)
+ *
+ * @event Container#cwdChanged
+ * @type {object}
+ * @property {string} cwd - The new cwd.
+ */
+
+/**
+ * emptyDirectory event.
+ * Fired when the directy that is vewd is empty
+ *
+ * @event Container#emptyDirectory
+ * @type {object}
+ * @property {string} filepath - The path of the empty directory.
+ */
+
+/**
+ * firstFile event.
+ * Fired when the first file is added. I doesn't have to be the actual 'first'
+ * file of a directy, but isntead can be the file that was selected to be opened
+ * or got dragged into the dropzone, hence why the index is returned.
+ *
+ * @event Container#firstFile
+ * @type {object}
+ * @property {number} index - The index of the file
+ * @property {MediaFile} mediafile - A MediaFile instance for that file
+ */
+
+/**
+ * fileAdded event.
+ * Fired when a new file was added to the list of MediaFiles
+ * 
+ * @event Container#fileAdded
+ * @type {object}
+ * @property {number} filecount - The amount of MediaFiles currently in the list
+ * @property {MediaFile} mediafile - A MediaFile instance for that file
+ */
+
+/**
+ * addedFolder event.
+ * Fired when a new folder or zip-archive was added to the list of children
+ * 
+ * @event Container#addedFolder
+ * @type {object}
+ * @property {string} folder - Path of the current folder
+ * @property {boolean} isZip - Added folder is actually a zip-archive
+ */
+
+/**
+ * currenFileChanged event.
+ * Fired when the currently viewed media is changed to another one, i.e. user
+ * clicks "Next", "Previous", etc.
+ * 
+ * @event Container#currenFileChanged
+ * @type {object}
+ * @property {number} index - Index of that file in the list of mediafiles
+ * @property {MediaFile} mediafile - A MediaFile instance for that file
+ */
+
+/**
+ * folderEnd event.
+ * Fire when the folder reaches the upper/lower end
+ * 
+ * @event Container#folderEnd
+ * @type {object}
+ * @property {boolean} isEnd - Lower end (true, e.g. z.jpg), upper end (false, e.g. a.jpg)
+ */

@@ -1,9 +1,7 @@
-import ElectronSettings from 'electron-settings'
+import settings from 'electron-settings'
 
-import * as config from '../config/config.js'
+import {supportedMIMETypes} from '../config.json'
 import mime from 'mime'
-
-const settings = new ElectronSettings()
 
 
 export function errorElement(obj) {
@@ -14,7 +12,7 @@ export function errorElement(obj) {
 }
 
 export function applyVideoSettings(videoelement) {
-  let videosettings = global.settings.get('videoSettings')
+  let videosettings = settings.getSync('video')
   console.log('videosettings ', videosettings)
   videoelement = applySettings(videoelement, videosettings)
   // disable autoplay so we can preload files that might have auto
@@ -23,7 +21,8 @@ export function applyVideoSettings(videoelement) {
 }
 
 export function applyImageSettings(imageelement) {
-  return applySettings(imageelement, config.imagesettings)
+  // return applySettings(imageelement, config.imagesettings)
+  return imageelement
 }
 
 function applySettings(elem, setting) {
@@ -35,12 +34,12 @@ function applySettings(elem, setting) {
 
 export function applyStyle(element) {
   // TODO: do stuff with custom style here
-  element.className = config.defaultStyle
+  // element.className = config.defaultStyle
   return element
 }
 
 export function isArchive(filepath) {
-  console.log('isArchive: ', filepath, (/\.(zip|cbz)$/i).test(filepath))
+  // console.log('isArchive: ', filepath, (/\.(zip|cbz)$/i).test(filepath))
   return (/\.(zip|cbz)$/i).test(filepath)
 }
 
@@ -56,7 +55,8 @@ export function getMIMEType(file) {
 }
 
 export function isSupportedMIMEType(mimetype) {
-  return mimetype.startsWith('image') || config.supportedMIMEType.indexOf(mimetype) > -1
+  console.log()
+  return mimetype.startsWith('image') || supportedMIMETypes.indexOf(mimetype) > -1
 }
 
 

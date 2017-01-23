@@ -13,9 +13,15 @@
   "homepage": "https://github.com/RoyalBingBong/meView#readme",
   "scripts": {
     "start": "electron app/",
-    "babel:prod": "set BABEL_ENV=production && babel -d app/dist app/src",
-    "babel": "babel -d app/dist app/src",
-    "babel:w": "babel -w -d app/dist app/src"
+    "starttest": "electron app/ \"D:\\Neuer Ordner\"",
+    "babel:prod": "gulp babel:prod",
+    "babel": "babel -d app/js/ src/",
+    "babel:w": "babel -w -d app/js/ src/",
+    "build:all": "electron-packager app/ meView --all --icon=app/assets/icon.ico --out=builds/",
+    "build:win": "electron-packager app/ meView -platform=win32 --arch=x64 --out=builds/",
+    "build:mac": "electron-packager app/ meView -platform=darwin --arch=all --out=builds/",
+    "build:linux": "electron-packager app/ meView -platform=linux --arch=all --out=builds/",
+    "make:all": "electron-forge make"
   },
   "keywords": [],
   "author": "David Koch <david-k@mail.de>",
@@ -25,15 +31,18 @@
     "babel-cli": "^6.10.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.10.3",
     "babel-plugin-transform-remove-console": "^6.8.0",
-    "electron-prebuilt": "^1.2.6",
+    "electron": "^1.4.13",
+    "electron-packager": "^8.4.0",
+    "electron-prebuilt-compile": "^1.4.14",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
-    "gulp-clean": "^0.3.2"
+    "gulp-clean": "^0.3.2",
+    "gulp-util": "^3.0.8"
   },
   "build": {
     "productName": "meView",
     "win": {
-      "iconUrl": "https://github.com/royalbingbong/meview/blob/master/build/icon.ico?raw=true"
+      "iconUrl": "https://github.com/royalbingbong/meview/blob/master/app/assets/icon.ico?raw=true"
     }
   }
 }
