@@ -44,6 +44,6 @@ For the developers who want to tinker with the code:
 2. Install dev-dependencies: `cd meView/ && npm install`
 3. Install dependencies: `cd app/ && npm install` and go back `cd ..`
 4. Set `debug: true` in `app/config.js`
-5. `npm run babel` or `npm run babel:w` to transpile to code
+5. `npm run babel` or `npm run babel:w` to transpile the code
 7. `npm start` to launch meView from your environment
-8. Change some code, transpile it and press Ctrl+R to refresh meView
+8. Do stuff.
