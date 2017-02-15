@@ -14,7 +14,6 @@
   },
   "homepage": "https://github.com/RoyalBingBong/meView#readme",
   "dependencies": {
-    "about-window": "^1.6.1",
     "adm-zip": "^0.4.7",
     "electron-settings": "^2.2.2",
     "lodash": "^4.13.1",
