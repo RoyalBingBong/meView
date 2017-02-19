@@ -38,11 +38,12 @@ Grab the archive for your OS from the [releases](https://github.com/RoyalBingBon
 ___
 
 # Developers
-For the developers who want to tinker with the code:
 
 1. Clone the repository: `git clone https://github.com/RoyalBingBong/meView/`
-2. Run `npm install`. It will install the dev-dependencies and after that the app's dependencies into `app/node_modules`. If that does not happen, then just install them manually via `cd app/ && npm install` and go back `cd ..`
-3. Run either `npm run babel` or `npm run babel:w` (will watch the `src` folder for changes, very convenient)
-4. Start the app:
-    * Without dev-tools: `npm start` or `npm run start:asar` (to see how the app behaves when packaged).
-    * With dev-tools: via  I have also a launch configuration for [VSCode](https://code.visualstudio.com/)
+2. Run `npm install`. It will install the dev-dependencies and after that the app's dependencies into `app/node_modules`. If that does not happen, then just install them manually by going into `app/` and running `npm install`
+3. Code from `src/` will be transpiled with babel to `app/js`. Use `npm run babel` or `npm run babel:w` to transpile your code (:w will watch for changes)
+4. Starting meView:
+    * Use `npm start` or `npm run start:asar` to run the app without the DevTools.
+    * Use `npm run debug` or `npm run debug:asar` to run the app with the DevTools.
+
+When running meView in debug*-mode (`ELECTRON_ENV=development`), you will be able to reload the Renderer via `Ctrl+R` or via `View -> Reload`. There is a also launch.json for VSCode.
