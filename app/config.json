@@ -1,5 +1,4 @@
 {
-  "debug": true,
   "defaultSettings": {
     "video": {
       "autoplay": true,
@@ -28,7 +27,8 @@
   "supportedMIMETypes": [
     "video/ogg",
     "video/webm",
-    "video/mp4"
+    "video/mp4",
+    "video/quicktime"
   ],
   "fileFilter":[
     {"name": "Mediafiles", "extensions": ["jpg", "jpeg", "png", "gif", "bmp", "webm", "mp4"]},

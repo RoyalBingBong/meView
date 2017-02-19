@@ -41,9 +41,8 @@ ___
 For the developers who want to tinker with the code:
 
 1. Clone the repository: `git clone https://github.com/RoyalBingBong/meView/`
-2. Install dev-dependencies: `cd meView/ && npm install`
-3. Install dependencies: `cd app/ && npm install` and go back `cd ..`
-4. Set `debug: true` in `app/config.js`
-5. `npm run babel` or `npm run babel:w` to transpile the code
-7. `npm start` to launch meView from your environment
-8. Do stuff.
+2. Run `npm install`. It will install the dev-dependencies and after that the app's dependencies into `app/node_modules`. If that does not happen, then just install them manually via `cd app/ && npm install` and go back `cd ..`
+3. Run either `npm run babel` or `npm run babel:w` (will watch the `src` folder for changes, very convenient)
+4. Start the app:
+    * Without dev-tools: `npm start` or `npm run start:asar` (to see how the app behaves when packaged).
+    * With dev-tools: via  I have also a launch configuration for [VSCode](https://code.visualstudio.com/)

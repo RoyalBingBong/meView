@@ -52,6 +52,13 @@ export default class Container extends EventEmitter {
       if(err) {
         throw new Error(`Viewer#open: could not get stats for "${fileorpath}"`)
       }
+      
+      if(oldCWD != this.cwd) { // cwd changed thus update siblings
+        this.emit('cwdChanged', {
+          cwd: this.cwd
+        })
+      }
+
       if(stats.isFile()) {
         if(helper.isArchive(fileorpath)) {
           console.log('open isFile and isArchive: ', fileorpath)
@@ -72,12 +79,6 @@ export default class Container extends EventEmitter {
       if(oldParendDir != this.parentDir) {
         console.log(`parentDir changed from "${oldParendDir}" to "${this.parentDir}"`)
         this.fetchSiblings()
-      }
-
-      if(oldCWD != this.cwd) { // cwd changed thus update siblings
-        this.emit('cwdChanged', {
-          cwd: this.cwd
-        })
       }
     })
   }

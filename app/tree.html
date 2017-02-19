@@ -1,25 +1,31 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Select Directory</title>
-    <link rel="stylesheet" href="css/dirselector.css">
-  </head>
-  <body>
+
+<head>
+  <meta charset="utf-8">
+  <title>Select Directory</title>
+  <link rel="stylesheet" href="css/dirselector.css">
+</head>
+
+<body>
+    <div>
+      <label for="cwd">Current folder:</label><br>
+      <input id="cwd" type="text" readonly>
+    </div>
     <div class="wrapper">
       <div class="lefty">
-        <select id="folderselect" autofocus size="20">
-        </select>
+        <select id="folderselect" autofocus size="15"></select>
       </div>
       <div class="righty">
         <div id="controls">
-          <button id="btnOpen">Use Folder</button><br />
+          <button id="btnOpen">Use folder</button><br />
           <button id="btnCancel">Cancel</button>
         </div>
       </div>
     </div>
-    <script>
-      require("./js/folderselect.js")
-    </script>
-  </body>
+  <script>
+    require("./js/folderselect.js")
+  </script>
+</body>
+
 </html>

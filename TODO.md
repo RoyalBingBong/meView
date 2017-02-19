@@ -1,3 +1,2 @@
-* Textbox for folderselect to show current directory
-* Better indicator for "X of N" field on the bottom
-* Fix files having different sort order sometimes.
+* Fix files having different sort order sometimes
+* Maybe disable playback buttons in menu, when there is no video showing

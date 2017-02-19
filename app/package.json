@@ -2,8 +2,8 @@
   "name": "meview",
   "productName": "meView",
   "description": "Image/Video viewer for typical web media formats. Also supports zip-archives.",
-  "version": "1.0.0",
-  "main": "main.js",
+  "version": "1.0.1",
+  "main": "js/main.js",
   "license": "ISC",
   "repository": {
     "type": "git",

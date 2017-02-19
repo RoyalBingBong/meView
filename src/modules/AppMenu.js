@@ -2,7 +2,7 @@ import {remote} from 'electron'
 const {Menu, MenuItem} = remote
 
 import * as controller from '../controller.js'
-import {debug, skipIntervalValues} from '../../config.json'
+import {skipIntervalValues} from '../../config.json'
 
 /**
  * Generates the application menu and submenus, and creates the
@@ -201,7 +201,8 @@ export default class AppMenu {
     viewmenu.append(item)
 
     // debug settings
-    if(debug) {
+    if(process.env.ELECTRON_ENV === 'development') {
+
       viewmenu.append(new MenuItem({type: 'separator'}))
 
       item = new MenuItem({

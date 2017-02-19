@@ -2,19 +2,21 @@ import {remote} from 'electron'
 
 import {DirectoryTraverser} from './modules/DirectoryTraverser.js'
 
-let currentDir = localStorage.getItem('cwd')
+const currentDir = localStorage.getItem('cwd')
 
-let travis = new DirectoryTraverser(currentDir)
+const travis = new DirectoryTraverser(currentDir)
 
-let curDir = document.createElement('option')
+const curDir = document.createElement('option')
 curDir.value = '.'
 curDir.innerText = '. (Current Directory)'
-let parDir = document.createElement('option')
+const parDir = document.createElement('option')
 parDir.value = '..'
 parDir.innerText = '.. (Parent Directory)'
 
-let selector = document.getElementById('folderselect')
+const selector = document.getElementById('folderselect')
+const cwdText = document.getElementById('cwd')
 
+cwdText.value = currentDir 
 
 console.log(remote.getCurrentWindow())
 
@@ -68,6 +70,7 @@ function updateDir(dir) {
       remote.getCurrentWindow().close()
     } else {
       prevPath = travis.cd(dir)
+      cwdText.value = travis.cwd
     }
   }
   travis.filterDirectory(['zip'])
@@ -116,22 +119,20 @@ document.addEventListener('keyup', (evt) => {
 })
 
 
-let openButton = document.getElementById('btnOpen')
-let cancelButton = document.getElementById('btnCancel')
+const openButton = document.getElementById('btnOpen')
+const cancelButton = document.getElementById('btnCancel')
 
 openButton.addEventListener('click', () => {
-  console.log('cancel click')
+  console.log('open  click')
   let val = selector.options[selector.selectedIndex].value
   console.log(val)
-  if(val == '.') {
-    // clsoe window and return cwd
+  travis.cd(val)
+  if(val == '..') {    
+    updateDir()
+  } else {    
     localStorage.setItem('cwd', travis.cwd)
     remote.getCurrentWindow().close()
-  } else {
-    travis.cd(val)
-    updateDir()
   }
-
 })
 
 // close window without new cwd if cancel button is clicked

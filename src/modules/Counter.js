@@ -68,9 +68,9 @@ export default class Counter {
    * @memberOf Counter
    */
   update() {
-    // console.log('current', this.current, 'max', this.max)
+    console.log('current', this.current, 'max', this.max)
     if(this.current && this.current > 0) {
-      if(this.current && this.max > 0) {
+      if(this.max > 0) {
         this.counter.value = this.current + ' of ' + this.max
       } else {
         this.counter.value = this.current + ' of -'

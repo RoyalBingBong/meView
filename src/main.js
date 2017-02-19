@@ -1,6 +1,7 @@
 'use strict'
-const electron = require('electron')
-const path = require('path')
+import electron from 'electron'
+import {join} from 'path'
+
 const app = electron.app  // Module to control application life.
 const BrowserWindow = electron.BrowserWindow  // Module to create native browser window.
 
@@ -22,19 +23,23 @@ app.on('ready', () => {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    icon: path.join(__dirname, 'assets/icon.png')
+    icon: join(__dirname, '..', 'assets/icon.png')
   })
   mainWindow.setMenu(null)
 
-  // pass args to renderer
-  mainWindow.argv = process.argv
+  // pass args to renderer, needed for when we want to open a file/folder via
+  // context menu
+  let lastArg = process.argv[process.argv.length - 1]
+  if(lastArg !== '.' && lastArg !== 'app/' && lastArg.indexOf('.asar') === -1 && lastArg.indexOf('.exe') === -1) {
+    mainWindow.open = lastArg
+  }
+  console.log(process.argv)
+  let index = join('file://', __dirname, '..', 'index.html')
+  mainWindow.loadURL(index)  
 
-  mainWindow.loadURL('file://' + __dirname + '/index.html')  
-
-  // Open the DevTools if in debug mode
-  let debugMode = require('./config.json').debug
-  if(debugMode) {
-    mainWindow.webContents.openDevTools()
+  // Open the DevTools when in dev env
+  if(process.env.ELECTRON_ENV === 'development') {  
+    mainWindow.webContents.openDevTools({mode: 'undocked'})
   }
 
   // Emitted when the window is closed.

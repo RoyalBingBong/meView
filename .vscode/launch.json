@@ -1,0 +1,116 @@
+{
+  // Use IntelliSense to learn about possible Node.js debug attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Packaged (dev)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": "babelpackage",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron.exe"
+      },  
+      "args": ["${workspaceRoot}/builds/app.asar"],
+      "env": {
+        "ELECTRON_ENV": "development"
+      }
+    },
+    {
+      "name": "Packaged (prod)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": "babelpackage",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron.exe"
+      },  
+      "args": ["${workspaceRoot}/builds/app.asar"]
+    },
+    {
+      "name": "Packaged (dev + testfiles)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": "babelpackage",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron.exe"
+      },  
+      "args": ["${workspaceRoot}/builds/app.asar", "${workspaceRoot}/testfiles/"],
+      "env": {
+        "ELECTRON_ENV": "development"
+      }
+    },
+    {
+      "name": "Packaged (prod + testfiles)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": "babelpackage",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron.exe"
+      },  
+      "args": ["${workspaceRoot}/builds/app.asar", "${workspaceRoot}/testfiles/"]
+    },
+    {
+      "name": "Root (dev + testfiles)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": "babel",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron.exe"
+      },  
+      "args": [".", "${workspaceRoot}/testfiles/"],
+      "env": {
+        "ELECTRON_ENV": "development"
+      }
+    },
+    {
+      "name": "Root (prod+testfiles)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": "babel",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron.exe"
+      },  
+      "args": [".", "${workspaceRoot}/testfiles/"]
+    },
+    {
+      "name": "Root (dev)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": "babel",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron.exe"
+      },    
+      "args": ["."],
+      "env": {
+        "ELECTRON_ENV": "development"
+      }
+    },
+    {
+      "name": "Root (prod)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": "babel",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron.exe"
+      },   
+      "args": ["."]
+    }
+  ]
+}

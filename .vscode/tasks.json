@@ -1,0 +1,40 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "0.1.0",
+  "command": "npm",
+  "isShellCommand": true,
+  "showOutput": "always",
+  "suppressTaskName": true,
+  "options": {
+        "env": {
+          "ELECTRON_ENV": "development"
+        }
+      }, 
+  "tasks": [
+    {
+      "taskName": "install",
+      "args": ["install"]
+    },
+    {
+      "taskName": "update",
+      "args": ["update"]
+    },
+    {
+      "taskName": "test",
+      "args": ["run", "test"]
+    },
+    {
+      "taskName": "babelpackage",
+      "args": ["run", "babelpackage"]
+    },
+    {
+      "taskName": "babel",
+      "args": ["run", "babel"]
+    },
+    {
+      "taskName": "start:dev",
+      "args": ["run", "debug"]      
+    }
+  ]
+}

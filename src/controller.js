@@ -4,7 +4,15 @@ import {join} from 'path'
 import settings from 'electron-settings'
 
 import Viewer from './modules/Viewer.js'
-import {fileFilter} from '../config.json'
+import {fileFilter, defaultSettings} from '../config.json'
+
+
+console.log('loading default settings:', JSON.stringify(defaultSettings, null, 2))
+settings.configure({prettify: true})
+settings.defaults(defaultSettings)
+settings.applyDefaultsSync()
+console.log(settings.hasSync('video'))
+
 
 const dialog = remote.dialog
 const BrowserWindow = remote.BrowserWindow
@@ -25,7 +33,7 @@ export function open(asFolder) {
   let searchPath, options
 
   // set the searchpath to user home or last used directoy (if enabled)
-  if(settings.get('savePath') && !!settings.get('lastSearchPath')) {
+  if(settings.getSync('savePath') && !!settings.getSync('lastSearchPath')) {
     searchPath = settings.getSync('lastSearchPath')
   } else {
     searchPath = remote.app.getPath('home')
@@ -279,24 +287,28 @@ export function showSelectFolder(parentWindow) {
     modal: true,
     icon: join(__dirname, '..', 'assets/icon.png'),
     width: 450,
-    height: 350,
-    // width: 1100,
-    // height: 500,
+    frame: false,
+    height: 365,
     fullscreenable: false,
-    // resizable: false,
-    show: false,
-    webPreferences: {
-      webSecurity: false
-    }
+    resizable: false,
+    show: false
   }) // frame: false
   selectFolderWindow.center()
   selectFolderWindow.setMenu(null)
-  // selectFolderWindow.webContents.openDevTools()
+  if(process.env.ELECTRON_ENV == 'development') {
+    selectFolderWindow.webContents.openDevTools()
+  }
   
+
   let cwd = viewer.container.cwd
-  console.log('cwd', cwd)
+  console.log('cwd before:', cwd)
+  if(!cwd || cwd == '.') {
+    cwd = settings.getSync('savePath') && !!settings.getSync('lastSearchPath') ? settings.getSync('lastSearchPath') : remote.app.getPath('home')
+  }
+  console.log('cwd after:', cwd)
   let p = join('file://', __dirname, '..', 'tree.html')
   // p = 'file://'+p
+  console.log('p', p)
 
   // Fall back to last path or to the user'S home folder
   if (cwd == '.') { // app dir
@@ -348,6 +360,7 @@ export function closeAllWindows() {
  * @returns
  */
 export function isCurrentSkipValue(val) {
+  console.log('val:', val, 'skipInterval:', settings.getSync('video.skipInterval'))
   return settings.getSync('video.skipInterval') === val
 }
 
@@ -358,7 +371,7 @@ export function isCurrentSkipValue(val) {
  * @param {number} val Skip interval in seconds
  */
 export function setSkipValue(val) {  
-  settings.setSync('videoSkipValue', val)
+  settings.setSync('video.skipInterval', val)
 }
 
 /**
@@ -368,7 +381,7 @@ export function setSkipValue(val) {
  * @returns {number} Skip interval in secodns
  */
 export function getSkipValue() {  
-  return settings.getSync('videoSkipValue') || 0
+  return settings.getSync('video.skipInterval') || defaultSettings.video.skipInterval
 }
 
 /**

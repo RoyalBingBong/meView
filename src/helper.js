@@ -1,5 +1,4 @@
 import settings from 'electron-settings'
-
 import {supportedMIMETypes} from '../config.json'
 import mime from 'mime'
 
@@ -58,7 +57,6 @@ export function isSupportedMIMEType(mimetype) {
   console.log()
   return mimetype.startsWith('image') || supportedMIMETypes.indexOf(mimetype) > -1
 }
-
 
 // export function sortFiles(files) {
 //   if(process.platform == 'win32') {
