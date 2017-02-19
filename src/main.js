@@ -21,8 +21,8 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 640,
+    height: 480,
     icon: join(__dirname, '..', 'assets/icon.png')
   })
   mainWindow.setMenu(null)
@@ -30,7 +30,7 @@ app.on('ready', () => {
   // pass args to renderer, needed for when we want to open a file/folder via
   // context menu
   let lastArg = process.argv[process.argv.length - 1]
-  if(lastArg !== '.' && lastArg !== 'app/' && lastArg.indexOf('.asar') === -1 && lastArg.indexOf('.exe') === -1) {
+  if(lastArg !== '.' && lastArg !== 'app/' && !lastArg.startsWith('--') && lastArg.indexOf('.asar') === -1 && lastArg.indexOf('.exe') === -1) {
     mainWindow.open = lastArg
   }
   console.log(process.argv)
