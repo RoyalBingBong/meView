@@ -2,7 +2,7 @@
   <img src="app/assets/logo.png" tag="meView Logo">
 </p>
 
-### meView provides a seamless viewing experience for both images **and** videos. It also supports viewing those files from within zip archives.
+### meView (**me**dia **view**er) provides a seamless viewing experience for both images **and** videos. It also supports viewing those files from within zip archives.
 
 # What does meView do?
 Viewers like IrfanView or Honeyview are nice and fast for viewing images and even various archives (ziü, cbz, etc), but lack support for video formats like .webm and .mp4. Those video formats are often used to replace animated gifs.
