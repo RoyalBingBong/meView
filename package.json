@@ -13,10 +13,10 @@
   "homepage": "https://github.com/RoyalBingBong/meView#readme",
   "scripts": {
     "postinstall": "cd app/ && npm install && cd ..",
+    "prestart": "npm run babel",
     "start": "electron .",
     "prestart:asar": "npm run babelpackage",
-    "start:asar": "electron builds/app.asar",   
-    
+    "start:asar": "electron builds/app.asar",
     "clean": "rimraf app/js",
     "clean:builds": "rimraf builds/",
     "debug": "cross-env ELECTRON_ENV=development npm run start",
