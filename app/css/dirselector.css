@@ -47,6 +47,8 @@ input {
   text-overflow: ellipsis;
   direction: rtl;
   text-align: left;
+  -webkit-user-select: none;
+  user-select: none;  
 }
 
 #folderselect {

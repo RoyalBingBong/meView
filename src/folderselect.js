@@ -1,11 +1,9 @@
-import {remote} from 'electron'
+import {remote, ipcRenderer} from 'electron'
 
 import {DirectoryTraverser} from './modules/DirectoryTraverser.js'
 
-const currentDir = localStorage.getItem('cwd')
 
-const travis = new DirectoryTraverser(currentDir)
-
+let travis
 const curDir = document.createElement('option')
 curDir.value = '.'
 curDir.innerText = '. (Current Directory)'
@@ -16,9 +14,16 @@ parDir.innerText = '.. (Parent Directory)'
 const selector = document.getElementById('folderselect')
 const cwdText = document.getElementById('cwd')
 
-cwdText.value = currentDir 
+ipcRenderer.on('cwd', (event, cwd) => {
+  travis = new DirectoryTraverser(cwd)
+  cwdText.value = cwd
+  updateDir()
+})
 
-console.log(remote.getCurrentWindow())
+function open(path) {
+  ipcRenderer.send('folderBrowser', path) // sendSync will block destroy()
+  remote.getCurrentWindow().destroy()
+}
 
 selector.ondblclick = (event) => {
   console.log(event.target.file)
@@ -66,8 +71,7 @@ function updateDir(dir) {
   let prevPath
   if(dir) {
     if(dir == '.') {
-      localStorage.setItem('cwd', travis.cwd)
-      remote.getCurrentWindow().close()
+      open(travis.cwd)
     } else {
       prevPath = travis.cd(dir)
       cwdText.value = travis.cwd
@@ -92,9 +96,7 @@ function fillSelect(files, selectitem) {
   let selected = false
   files.forEach((file) => {
     let opt = document.createElement('option')
-    // let i = document.createElement('i')
-    // opt.appendChild(i)
-    
+   
     opt.value = file.name
     if(file.name == selectitem) {
       selected = true
@@ -113,7 +115,7 @@ function fillSelect(files, selectitem) {
 // close window without chaning cwd, if ESC key was pressed
 document.addEventListener('keyup', (evt) => {
   evt = evt || window.event
-  if (evt.keyCode == 27) {
+  if (evt.keyCode == 27) { // 27 = ESC
     remote.getCurrentWindow().destroy()
   }
 })
@@ -123,15 +125,14 @@ const openButton = document.getElementById('btnOpen')
 const cancelButton = document.getElementById('btnCancel')
 
 openButton.addEventListener('click', () => {
-  console.log('open  click')
+  console.log('open click')
   let val = selector.options[selector.selectedIndex].value
   console.log(val)
   travis.cd(val)
   if(val == '..') {    
     updateDir()
-  } else {    
-    localStorage.setItem('cwd', travis.cwd)
-    remote.getCurrentWindow().close()
+  } else {
+    open(travis.cwd)
   }
 })
 
@@ -140,6 +141,3 @@ cancelButton.addEventListener('click', () => {
   console.log('cancel click')  
   remote.getCurrentWindow().destroy()
 })
-
-
-updateDir()

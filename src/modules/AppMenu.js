@@ -215,6 +215,16 @@ export default class AppMenu {
         }
       })
       viewmenu.append(item)
+
+      item = new MenuItem({
+        label: 'Open Appdata Folder',
+        click(menuItem, browserWindow) {        
+          if (browserWindow) {
+            controller.openAppdata(browserWindow)
+          }
+        }
+      })
+      viewmenu.append(item)
       
       item = new MenuItem({
         label: 'Toggle Developer Tools',

@@ -1,9 +1,12 @@
 'use strict'
-import electron from 'electron'
+import {app, ipcMain, BrowserWindow} from 'electron'
 import {join} from 'path'
+import settings from 'electron-settings'
 
-const app = electron.app  // Module to control application life.
-const BrowserWindow = electron.BrowserWindow  // Module to create native browser window.
+
+settings.configure({
+  prettify: true
+})
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -21,17 +24,23 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 640,
-    height: 480,
+    width: settings.getSync('window.width') || 800,
+    height: settings.getSync('window.height') || 600,
+    x: settings.getSync('window.position.x') || undefined,
+    y: settings.getSync('window.position.y') || undefined,
     icon: join(__dirname, '..', 'assets/icon.png')
   })
+  // otherwise app will initiate with default menu, and then changes to the custom one
   mainWindow.setMenu(null)
-
-  // pass args to renderer, needed for when we want to open a file/folder via
-  // context menu
+  if(settings.getSync('window.maximized')) {
+    mainWindow.maximize()
+  }    
+  // pass args to renderer, needed for when we want to open a file/folder via context menu
   let lastArg = process.argv[process.argv.length - 1]
   if(lastArg !== '.' && lastArg !== 'app/' && !lastArg.startsWith('--') && lastArg.indexOf('.asar') === -1 && lastArg.indexOf('.exe') === -1) {
-    mainWindow.open = lastArg
+    mainWindow.webContents.once('did-finish-load', () => {
+      mainWindow.webContents.send('open', lastArg) 
+    })
   }
   console.log(process.argv)
   let index = join('file://', __dirname, '..', 'index.html')
@@ -39,11 +48,30 @@ app.on('ready', () => {
 
   // Open the DevTools when in dev env
   if(process.env.ELECTRON_ENV === 'development') {  
-    mainWindow.webContents.openDevTools({mode: 'undocked'})
-  }
+    mainWindow.webContents.openDevTools()
+  } 
+
+  mainWindow.on('close', () => {
+    let [width, height] = mainWindow.getSize()
+    let [x, y] = mainWindow.getPosition()
+    let maximized = mainWindow.isMaximized()
+    settings.setSync('window', { 
+      width,
+      height,
+      'position': {x, y},
+      maximized
+    })
+  })
 
   // Emitted when the window is closed.
-  mainWindow.on('closed', () => {
+  mainWindow.on('closed', () => {    
     mainWindow = null
   })
+})
+
+ipcMain.on('folderBrowser', (event, arg) => {
+  if(arg) {
+    console.log(arg)
+    mainWindow.webContents.send('open', arg)
+  }
 })

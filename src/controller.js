@@ -1,4 +1,4 @@
-import {shell, remote} from 'electron'
+import {shell, remote, ipcRenderer} from 'electron'
 import {join} from 'path'
 
 import settings from 'electron-settings'
@@ -6,13 +6,15 @@ import settings from 'electron-settings'
 import Viewer from './modules/Viewer.js'
 import {fileFilter, defaultSettings} from '../config.json'
 
-
-console.log('loading default settings:', JSON.stringify(defaultSettings, null, 2))
 settings.configure({prettify: true})
 settings.defaults(defaultSettings)
 settings.applyDefaultsSync()
 console.log(settings.hasSync('video'))
 
+
+ipcRenderer.on('open', (event, arg) => {
+  openPath(arg)
+})
 
 const dialog = remote.dialog
 const BrowserWindow = remote.BrowserWindow
@@ -138,6 +140,10 @@ export function showInFileBrowser() {
   shell.showItemInFolder(getCurrentFile())
 }
 
+export function openAppdata() {
+  shell.openItem(remote.app.getPath('userData'))
+}
+
 /**
  * Open the currently opened file in the viewer set by the OS
  * 
@@ -177,7 +183,6 @@ export function openAbout() {
     minimizable: false,
     maximizable: false
   })
-
   aboutWindow.setMenu(null)
   aboutWindow.setMenuBarVisibility(false)
   aboutWindow.loadURL(join('file://', __dirname, '..', 'about.html'))
@@ -293,42 +298,34 @@ export function showSelectFolder(parentWindow) {
     resizable: false,
     show: false
   }) // frame: false
-  selectFolderWindow.center()
-  selectFolderWindow.setMenu(null)
+  selectFolderWindow.setMenu(null)  
   if(process.env.ELECTRON_ENV == 'development') {
-    selectFolderWindow.webContents.openDevTools()
+     // undocked because the window has a fixed size
+    selectFolderWindow.webContents.openDevTools({mode: 'undocked'})
   }
-  
 
   let cwd = viewer.container.cwd
-  console.log('cwd before:', cwd)
+  // Fall back to last path or to the user'S home folder
   if(!cwd || cwd == '.') {
     cwd = settings.getSync('savePath') && !!settings.getSync('lastSearchPath') ? settings.getSync('lastSearchPath') : remote.app.getPath('home')
-  }
-  console.log('cwd after:', cwd)
-  let p = join('file://', __dirname, '..', 'tree.html')
-  // p = 'file://'+p
-  console.log('p', p)
+  }    
 
-  // Fall back to last path or to the user'S home folder
-  if (cwd == '.') { // app dir
-    cwd = (isSavingPath() ? settings.getSync('lastSearchPath') : remote.app.getPath('home'))
-  }
-  localStorage.setItem('cwd', cwd)
-  selectFolderWindow.cwd = cwd
-  // selectFolderWindow.currentDir = cwd
-  selectFolderWindow.loadURL(p)
+  let page = join('file://', __dirname, '..', 'tree.html')
+  selectFolderWindow.loadURL(page)
+  selectFolderWindow.focus()
 
-  selectFolderWindow.show()
-
-
-  selectFolderWindow.on('close', () => {
-    let newcwd = localStorage.getItem('cwd')    
-    localStorage.setItem('cwd', '') // For privacy
-    if (newcwd !== '') {
-      viewer.openFile(newcwd)
-    }
+  selectFolderWindow.webContents.on('did-finish-load', () => {
+    selectFolderWindow.webContents.send('cwd', cwd)
+    selectFolderWindow.show()   
   })
+
+  // selectFolderWindow.on('close', () => {
+  //   let newcwd = localStorage.getItem('cwd')    
+  //   localStorage.setItem('cwd', '') // For privacy
+  //   if (newcwd !== '') {
+  //     viewer.openFile(newcwd)
+  //   }
+  // })
 
   // Emitted when the window is closed.
   selectFolderWindow.on('closed', () => {
