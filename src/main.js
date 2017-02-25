@@ -36,12 +36,16 @@ app.on('ready', () => {
     mainWindow.maximize()
   }    
   // pass args to renderer, needed for when we want to open a file/folder via context menu
-  let lastArg = process.argv[process.argv.length - 1]
-  if(lastArg !== '.' && lastArg !== 'app/' && !lastArg.startsWith('--') && lastArg.indexOf('.asar') === -1 && lastArg.indexOf('.exe') === -1) {
+  let argIndex = process.argv.findIndex((arg) => {
+    return (arg.indexOf('-meview-open') > -1)
+  })
+  // -meview-open was passed and the idnex after that exists
+  if(argIndex > -1 && !!process.argv[argIndex+1]) {
     mainWindow.webContents.once('did-finish-load', () => {
-      mainWindow.webContents.send('open', lastArg) 
+      mainWindow.webContents.send('open', process.argv[argIndex + 1] ) 
     })
   }
+
   console.log(process.argv)
   let index = join('file://', __dirname, '..', 'index.html')
   mainWindow.loadURL(index)  
