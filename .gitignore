@@ -3,5 +3,4 @@ builds
 **/node_modules
 app/js
 *.log
-meView*/
 *.asar
