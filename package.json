@@ -30,9 +30,9 @@
     "babel:prod": "cross-env BABEL_ENV=production babel -d app/js src/",
     "prebuild": "npm run clean && npm run clean:builds",
     "build": "npm run babel:prod && npm run build:all",
-    "build:all": "electron-packager app/ meView --asar --all --icon=app/assets/icon.ico --out=builds/",
-    "build:win": "electron-packager app/ meView --asar -platform=win32 --arch=x64 --out=builds/",
-    "build:mac": "electron-packager app/ meView --asar -platform=darwin --arch=all --icon=app/assets/meView.icns --out=builds/",
+    "build:all": "npm run build:win && npm run build:mac && npm run build:linux",
+    "build:win": "electron-packager app/ meView --asar -platform=win32 --arch=x64 --out=builds/ --icon=app/assets/icon.ico",
+    "build:mac": "electron-packager app/ meView --asar -platform=darwin --arch=all --out=builds/ --icon=app/assets/meView.icns",
     "build:linux": "electron-packager app/ meView --asar -platform=linux --arch=all --out=builds/"
   },
   "keywords": [],

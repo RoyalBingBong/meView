@@ -246,7 +246,7 @@ export function isSavingPath() {
  * @param {any} callback
  */
 export function windowsInstallContextMenu(callback) {
-  let registry = require('./windows/registry.js')
+  let registry = require('./OS/win/registry.js')
   registry.installContextMenu((err, std) => {
     if(err) {
       console.log(err)
@@ -261,7 +261,7 @@ export function windowsInstallContextMenu(callback) {
 }
 
 export function windowsUninstallContextMenu(callback) {
-  let registry = require('./windows/registry.js')
+  let registry = require('./OS/win/registry.js')
   registry.uninstallContextMenu((err, std) => {
     if(err) {
       console.log(err)
@@ -286,14 +286,22 @@ export function showSelectFolder(parentWindow) {
   if (selectFolderWindow) {
     return selectFolderWindow.focus()
   }
+  let viewerWindow = remote.getCurrentWindow()
+  let [vwidth, vheight] = viewerWindow.getSize()
+  let [x, y] = viewerWindow.getPosition()
+  let width = 450
+  let height = 365
+
   console.log('Parent', parentWindow)
   selectFolderWindow = new BrowserWindow({
-    parent: remote.getCurrentWindow(),
+    parent: viewerWindow,
     modal: true,
     icon: join(__dirname, '..', 'assets/icon.png'),
-    width: 450,
+    width,
+    height,
+    x: x + vwidth/2 - width/2,
+    y: y + vheight/2 - height/2,
     frame: false,
-    height: 365,
     fullscreenable: false,
     resizable: false,
     show: false
@@ -312,11 +320,11 @@ export function showSelectFolder(parentWindow) {
 
   let page = join('file://', __dirname, '..', 'tree.html')
   selectFolderWindow.loadURL(page)
-  selectFolderWindow.focus()
 
   selectFolderWindow.webContents.on('did-finish-load', () => {
     selectFolderWindow.webContents.send('cwd', cwd)
-    selectFolderWindow.show()   
+    selectFolderWindow.show()
+    selectFolderWindow.focus()
   })
 
   // selectFolderWindow.on('close', () => {
@@ -357,7 +365,6 @@ export function closeAllWindows() {
  * @returns
  */
 export function isCurrentSkipValue(val) {
-  console.log('val:', val, 'skipInterval:', settings.getSync('video.skipInterval'))
   return settings.getSync('video.skipInterval') === val
 }
 

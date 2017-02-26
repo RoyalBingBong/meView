@@ -41,7 +41,7 @@ export function installContextMenu(callback) {
 
   function installFileHandler(callback) {
     let appp = format('%s\\shell\\open\\command', applicationsKeyPath)
-    let penarg = format('%s "%1"', execPath)
+    let penarg = format('%s -meview-open "%1"', execPath)
     args = [appp, '/ve', '/d', penarg]
     addToRegistry(args, callback)
   }
@@ -53,7 +53,7 @@ export function installContextMenu(callback) {
       args = [keyPath, '/v', 'Icon', '/d', execPath]
       addToRegistry(args, () => {
         let kp = format('%s\\command', keyPath)
-        let pe = format('"%s" "%s"', process.execPath, arg)
+        let pe = format('"%s" -meview-open %s"', process.execPath, arg)
         args = [ kp, '/ve', '/d', pe]
         addToRegistry(args, callback)
       })
