@@ -1,6 +1,6 @@
 {
   "name": "meview",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Image/Video viewer for typical web media formats. Also supports zip-archives.",
   "main": "app/js/main.js",
   "repository": {
