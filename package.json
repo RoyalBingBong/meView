@@ -19,6 +19,7 @@
     "start:asar": "electron builds/app.asar",
     "clean": "rimraf app/js",
     "clean:builds": "rimraf builds/",
+    "clean:dist": "rimraf dist/",
     "debug": "cross-env ELECTRON_ENV=development npm run start",
     "debug:asar": "cross-env ELECTRON_ENV=development npm run start:asar",
     "prebabelpackage": "npm run clean",
@@ -29,11 +30,9 @@
     "babel:w": "babel -w -d app/js/ src/",
     "babel:prod": "cross-env BABEL_ENV=production babel -d app/js src/",
     "prebuild": "npm run clean && npm run clean:builds",
-    "build": "npm run babel:prod && npm run build:all",
-    "build:all": "npm run build:win && npm run build:mac && npm run build:linux",
     "build:win": "build -w",
-    "build:mac": "electron-packager app/ meView --asar -platform=darwin --arch=all --out=builds/ --icon=app/assets/meView.icns",
-    "build:linux": "electron-packager app/ meView --asar -platform=linux --arch=all --out=builds/"
+    "build:mac": "build -m",
+    "build:linux": "build -l"
   },
   "keywords": [],
   "author": "David Koch <david-k@mail.de>",
