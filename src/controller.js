@@ -5,7 +5,7 @@ import settings from 'electron-settings'
 
 import Viewer from './modules/Viewer.js'
 import {fileFilter, defaultSettings} from '../config.json'
-import {isEnvDeveloper} from '../helper.js'
+import {isEnvDeveloper} from './helper.js'
 
 settings.configure({prettify: true})
 settings.defaults(defaultSettings)
