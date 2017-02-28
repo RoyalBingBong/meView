@@ -3,7 +3,7 @@ const {Menu, MenuItem} = remote
 
 import * as controller from '../controller.js'
 import {skipIntervalValues} from '../../config.json'
-import {isEnvDeveloper} from '../../helper.js'
+import {isEnvDeveloper} from '../helper.js'
 
 /**
  * Generates the application menu and submenus, and creates the
