@@ -1,4 +1,3 @@
-import {remote} from 'electron'
 import settings from 'electron-settings'
 
 import Container from './Container.js'
@@ -43,7 +42,7 @@ export default class Viewer {
      */
     this.mainViewObserver = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
-        if (mutation.type == 'childList') {
+        if (mutation.type === 'childList') {
           if (mutation.addedNodes.length > 0) {
             if (mutation.addedNodes[0].mediafile) {
               let mf = mutation.addedNodes[0].mediafile
@@ -123,6 +122,9 @@ export default class Viewer {
   openFile(file) {
     if(file) {
       this.container.open(file)
+      if(settings.getSync('savePath')) {
+        settings.setSync('lastSearchPath', file)
+      }
       this.hideDropzone()
     }
   }
@@ -208,8 +210,10 @@ export default class Viewer {
         this.counter.updateCurrent(data.index + 1)      
         this.updateCurrentFileName(data.mediafile.filepath)
         this.showFile(data.mediafile)
-        this.container.preloadNext(data.index)
-        this.container.preloadPrevious(data.index)
+        setTimeout(() => {
+          this.container.preloadNext(data.index)
+          this.container.preloadPrevious(data.index)
+        }, 30)
       }
     })
     this.container.on('folderEnd', (data) => {
@@ -240,7 +244,7 @@ export default class Viewer {
       this.counter.updateCurrent(0)
       this.counter.updateMax(0)
       this.updateCurrentFileName(data.filepath)
-      this.showError('No file in directory: "' + data.filepath+'"' )
+      this.showError('No viewable files in directory: \n"' + data.filepath+'"' )
     })
     this.container.on('cwdChanged', (data) => {
       console.log('cwdChanged')

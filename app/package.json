@@ -2,6 +2,7 @@
   "name": "meview",
   "productName": "meView",
   "description": "Image/Video viewer for typical web media formats. Also supports zip-archives.",
+  "author": "David Koch <david-k@mail.de>",
   "version": "1.0.1",
   "main": "js/main.js",
   "license": "ISC",

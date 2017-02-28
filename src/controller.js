@@ -56,9 +56,9 @@ export function open(asFolder) {
 
   dialog.showOpenDialog(options, (files) => {
     if(files) {
-      if(settings.getSync('savePath')) {
-        settings.setSync('lastSearchPath', files[0])
-      }
+      // if(settings.getSync('savePath')) {
+      //   settings.setSync('lastSearchPath', files[0])
+      // }
       viewer.hideDropzone()
       viewer.container.open(files[0])
     }
@@ -222,7 +222,7 @@ export function openRepositoryIssues() {
 export function toggleSavePath(isSaving) {
   settings.setSync('savePath', isSaving)
   if(!isSaving) {
-    // remove preiovusly saved path bceause privacy
+    // remove previously saved path
     settings.deleteSync('lastSearchPath')
   }
 }
@@ -247,7 +247,7 @@ export function isSavingPath() {
  */
 export function windowsInstallContextMenu(callback) {
   let registry = require('./OS/win/registry.js')
-  registry.installContextMenu((err, std) => {
+  registry.installContextMenu((err) => {
     if(err) {
       console.log(err)
       let message = 'Failed to install context menu entries!'
@@ -262,7 +262,7 @@ export function windowsInstallContextMenu(callback) {
 
 export function windowsUninstallContextMenu(callback) {
   let registry = require('./OS/win/registry.js')
-  registry.uninstallContextMenu((err, std) => {
+  registry.uninstallContextMenu((err) => {
     if(err) {
       console.log(err)
       let message = 'Failed to uninstall context menu entries!'
@@ -307,14 +307,14 @@ export function showSelectFolder(parentWindow) {
     show: false
   }) // frame: false
   selectFolderWindow.setMenu(null)  
-  if(process.env.ELECTRON_ENV == 'development') {
+  if(process.env.ELECTRON_ENV.trim() === 'development' || process.env.ELECTRON_ENV.trim() === 'dev') {
      // undocked because the window has a fixed size
     selectFolderWindow.webContents.openDevTools({mode: 'undocked'})
   }
 
   let cwd = viewer.container.cwd
   // Fall back to last path or to the user'S home folder
-  if(!cwd || cwd == '.') {
+  if(!cwd || cwd === '.') {
     cwd = settings.getSync('savePath') && !!settings.getSync('lastSearchPath') ? settings.getSync('lastSearchPath') : remote.app.getPath('home')
   }    
 
@@ -414,7 +414,7 @@ export function resetToDefaultSettings(browserWindow) {
     title: 'Reset to default settings',
     message: 'Are you sure you want to reset to the default settings? This will also uninstall the Windows context menu entry of meView'
   }, (response) => {
-    if(response == 0) {
+    if(response === 0) {
       if(settings.getSync('windowsContextMenuInstalled')) {
         windowsUninstallContextMenu((err) => {
           if(err) {

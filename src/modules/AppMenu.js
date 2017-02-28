@@ -201,7 +201,7 @@ export default class AppMenu {
     viewmenu.append(item)
 
     // debug settings
-    if(process.env.ELECTRON_ENV === 'development') {
+    if(process.env.ELECTRON_ENV.trim() === 'development' || process.env.ELECTRON_ENV.trim() === 'dev') {
 
       viewmenu.append(new MenuItem({type: 'separator'}))
 

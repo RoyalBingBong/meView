@@ -27,7 +27,7 @@ export function spawn(command, args, callback) {
     error = error || processsError
   })
   spawnedProcess.on('close', (code) => {
-    if(code != 0) {
+    if(code !== 0) {
       let message = format('Command faile! Exit code %s ', code)
       error = new Error(message)
       error.code = code

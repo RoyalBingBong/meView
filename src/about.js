@@ -1,9 +1,8 @@
-import * as pkg from '../../package.json'
-import * as apppkg from '../package.json'
+import * as appPackage from '../package.json'
 import {shell} from 'electron'
 
 let subtitle = document.getElementById('subtitle')
-subtitle.innerText = apppkg.description
+subtitle.innerText = appPackage.description
 
 let versions = document.getElementById('versions')
 

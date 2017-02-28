@@ -32,11 +32,11 @@ selector.ondblclick = (event) => {
     travis.cd(event.target.file.name)
     updateDir()
   } else {
-    if(event.target.value == '..') {
+    if(event.target.value === '..') {
       travis.cd('..')
       updateDir()
     }
-    if(event.target.value == '.') {
+    if(event.target.value === '.') {
       updateDir('.')
     }
   }
@@ -46,7 +46,7 @@ selector.addEventListener('keypress', () => {
   console.log(event)
   let key = event.which
   // pressing 'return'
-  if(key == 13) {
+  if(key === 13) {
     console.log('13')
     let val = selector.options[selector.selectedIndex].value
     updateDir(val)
@@ -57,11 +57,11 @@ selector.addEventListener('keyup', () => {
   console.log('keyup')
   let key = event.which
   //pressesd "left arrow"
-  if(key == 37) {
+  if(key === 37) {
     updateDir('..')
   }
   // "right arrow"
-  if(key == 39) {
+  if(key === 39) {
     let val = selector.options[selector.selectedIndex].value
     updateDir(val)
   }
@@ -70,7 +70,7 @@ selector.addEventListener('keyup', () => {
 function updateDir(dir) {
   let prevPath
   if(dir) {
-    if(dir == '.') {
+    if(dir === '.') {
       open(travis.cwd)
     } else {
       prevPath = travis.cd(dir)
@@ -98,7 +98,7 @@ function fillSelect(files, selectitem) {
     let opt = document.createElement('option')
    
     opt.value = file.name
-    if(file.name == selectitem) {
+    if(file.name === selectitem) {
       selected = true
       opt.selected = 'selected'
     }
@@ -115,7 +115,7 @@ function fillSelect(files, selectitem) {
 // close window without chaning cwd, if ESC key was pressed
 document.addEventListener('keyup', (evt) => {
   evt = evt || window.event
-  if (evt.keyCode == 27) { // 27 = ESC
+  if (evt.keyCode === 27) { // 27 = ESC
     remote.getCurrentWindow().destroy()
   }
 })
@@ -129,7 +129,7 @@ openButton.addEventListener('click', () => {
   let val = selector.options[selector.selectedIndex].value
   console.log(val)
   travis.cd(val)
-  if(val == '..') {    
+  if(val === '..') {    
     updateDir()
   } else {
     open(travis.cwd)

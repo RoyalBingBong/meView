@@ -7,11 +7,12 @@ import * as helper from '../helper.js'
  * @class MediaFile
  */
 export default class MediaFile {
-  constructor(filename, filepath, mimetype, zipentry) {
+  constructor(filename, filepath, mimetype, zipentry, filesize) {
     this.filename = filename
     this.filepath = filepath
     this.mimetype = mimetype
     this.zipentry = zipentry
+    this.filesize = filesize || this.zipentry.getData().length
     this.element
   }
 
@@ -140,7 +141,7 @@ export default class MediaFile {
    * @memberOf MediaFile
    */
   getElement() {
-    if (!this.element) {
+    if (!this.element) {      
       if (this.isImage()) {
         // create img element;
         this.element = new Image()
@@ -153,6 +154,8 @@ export default class MediaFile {
       }
       helper.applyStyle(this.element)
       this.element.src = this.getSrc()
+    } else {
+      console.log(`Returning cached MediaFile for '${this.filename}' (${this.filesize/1024} KB)`)
     }
     return this.element
   }

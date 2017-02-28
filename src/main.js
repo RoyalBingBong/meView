@@ -51,7 +51,7 @@ app.on('ready', () => {
   mainWindow.loadURL(index)  
 
   // Open the DevTools when in dev env
-  if(process.env.ELECTRON_ENV === 'development') {  
+  if(process.env.ELECTRON_ENV.trim() === 'development' || process.env.ELECTRON_ENV.trim() === 'dev') {  
     mainWindow.webContents.openDevTools()
   } 
 

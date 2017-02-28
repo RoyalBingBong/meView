@@ -53,7 +53,7 @@ export default class Container extends EventEmitter {
         throw new Error(`Viewer#open: could not get stats for "${fileorpath}"`)
       }
       
-      if(oldCWD != this.cwd) { // cwd changed thus update siblings
+      if(oldCWD !== this.cwd) { // cwd changed thus update siblings
         this.emit('cwdChanged', {
           cwd: this.cwd
         })
@@ -76,7 +76,7 @@ export default class Container extends EventEmitter {
         this.viewDirectory(this.cwd)
       }
 
-      if(oldParendDir != this.parentDir) {
+      if(oldParendDir !== this.parentDir) {
         console.log(`parentDir changed from "${oldParendDir}" to "${this.parentDir}"`)
         this.fetchSiblings()
       }
@@ -103,7 +103,7 @@ export default class Container extends EventEmitter {
         throw new Error(message)
       }
 
-      if(files.length == 0) {
+      if(files.length === 0) {
         this.emit('emptyDirectory', {
           filepath: dir
         })
@@ -111,28 +111,30 @@ export default class Container extends EventEmitter {
 
       this.files = []
       this.children = []
-      files = files.map((f) => {
-        return join(this.cwd, f)
-      })
 
       // Windows style sorting, e.g a1.jpg before A2.jpg
       files = helper.sortFiles(files)
 
-      files.forEach((file) => {
+      files = files.map((f) => {
+        return join(this.cwd, f)
+      })
+      
+      files.forEach((file, idx) => {
         fsstat(file, (err, stats) => {
           if(err) {
             console.error(err)
             return
           }
+          console.log(this.files.length === 0, idx < files.length - 1)
           if(stats.isFile()) {
             let mimetype = helper.getMIMEType(file)
             if(helper.isSupportedMIMEType(mimetype)) {
-              let mf = new MediaFile(basename(file), file, mimetype)
+              let mf = new MediaFile(basename(file), file, mimetype, null, stats.size)
               this.files.push(mf)
               // fire events
               // if there is a file that has to be shown instantly do stuff
               if(!firstTriggered && showfile) {
-                if(showfile == file) {
+                if(showfile === file) {
                   let idx = this.files.indexOf(mf)
                   this._currentIndex = idx
                   this.emit('firstFile', {
@@ -145,7 +147,7 @@ export default class Container extends EventEmitter {
 
                   firstTriggered = true
                 }
-              } else if (this.files.length == 1) {
+              } else if (this.files.length === 1) {
                 this._currentIndex = 0
                 this.emit('firstFile', {
                   index: 0,
@@ -170,6 +172,12 @@ export default class Container extends EventEmitter {
             this.children.push(file)
             this.emit('addedFolder', {
               folder: file
+            })
+          }
+          
+          if(this.files.length === 0 && idx < files.length - 1) {
+            this.emit('emptyDirectory', {
+              filepath: dir
             })
           }
         })
@@ -197,7 +205,7 @@ export default class Container extends EventEmitter {
     this.files = []
     this.siblings = []
     zipEntries.forEach((file) => {
-      if(!file.isDirectory) {
+      if(!file.isDirectory && file.entryName.indexOf('_MACOSX') === -1) {
         let mimetype = helper.getMIMEType(file.entryName)
 
         if(helper.isSupportedMIMEType(mimetype)) {
@@ -205,7 +213,7 @@ export default class Container extends EventEmitter {
           // pass zipentry instead of buffer, because it's faster (IRC)
           let mf = new MediaFile(file.entryName, fullpath, mimetype, file)
           this.files.push(mf)
-          if(this.files.length == 1) {
+          if(this.files.length === 1) {
             this._currentIndex = 0
             this.emit('firstFile', {
               index: 0,
@@ -234,11 +242,12 @@ export default class Container extends EventEmitter {
     let parentDir = join(this.cwd, '..')
     this.siblings = []
     fsreaddir(parentDir, (err, files) => {
+      
+      files = helper.sortFiles(files)
+
       files = files.map((f) => {
         return join(parentDir, f)
       })
-
-      files = helper.sortFiles(files)
 
       files.forEach((file) => {
         fsstat(file, (err, stats) => {
@@ -389,6 +398,7 @@ export default class Container extends EventEmitter {
     console.log('preloadNext')
     if(idx + 1 < this.files.length) {
       let mf = this.files[idx + 1]
+      console.log('should be preloaded: ', mf)
       let elem = mf.getElement()
       if(range) {
         this.preloadNext(++idx, --range)

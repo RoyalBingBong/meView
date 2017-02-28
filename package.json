@@ -31,7 +31,7 @@
     "prebuild": "npm run clean && npm run clean:builds",
     "build": "npm run babel:prod && npm run build:all",
     "build:all": "npm run build:win && npm run build:mac && npm run build:linux",
-    "build:win": "electron-packager app/ meView --asar -platform=win32 --arch=x64 --out=builds/ --icon=app/assets/icon.ico",
+    "build:win": "build -w",
     "build:mac": "electron-packager app/ meView --asar -platform=darwin --arch=all --out=builds/ --icon=app/assets/meView.icns",
     "build:linux": "electron-packager app/ meView --asar -platform=linux --arch=all --out=builds/"
   },
@@ -46,13 +46,8 @@
     "babel-plugin-transform-remove-console": "^6.8.0",
     "cross-env": "^3.1.4",
     "electron": "^1.4.13",
+    "electron-builder": "^14.5.2",
     "electron-packager": "^8.4.0",
     "rimraf": "^2.6.0"
-  },
-  "build": {
-    "productName": "meView",
-    "win": {
-      "iconUrl": "https://github.com/royalbingbong/meview/blob/master/app/assets/icon.ico?raw=true"
-    }
   }
 }

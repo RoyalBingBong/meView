@@ -1,0 +1,18 @@
+{
+  "productName": "meView",
+  "appId": "com.royalbingbong.meview",
+  "mac" : {
+    "target": ["dmg", "zip"],
+    "category": "public.app-category.photography",
+    "icon": "app/assets/mac.icns"
+  },
+  "win": {
+    "target": ["nsis", "zip"],
+    "icon": "app/assets/icon.ico"
+  },
+  "linux": {
+    "target": ["deb", "7z", "zip"],
+    "category": "Viewer",
+    "icon": "app/assets/linux.iconset"
+  }
+}
