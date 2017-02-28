@@ -2,7 +2,7 @@
 import {app, ipcMain, BrowserWindow} from 'electron'
 import {join} from 'path'
 import settings from 'electron-settings'
-
+import {isEnvDeveloper} from './helper.js'
 
 settings.configure({
   prettify: true
@@ -51,7 +51,7 @@ app.on('ready', () => {
   mainWindow.loadURL(index)  
 
   // Open the DevTools when in dev env
-  if(process.env.ELECTRON_ENV.trim() === 'development' || process.env.ELECTRON_ENV.trim() === 'dev') {  
+  if(isEnvDeveloper()) {  
     mainWindow.webContents.openDevTools()
   } 
 

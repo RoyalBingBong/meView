@@ -82,3 +82,13 @@ export function sortFiles(files) {
     return 0
   })
 }
+
+
+export function isEnvDeveloper() {
+  if(process.env.ELECTRON_ENV) {
+    let env = process.env.ELECTRON_ENV.trim()
+    return (env === 'development' || env === 'dev')
+  } else {
+    return false
+  }
+}

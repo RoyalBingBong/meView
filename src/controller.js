@@ -5,6 +5,7 @@ import settings from 'electron-settings'
 
 import Viewer from './modules/Viewer.js'
 import {fileFilter, defaultSettings} from '../config.json'
+import {isEnvDeveloper} from '../helper.js'
 
 settings.configure({prettify: true})
 settings.defaults(defaultSettings)
@@ -307,7 +308,7 @@ export function showSelectFolder(parentWindow) {
     show: false
   }) // frame: false
   selectFolderWindow.setMenu(null)  
-  if(process.env.ELECTRON_ENV.trim() === 'development' || process.env.ELECTRON_ENV.trim() === 'dev') {
+  if(isEnvDeveloper()) {
      // undocked because the window has a fixed size
     selectFolderWindow.webContents.openDevTools({mode: 'undocked'})
   }

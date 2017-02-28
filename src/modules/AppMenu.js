@@ -3,6 +3,7 @@ const {Menu, MenuItem} = remote
 
 import * as controller from '../controller.js'
 import {skipIntervalValues} from '../../config.json'
+import {isEnvDeveloper} from '../../helper.js'
 
 /**
  * Generates the application menu and submenus, and creates the
@@ -98,7 +99,7 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Quit',
       accelerator: 'Alt+Q',
-      role: 'close'
+      role: 'quit'
     })
     filemenu.append(item)
 
@@ -201,7 +202,7 @@ export default class AppMenu {
     viewmenu.append(item)
 
     // debug settings
-    if(process.env.ELECTRON_ENV.trim() === 'development' || process.env.ELECTRON_ENV.trim() === 'dev') {
+    if(isEnvDeveloper()) {
 
       viewmenu.append(new MenuItem({type: 'separator'}))
 
