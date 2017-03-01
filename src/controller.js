@@ -289,19 +289,23 @@ export function showSelectFolder(parentWindow) {
   }
   let viewerWindow = remote.getCurrentWindow()
   let [vwidth, vheight] = viewerWindow.getSize()
-  let [x, y] = viewerWindow.getPosition()
+  let [vx, vy] = viewerWindow.getPosition()
   let width = 450
   let height = 365
+  let x = Math.floor(vx + vwidth/2 - width/2)
+  let y = Math.floor(vy + vheight/2 - height/2)
 
-  console.log('Parent', parentWindow)
+  console.log('Modal position:', x + vwidth/2 - width/2, y + vheight/2 - height/2)
+
+  console.log('Parent', viewerWindow)
   selectFolderWindow = new BrowserWindow({
     parent: viewerWindow,
-    modal: true,
+    // modal: true,
     icon: join(__dirname, '..', 'assets/icon.png'),
     width,
     height,
-    x: x + vwidth/2 - width/2,
-    y: y + vheight/2 - height/2,
+    x,
+    y,
     frame: false,
     fullscreenable: false,
     resizable: false,
@@ -327,14 +331,6 @@ export function showSelectFolder(parentWindow) {
     selectFolderWindow.show()
     selectFolderWindow.focus()
   })
-
-  // selectFolderWindow.on('close', () => {
-  //   let newcwd = localStorage.getItem('cwd')    
-  //   localStorage.setItem('cwd', '') // For privacy
-  //   if (newcwd !== '') {
-  //     viewer.openFile(newcwd)
-  //   }
-  // })
 
   // Emitted when the window is closed.
   selectFolderWindow.on('closed', () => {

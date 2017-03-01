@@ -45,7 +45,6 @@ export default class Container extends EventEmitter {
    */
   open(fileorpath) {
     console.log('open: ', fileorpath)
-    let oldCWD = this.cwd
     let oldParendDir = this.parentDir
 
     fsstat(fileorpath, (err, stats) => {
@@ -57,16 +56,16 @@ export default class Container extends EventEmitter {
         if(helper.isArchive(fileorpath)) {
           console.log('open isFile and isArchive: ', fileorpath)
           this.parentDir = dirname(fileorpath)
-          this.cwd = fileorpath
+          this.changeCWD(fileorpath)
           this.viewArchive(fileorpath)
         } else {
           this.parentDir = join(dirname(fileorpath), '..')
-          this.cwd = dirname(fileorpath)
+          this.changeCWD(dirname(fileorpath))
           this.viewDirectory(this.cwd, fileorpath)
         }
       } else if(stats.isDirectory()) {
         this.parentDir = join(fileorpath, '..')
-        this.cwd = fileorpath
+        this.changeCWD(fileorpath)
         this.viewDirectory(this.cwd)
       }
 
@@ -74,13 +73,17 @@ export default class Container extends EventEmitter {
         console.log(`parentDir changed from "${oldParendDir}" to "${this.parentDir}"`)
         this.fetchSiblings()
       }
-      
-      if(oldCWD !== this.cwd) { // cwd changed thus update siblings
-        this.emit('cwdChanged', {
-          cwd: this.cwd
-        })
-      }
     })
+  }
+
+  changeCWD(cwd) {
+    let oldCWD = this.cwd
+    this.cwd = cwd
+    if(oldCWD !== this.cwd) { // cwd changed thus update siblings
+      this.emit('cwdChanged', {
+        cwd: this.cwd
+      })
+    }
   }
 
   /**

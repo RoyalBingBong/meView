@@ -2,6 +2,7 @@ import {remote, ipcRenderer} from 'electron'
 
 import {DirectoryTraverser} from './modules/DirectoryTraverser.js'
 
+import {supportedArchivesFormats} from '../config.json'
 
 let travis
 const curDir = document.createElement('option')
@@ -28,6 +29,14 @@ function open(path) {
 selector.ondblclick = (event) => {
   console.log(event.target.file)
   if(event.target.file) {
+
+    supportedArchivesFormats.forEach((ext) => {
+      if(event.target.file.name.endsWith(ext)) {
+        travis.cd(event.target.file.name)
+        open(travis.cwd)
+      }
+    })
+
     console.log('dbl click on: ', event.target.file)
     travis.cd(event.target.file.name)
     updateDir()
@@ -35,8 +44,7 @@ selector.ondblclick = (event) => {
     if(event.target.value === '..') {
       travis.cd('..')
       updateDir()
-    }
-    if(event.target.value === '.') {
+    } else if(event.target.value === '.') {
       updateDir('.')
     }
   }
@@ -77,7 +85,7 @@ function updateDir(dir) {
       cwdText.value = travis.cwd
     }
   }
-  travis.filterDirectory(['zip'])
+  travis.filterDirectory(supportedArchivesFormats)
     .then((files) => {
       fillSelect(files, prevPath)
     })

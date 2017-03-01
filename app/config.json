@@ -34,5 +34,8 @@
     {"name": "Mediafiles", "extensions": ["jpg", "jpeg", "png", "gif", "bmp", "webm", "mp4"]},
     {"name": "Archives", "extensions": ["zip", "cbz"]},
     {"name": "All Types", "extensions": ["*"]}
+  ],
+  "supportedArchivesFormats": [
+    "zip", "cbz"
   ]
 }
