@@ -17,22 +17,21 @@
     "start": "electron .",
     "prestart:asar": "npm run babelpackage",
     "start:asar": "electron builds/app.asar",
+    "patch": "npm version patch && cd app/ && npm version patch && cd ..",
+    "minor": "npm version minor && cd app/ && npm version minor && cd ..",
+    "major": "npm version major && cd app/ && npm version major && cd ..",
     "clean": "rimraf app/js",
-    "clean:builds": "rimraf builds/",
     "clean:dist": "rimraf dist/",
     "debug": "cross-env ELECTRON_ENV=development npm run start",
     "debug:asar": "cross-env ELECTRON_ENV=development npm run start:asar",
-    "prebabelpackage": "npm run clean",
-    "babelpackage": "npm run babel && npm run package",
-    "package": "asar pack app/ builds/app.asar",
     "prebabel*": "npm run clean",
     "babel": "babel -d app/js/ src/",
     "babel:w": "babel -w -d app/js/ src/",
+    "prebabel:prod*": "npm run clean",
     "babel:prod": "cross-env BABEL_ENV=production babel -d app/js src/",
-    "prebuild": "npm run clean && npm run clean:builds",
-    "build:win": "build -w",
-    "build:mac": "build -m",
-    "build:linux": "build -l"
+    "build:win": "npm run babel && build -w",
+    "build:mac": "npm run babel && build -m",
+    "build:linux": "npm run babel && build -l"
   },
   "keywords": [],
   "author": "David Koch <david-k@mail.de>",
@@ -46,7 +45,6 @@
     "cross-env": "^3.1.4",
     "electron": "^1.4.13",
     "electron-builder": "^14.5.2",
-    "electron-packager": "^8.4.0",
     "rimraf": "^2.6.0"
   }
 }
