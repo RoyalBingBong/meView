@@ -87,6 +87,6 @@ app.on('ready', () => {
 ipcMain.on('folderBrowser', (event, arg) => {
   if(arg) {
     console.log(arg)
-    mainWindow.webContents.send('open', arg)
+    mainWindow.webContents.send('open', {path: arg})
   }
 })
