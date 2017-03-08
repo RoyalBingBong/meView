@@ -358,6 +358,18 @@ export default class AppMenu {
     })
     settingsmenu.append(item)
 
+    item = new MenuItem({
+      label: 'Reopen last file on start',
+      type: 'checkbox',
+      checked: controller.isReopenLastFile(),
+      click(menuItem, browserWindow) {
+        if(browserWindow) {
+          controller.toggleReopenLastFile(menuItem.checked)
+        }
+      }
+    })
+    settingsmenu.append(item)
+
     if(process.platform === 'win32') {
       settingsmenu.append(new MenuItem({ type: 'separator' }))
       settingsmenu.append(this.buildWindowsMenu())

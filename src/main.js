@@ -16,9 +16,9 @@ let mainWindow = null
 app.on('window-all-closed', () => {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform != 'darwin') {
-    app.quit()
-  }
+  // if (process.platform != 'darwin') {
+  //   app.quit()
+  // }
 })
 
 app.on('ready', () => {
@@ -42,7 +42,18 @@ app.on('ready', () => {
   // -meview-open was passed and the idnex after that exists
   if(argIndex > -1 && !!process.argv[argIndex+1]) {
     mainWindow.webContents.once('did-finish-load', () => {
-      mainWindow.webContents.send('open', process.argv[argIndex + 1] ) 
+      mainWindow.webContents.send('open', {
+        path: process.argv[argIndex + 1]
+      } ) 
+    })
+  } else if(settings.getSync('reopenLastFile')) {
+    let reopen = {
+      reopen: true,
+      path: settings.getSync('lastFile.dirname'),
+      file: settings.getSync('lastFile.filename')
+    }
+    mainWindow.webContents.once('did-finish-load', () => {
+      mainWindow.webContents.send('open', reopen ) 
     })
   }
 

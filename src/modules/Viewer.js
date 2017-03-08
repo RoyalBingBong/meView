@@ -33,7 +33,9 @@ export default class Viewer {
     })
     this.filename = document.getElementById(elements.file)
     this.dropzone = document.getElementById(elements.dropzone)
-    this.dropzone.isHidden = false
+    this.isViewing = false
+
+    this.currentFile = null
 
     /**
      * MutationObserver to start video playback (if autoplay is enabled) and
@@ -77,6 +79,7 @@ export default class Viewer {
    */
   showFile(mediafile) {
     if(mediafile) {
+      this.currentFile = mediafile
       let elem = mediafile.getElement()
       this.showElement(elem)
       elem.mediafile = mediafile
@@ -207,6 +210,7 @@ export default class Viewer {
     this.container.on('firstFile', (data) => {
       console.log('onFirstFile')
       if(data) {
+        this.isViewing = true
         this.counter.updateCurrent(data.index + 1)      
         this.updateCurrentFileName(data.mediafile.filepath)
         this.showFile(data.mediafile)
@@ -261,9 +265,7 @@ export default class Viewer {
    * @todo outsoruce into a new file
    * @memberOf Viewer
    */
-  initFileDropHandler() { 
-    this.dropzone.isHidden = false
-
+  initFileDropHandler() {
     // prevent opening media directly in the window
     window.addEventListener('dragover', (e) => {
       e = e || event
@@ -285,8 +287,8 @@ export default class Viewer {
     }
 
     this.dropzone.ondragend = () => {
-      console.log('ondragend hidden? ', this.dropzone.isHidden)
-      if(!this.dropzone.isHidden) {
+      console.log('ondragend hidden? ', this.isViewing)
+      if(this.isViewing) {
         this.hideDropzone()
       } else {
         this.dropzone.className = 'message'
@@ -295,9 +297,11 @@ export default class Viewer {
     }
 
     this.dropzone.ondragleave = () => {
-      console.log('ondragleave hidden? ', this.dropzone.isHidden)
-      if(!this.dropzone.isHidden) {
+      console.log('ondragleave hidden? ', this.isViewing)
+      if(this.isViewing) {
         this.hideDropzone()
+      } else {
+        this.dropzone.className = 'message'
       }
       return false
     }
@@ -333,7 +337,6 @@ export default class Viewer {
    */
   showDropzone() {
     console.log('show')
-    this.dropzone.isHidden = false
     this.dropzone.className = 'message hover'
     this.dropzone.visibility = 'visible'
   }
@@ -345,7 +348,6 @@ export default class Viewer {
    */
   hideDropzone() {
     console.log('hide')
-    this.dropzone.isHidden = true
     this.dropzone.className = 'message hide'
     this.dropzone.visibility = 'hidden'
   }

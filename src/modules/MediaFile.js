@@ -1,5 +1,5 @@
 import * as helper from '../helper.js'
-
+import {dirname} from 'path'
 /**
  * MediaFile class to wrap an image or video into the respective HTML tag.
  * 
@@ -9,6 +9,7 @@ import * as helper from '../helper.js'
 export default class MediaFile {
   constructor(filename, filepath, mimetype, zipentry, filesize) {
     this.filename = filename
+    this.dirname = dirname(filepath)
     this.filepath = filepath
     this.mimetype = mimetype
     this.zipentry = zipentry

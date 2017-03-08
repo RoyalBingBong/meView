@@ -4,7 +4,7 @@ import {join} from 'path'
 import settings from 'electron-settings'
 
 import Viewer from './modules/Viewer.js'
-import {fileFilter, defaultSettings} from '../config.json'
+import {fileFilter, defaultSettings, supportedArchivesFormats} from '../config.json'
 import {isEnvDeveloper} from './helper.js'
 
 settings.configure({prettify: true})
@@ -14,7 +14,11 @@ console.log(settings.hasSync('video'))
 
 
 ipcRenderer.on('open', (event, arg) => {
-  openPath(arg)
+  if(arg.reopen) {
+    reopenFile(arg.path, arg.file)
+  } else {
+    openPath(arg.path)
+  }
 })
 
 const dialog = remote.dialog
@@ -24,6 +28,17 @@ const viewer = new Viewer()
 
 export function openPath(p) {
   viewer.openFile(p)
+}
+
+function reopenFile(path, file) {
+  let archive = supportedArchivesFormats.filter((el) => {
+    return path.endsWith(el)
+  })
+  if(archive.length > 0) {
+    viewer.openFile(path)
+  } else {
+    viewer.openFile(join(path, file))
+  }
 }
 
 /**
@@ -229,6 +244,19 @@ export function toggleSavePath(isSaving) {
 }
 
 /**
+ * Toggles if the last opened file should be reopened on startup.
+ * 
+ * @export
+ * @param {Boolean} isReopening 
+ */
+export function toggleReopenLastFile(isReopening) {
+  settings.setSync('reopenLastFile', isReopening)
+  if(!isReopening) {
+    settings.deleteSync('lastFile')
+  }
+}
+
+/**
  * Returns user setting for path saving
  * 
  * @export
@@ -236,6 +264,17 @@ export function toggleSavePath(isSaving) {
  */
 export function isSavingPath() {
   return !!settings.getSync('savePath')
+}
+
+
+/**
+ * Return user setting for reoping the last opened file on startup
+ * 
+ * @export
+ * @returns {Boolean} Reopening?
+ */
+export function isReopenLastFile() {
+  return !!settings.getSync('reopenLastFile')
 }
 
 /**
@@ -337,6 +376,16 @@ export function showSelectFolder(parentWindow) {
     selectFolderWindow = null
   })
 }
+
+export function beforeUnload() {
+  if(settings.getSync('reopenLastFile')) {
+    settings.setSync('lastFile', {
+      dirname: viewer.currentFile.dirname,
+      filename: viewer.currentFile.filename
+    })
+  }
+}
+
 
 
 /**
