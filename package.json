@@ -1,6 +1,5 @@
 {
   "name": "meview",
-  "version": "1.3.0",
   "description": "Image/Video viewer for typical web media formats. Also supports zip-archives.",
   "main": "app/js/main.js",
   "repository": {
@@ -17,9 +16,9 @@
     "start": "electron .",
     "prestart:asar": "npm run babelpackage",
     "start:asar": "electron builds/app.asar",
-    "patch": "cd app/ && npm version patch && cd .. && npm version patch",
-    "minor": "cd app/ && npm version minor && cd .. && npm version minor",
-    "major": "cd app/ && npm version major && cd .. && npm version major",
+    "patch": "cd app/ && npm version patch && cd ..",
+    "minor": "cd app/ && npm version minor && cd ..",
+    "major": "cd app/ && npm version major && cd ..",
     "clean": "rimraf app/js",
     "clean:dist": "rimraf dist/",
     "debug": "cross-env ELECTRON_ENV=development npm run start",
@@ -29,6 +28,9 @@
     "babel:w": "babel -w -d app/js/ src/",
     "prebabel:prod*": "npm run clean",
     "babel:prod": "cross-env BABEL_ENV=production babel -d app/js src/",
+    "prebuild:win": "npm run clean && npm run clean:dist",
+    "prebuild:mac": "npm run clean && npm run clean:dist",
+    "prebuild:linux": "npm run clean && npm run clean:dist",
     "build:win": "npm run babel && build -w",
     "build:mac": "npm run babel && build -m",
     "build:linux": "npm run babel && build -l"
