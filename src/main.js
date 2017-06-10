@@ -1,12 +1,7 @@
-'use strict'
 import {app, ipcMain, BrowserWindow} from 'electron'
 import {join} from 'path'
 import settings from 'electron-settings'
 import {isEnvDeveloper} from './helper.js'
-
-settings.configure({
-  prettify: true
-})
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -22,6 +17,9 @@ app.on('window-all-closed', () => {
 })
 
 app.on('ready', () => {
+  settings.configure({
+    prettify: true
+  })
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: settings.getSync('window.width') || 800,

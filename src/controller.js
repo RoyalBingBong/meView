@@ -9,9 +9,6 @@ import {isEnvDeveloper} from './helper.js'
 
 settings.configure({prettify: true})
 settings.defaults(defaultSettings)
-settings.applyDefaultsSync()
-console.log(settings.hasSync('video'))
-
 
 ipcRenderer.on('open', (event, arg) => {
   if(arg.reopen) {
