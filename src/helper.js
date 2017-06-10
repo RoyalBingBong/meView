@@ -31,6 +31,17 @@ function applySettings(elem, setting) {
   return elem
 }
 
+export function applyClass(element, classname) {
+  if(!element){
+    return
+  }
+  if(typeof classname === 'string') {
+    element.className = classname
+  } else {
+    element.className = classname.join(' ')
+  }
+}
+
 export function applyStyle(element) {
   // TODO: do stuff with custom style here
   // element.className = config.defaultStyle

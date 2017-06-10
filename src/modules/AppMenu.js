@@ -326,20 +326,7 @@ export default class AppMenu {
     let settingsmenu = new Menu()
     let item
 
-    let viewoptionssubmenu = new Menu()
-
-    item = new MenuItem({
-      label: 'Fit to Window',
-      type: 'radio',
-      checked: true,
-    })
-    viewoptionssubmenu.append(item)
-    
-    item = new MenuItem({
-      label: 'Display options',
-      submenu: viewoptionssubmenu
-    })
-
+    item = this.buildInterfaceSettingsMenu()
     settingsmenu.append(item)
 
 
@@ -370,6 +357,18 @@ export default class AppMenu {
     })
     settingsmenu.append(item)
 
+    item = new MenuItem({
+      label: 'Close meView with ESC',
+      type: 'checkbox',
+      checked: controller.isCloseWithESC(),
+      click(menuItem, browserWindow) {
+        if(browserWindow) {
+          controller.toggleCloseWithESC(menuItem.checked)
+        }
+      }
+    })
+    settingsmenu.append(item)
+
     if(process.platform === 'win32') {
       settingsmenu.append(new MenuItem({ type: 'separator' }))
       settingsmenu.append(this.buildWindowsMenu())
@@ -392,6 +391,76 @@ export default class AppMenu {
     return new MenuItem({
       label: 'Settings',
       submenu: settingsmenu
+    })
+  }
+
+  buildInterfaceSettingsMenu() {
+    let intmenu = new Menu()
+    let item, ahPlaybackUI, ahStatusbar, hideCounter, hidePathbar
+
+    item = new MenuItem({
+      label: 'Playback UI',
+      type: 'checkbox',
+      checked: controller.isPlaybackUIEnabled(),
+      click(menuItem, browserWindow) {
+        if(browserWindow) {
+          controller.togglePlaybackUIVisibility(menuItem.checked)
+          ahPlaybackUI.enabled = menuItem.checked
+          if(ahPlaybackUI.checked && !menuItem.checked) {
+            ahPlaybackUI.checked = false
+            controller.toggleAutohidePlaybackUI(false)
+          }
+        }
+      }
+    })
+    intmenu.append(item)
+
+    ahPlaybackUI = new MenuItem({
+      label: 'Hide Playback UI in Fullscreen',
+      type: 'checkbox',
+      enabled: controller.isPlaybackUIEnabled(),
+      checked: controller.isAutohidePlaybackUI(),
+      click(menuItem, browserWindow) {
+        if(browserWindow) {
+          controller.toggleAutohidePlaybackUI(menuItem.checked)
+        }
+      }
+    })
+    intmenu.append(ahPlaybackUI)
+
+    ahStatusbar = new MenuItem({
+      label: 'Hide Status Bar in Fullscreen',
+      type: 'checkbox',
+      enabled: controller.isStatusbarEnabled(),
+      checked: controller.isAutohideStatusbar(),
+      click(menuItem, browserWindow) {
+        if(browserWindow) {
+          controller.toggleAutohideStatusbar(menuItem.checked)
+        }
+      }
+    })
+
+    item = new MenuItem({
+      label: 'Status Bar',
+      type: 'checkbox',
+      checked: controller.isStatusbarEnabled(),
+      click(menuItem, browserWindow) {
+        if(browserWindow) {
+          controller.toggleStatusbarVisibility(menuItem.checked)
+          ahStatusbar.enabled = menuItem.checked
+          if(ahStatusbar.checked && !menuItem.checked) {
+            ahStatusbar.checked = false
+            controller.toggleAutohideStatusbar(false)
+          }
+        }
+      }
+    })
+    intmenu.append(item)
+    intmenu.append(ahStatusbar)
+
+    return new MenuItem({
+      label: 'User Interface',
+      submenu: intmenu
     })
   }
 

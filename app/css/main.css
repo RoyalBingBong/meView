@@ -15,9 +15,14 @@ html, body{
 }
 
 /* Always show video controls */
+/*video::-webkit-media-controls-panel {*/
 video::-webkit-media-controls-panel {
   display: flex !important;
-  opacity: 1 !important;
+  opacity: .5 !important;
+}
+
+video.no-ui::-webkit-media-controls-panel {
+  display: none !important;
 }
 
 
@@ -32,15 +37,18 @@ video::-webkit-media-controls-panel {
   height: 100%;  
 }
 
-.autoheight {  
+#autoheight {
   height: calc(100% - 30px);
-  width:100%;
+  width: 100%;
   overflow:hidden;
   -webkit-box-sizing:border-box;
-  -moz-box-sizing:border-box;
-  -ms-box-sizing:border-box;
   box-sizing:border-box;
 }
+
+#autoheight.notoolbar {
+  height: 100%;
+}
+
 
 div#viewer {
   display: flex;
@@ -51,6 +59,10 @@ div#statusbar {
   height: 30px;
   display: flex;
   width: 100%;
+}
+
+div#statusbar.hide {
+  display: none;
 }
 
 input#filetext {

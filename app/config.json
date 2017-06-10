@@ -6,14 +6,25 @@
       "muted": true,
       "skipInterval": 5
     },
+    "window":{
+      "statusbar": {
+        "enabled": true,
+        "autohide": true
+      },
+      "playback": {
+        "enabled": true,
+        "autohide": true
+      }
+    },
     "display": "fit-to-window",
     "savePath": false
   },
-  "elements": {
+  "ELEMENTS": {
     "view": "viewer",
     "counter": "counter",
     "file": "filetext",
     "statusbar": "statusbar",
+    "autoheight": "autoheight",
     "dropzone": "dropzone"
   },
   "PRELOADRANGE": 0,

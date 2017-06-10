@@ -42,6 +42,6 @@ ___
 3. Code from `src/` will be transpiled with babel to `app/js`. Use `npm run babel` or `npm run babel:w` to transpile your code (:w will watch for changes)
 4. Starting meView:
     * Use `npm start` or `npm run start:asar` to run the app without the DevTools.
-    * Use `npm run debug` or `npm run debug:asar` to run the app with the DevTools.
+    * Use `npm run debug` or `npm run debug:asar` to run the app in development-mode.
 
-When running meView in debug*-mode (`ELECTRON_ENV=development`), you will be able to reload the Renderer via `Ctrl+R` or via `View -> Reload`. There is a also launch.json for VSCode.
+When running meView in development-mode (`ELECTRON_ENV=development`), you will have access to the DevTools, be able to reload the Renderer via `Ctrl+R` or via `View -> Reload` and open the appdata folder to access the settings file.

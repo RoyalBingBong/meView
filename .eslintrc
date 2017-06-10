@@ -48,6 +48,7 @@
     ],
     "no-unused-vars": "warn",
     "no-var": "error",
-    "no-console": "off"
+    "no-console": "off",
+    "no-trailing-spaces": "warn"
   }
 }

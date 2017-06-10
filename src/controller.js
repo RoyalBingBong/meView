@@ -43,8 +43,8 @@ function reopenFile(path, file) {
 
 /**
  * Open the OS's default "Open File/Folder" dialog.
- * asFolder defines the 
- * 
+ * asFolder defines the
+ *
  * @param {Boolean} asFolder
  */
 export function open(asFolder) {
@@ -84,7 +84,7 @@ export function open(asFolder) {
 
 /**
  * Toggles video loop setting
- * 
+ *
  * @export
  * @param {boolean} shouldLoop
  */
@@ -95,7 +95,7 @@ export function toggleVideoLoop(shouldLoop) {
 
 /**
  * Toggles video mute setting
- * 
+ *
  * @export
  * @param {boolean} shouldMute
  */
@@ -106,7 +106,7 @@ export function toggleVideoMute(shouldMute) {
 
 /**
  * Toggles video autoplay setting
- * 
+ *
  * @export
  * @param {any} shouldAutoplay
  */
@@ -117,7 +117,7 @@ export function toggleVideoAutoplay(shouldAutoplay) {
 
 /**
  * Returns if the user's video loop setting
- * 
+ *
  * @export
  * @returns {boolean} Loop video?
  */
@@ -127,7 +127,7 @@ export function isVideoLooping() {
 
 /**
  * Returns the user setting for muting videos
- * 
+ *
  * @export
  * @returns {boolean} Video muted?
  */
@@ -137,7 +137,7 @@ export function isVideoMuted() {
 
 /**
  * Returns the user setting for video autoplay
- * 
+ *
  * @export
  * @returns {boolean} Autoplay video
  */
@@ -147,7 +147,7 @@ export function isVideoAutoplayed() {
 
 /**
  * Opens the file in the file browser
- * 
+ *
  * @todo I might want to actually check if a file is opened and not rely on
  * 'filepath' being undefiend and throwing a TypeError
  * @export
@@ -162,9 +162,9 @@ export function openAppdata() {
 
 /**
  * Open the currently opened file in the viewer set by the OS
- * 
+ *
  * @todo I might want to actually check if a file is opened and nto rely on
- * 'filepath' being undefiend and throwing a TypeError * 
+ * 'filepath' being undefiend and throwing a TypeError *
  * @export
  */
 export function openInDefaultViewer() {
@@ -173,7 +173,7 @@ export function openInDefaultViewer() {
 
 /**
  * Retrieves the path of the currently viewed file.
- * 
+ *
  * @returns {string}  Path of current file
  */
 function getCurrentFile() {
@@ -183,7 +183,7 @@ function getCurrentFile() {
 
 /**
  * Opens the 'About' window
- * 
+ *
  * @export
  */
 let aboutWindow = null
@@ -210,7 +210,7 @@ export function openAbout() {
 
 /**
  * Opens a link to repo in the browser
- * 
+ *
  * @export
  */
 export function openRepository() {
@@ -220,7 +220,7 @@ export function openRepository() {
 
 /**
  * Opens a link to the repo issues in the browser
- * 
+ *
  * @export
  */
 export function openRepositoryIssues() {
@@ -230,8 +230,8 @@ export function openRepositoryIssues() {
 
 /**
  * Toggles if the last opened folder should be saved and be used as a starting
- * point when opening another one. 
- * 
+ * point when opening another one.
+ *
  * @export
  * @param {boolean} isSaving If the path should be saved
  */
@@ -245,9 +245,9 @@ export function toggleSavePath(isSaving) {
 
 /**
  * Toggles if the last opened file should be reopened on startup.
- * 
+ *
  * @export
- * @param {Boolean} isReopening 
+ * @param {Boolean} isReopening
  */
 export function toggleReopenLastFile(isReopening) {
   settings.setSync('reopenLastFile', isReopening)
@@ -258,7 +258,7 @@ export function toggleReopenLastFile(isReopening) {
 
 /**
  * Returns user setting for path saving
- * 
+ *
  * @export
  * @returns {boolean} Path gets saved?
  */
@@ -269,7 +269,7 @@ export function isSavingPath() {
 
 /**
  * Return user setting for reoping the last opened file on startup
- * 
+ *
  * @export
  * @returns {Boolean} Reopening?
  */
@@ -281,7 +281,7 @@ export function isReopenLastFile() {
  * Install a context menu entry on Windows OS when right-clicking on
  * files, folders or the background in Windows Explorer
  * Uses code from atom.
- * 
+ *
  * @export
  * @param {any} callback
  */
@@ -318,7 +318,7 @@ export function windowsUninstallContextMenu(callback) {
 let selectFolderWindow
 /**
  * Opens a "Select Folder" windows similar to the one Irfan View has.
- * 
+ *
  * @export
  * @returns
  */
@@ -350,7 +350,7 @@ export function showSelectFolder(parentWindow) {
     resizable: false,
     show: false
   }) // frame: false
-  selectFolderWindow.setMenu(null)  
+  selectFolderWindow.setMenu(null)
   if(isEnvDeveloper()) {
      // undocked because the window has a fixed size
     selectFolderWindow.webContents.openDevTools({mode: 'undocked'})
@@ -360,7 +360,7 @@ export function showSelectFolder(parentWindow) {
   // Fall back to last path or to the user'S home folder
   if(!cwd || cwd === '.') {
     cwd = settings.getSync('savePath') && !!settings.getSync('lastSearchPath') ? settings.getSync('lastSearchPath') : remote.app.getPath('home')
-  }    
+  }
 
   let page = join('file://', __dirname, '..', 'tree.html')
   selectFolderWindow.loadURL(page)
@@ -391,7 +391,7 @@ export function beforeUnload() {
 /**
  * Helper method to close all windows (About, Folder browser, etc) when reloading
  * or closing the app
- * 
+ *
  * @export
  */
 export function closeAllWindows() {
@@ -405,7 +405,7 @@ export function closeAllWindows() {
 
 /**
  * Returns if the passed interval value is the current user setting
- * 
+ *
  * @export
  * @param {number} val Skip interval
  * @returns
@@ -416,27 +416,27 @@ export function isCurrentSkipValue(val) {
 
 /**
  * Sets the user setting for the skip interval
- * 
+ *
  * @export
  * @param {number} val Skip interval in seconds
  */
-export function setSkipValue(val) {  
+export function setSkipValue(val) {
   settings.setSync('video.skipInterval', val)
 }
 
 /**
  * Retruns the user setting for the skip interval
- * 
+ *
  * @export
  * @returns {number} Skip interval in secodns
  */
-export function getSkipValue() {  
+export function getSkipValue() {
   return settings.getSync('video.skipInterval') || defaultSettings.video.skipInterval
 }
 
 /**
  * Returns wether the windows context menu entry installed
- * 
+ *
  * @export
  * @returns {boolean} Context menu installed?
  */
@@ -448,17 +448,23 @@ export function isWinContextMenuInstalled() {
 /**
  * Resets the settings to the default values.
  * Also opens a warning dialog, thus browserWindow is needed!
- * 
+ *
  * @export
  * @param {BrowserWindow} browserWindow
  */
 export function resetToDefaultSettings(browserWindow) {
+  let message = 'Are you sure you want to reset to the default settings?'
+
+  if(process.platform === 'win32') {
+    message = 'Are you sure you want to reset to the default settings? This will also uninstall the Windows context menu entry of meView'
+  }
+
   dialog.showMessageBox(browserWindow, {
     type: 'warning',
     buttons: ['Yes', 'No'],
     defaultId: 1,
     title: 'Reset to default settings',
-    message: 'Are you sure you want to reset to the default settings? This will also uninstall the Windows context menu entry of meView'
+    message
   }, (response) => {
     if(response === 0) {
       if(settings.getSync('windowsContextMenuInstalled')) {
@@ -470,13 +476,15 @@ export function resetToDefaultSettings(browserWindow) {
       }
       settings.resetToDefaultsSync()
       viewer.appmenu.reload()
+      viewer.updateElementStyle()
+      viewer.updateStatusbarStyle()
     }
   })
 }
 
 /**
  * View next
- * 
+ *
  * @export
  */
 export function viewNext() {
@@ -485,7 +493,7 @@ export function viewNext() {
 
 /**
  * View previous
- * 
+ *
  * @export
  */
 export function viewPrevious() {
@@ -494,7 +502,7 @@ export function viewPrevious() {
 
 /**
  * View first
- * 
+ *
  * @export
  */
 export function viewFirst() {
@@ -503,7 +511,7 @@ export function viewFirst() {
 
 /**
  * View last
- * 
+ *
  * @export
  */
 export function viewLast() {
@@ -512,7 +520,7 @@ export function viewLast() {
 
 /**
  * Play/pause video
- * 
+ *
  * @export
  */
 export function videoPlayPause() {
@@ -521,7 +529,7 @@ export function videoPlayPause() {
 
 /**
  * Fast forward video (by user skip value)
- * 
+ *
  * @export
  */
 export function videoForward() {
@@ -532,7 +540,7 @@ export function videoForward() {
 
 /**
  * Rewind video (by user skip value)
- * 
+ *
  * @export
  */
 export function videoRewind() {
@@ -542,7 +550,7 @@ export function videoRewind() {
 
 /**
  * Reload the application
- * 
+ *
  * @export
  * @param {BrowserWindow} browserWindow
  */
@@ -554,7 +562,7 @@ export function appRelaod(browserWindow) {
 /**
  * Toggles the fullscreen state of the app.
  * Autohides the menu bar when in fullscreen mode
- * 
+ *
  * @export
  */
 export function appToggleFullscreen() {
@@ -562,4 +570,59 @@ export function appToggleFullscreen() {
   win.setFullScreen(!win.isFullScreen())
   win.setAutoHideMenuBar(win.isFullScreen())
   win.setMenuBarVisibility(!win.isFullScreen())
+  viewer.updateElementStyle()
+  viewer.updateStatusbarStyle()
+}
+
+export function isFullscreen() {
+  return remote.getCurrentWindow().isFullScreen()
+}
+
+export function isCloseWithESC() {
+  return !!settings.getSync('closeWithESC')
+}
+
+export function toggleCloseWithESC(close) {
+  settings.setSync('closeWithESC', close)
+}
+
+export function closeApp() {
+  beforeUnload()
+  closeAllWindows()
+  remote.getCurrentWindow().close()
+}
+
+export function isAutohidePlaybackUI() {
+  return !!settings.getSync('window.playback.autohide')
+}
+
+export function toggleAutohidePlaybackUI(state) {
+  settings.setSync('window.playback.autohide', state)
+}
+
+export function isAutohideStatusbar() {
+  return !!settings.getSync('window.statusbar.autohide')
+}
+
+export function toggleAutohideStatusbar(state) {
+  settings.setSync('window.statusbar.autohide', state)
+}
+
+export function isStatusbarEnabled() {
+  return !!settings.getSync('window.statusbar.enabled')
+}
+
+export function toggleStatusbarVisibility(state) {
+  settings.setSync('window.statusbar.enabled', state)
+  viewer.updateStatusbarStyle()
+}
+
+export function isPlaybackUIEnabled() {
+  return !!settings.getSync('window.playback.enabled')
+}
+
+export function togglePlaybackUIVisibility(state) {
+  settings.setSync('window.playback.enabled', state)
+  viewer.updateElementStyle()
+  viewer.updateStatusbarStyle()
 }

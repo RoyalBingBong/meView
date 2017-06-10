@@ -1,17 +1,27 @@
 import settings from 'electron-settings'
 
 import Container from './Container.js'
-import {appToggleFullscreen, showSelectFolder} from '../controller.js'
+import {
+  appToggleFullscreen,
+  closeApp,
+  isAutohidePlaybackUI,
+  isAutohideStatusbar,
+  isCloseWithESC,
+  isFullscreen,
+  isPlaybackUIEnabled,
+  isStatusbarEnabled,
+  showSelectFolder
+} from '../controller.js'
 import AppMenu from './AppMenu.js'
-
 import Counter from './Counter.js'
+import {applyClass} from '../helper.js'
 
-import {elements} from '../../config.json'
+import {ELEMENTS} from '../../config.json'
 
 
 /**
  * Class to manage showing of media.
- * 
+ *
  * @todo Make it a real singleton: https://derickbailey.com/2016/03/09/creating-a-true-singleton-in-node-js-with-es6-symbols/
  * @export
  * @class Viewer
@@ -24,15 +34,16 @@ export default class Viewer {
     // Custom Menu
     this.appmenu = new AppMenu()
 
-    this.view = document.getElementById(elements.view)
-    this.counter = new Counter(elements.counter)
+    this.view = document.getElementById(ELEMENTS.view)
+    this.counter = new Counter(ELEMENTS.counter)
     this.counter.setCallback((value) => {
-      console.log('changeIndex', value)
       value = value - 1
       this.container.goto(value)
     })
-    this.filename = document.getElementById(elements.file)
-    this.dropzone = document.getElementById(elements.dropzone)
+    this.statusbar = document.getElementById(ELEMENTS.statusbar)
+    this.autoheight = document.getElementById(ELEMENTS.autoheight)
+    this.filename = document.getElementById(ELEMENTS.file)
+    this.dropzone = document.getElementById(ELEMENTS.dropzone)
     this.isViewing = false
 
     this.currentFile = null
@@ -59,22 +70,20 @@ export default class Viewer {
             }
           }
         }
-        // if (mutation.target.firstChild) {
-        //   console.log(mutation.target.firstChild.mediafile)
-        // }
       })
     })
     this.mainViewObserver.observe(this.view, { attributes: true, childList: true, characterData: true })
 
     this.initViewHandler()
     this.initFileDropHandler()
+    this.updateStatusbarStyle()
   }
 
   /**
    * Shows the passed media file in the app.
-   * 
+   *
    * @param {MediaFile} mediafile MediaFile to show
-   * 
+   *
    * @memberOf Viewer
    */
   showFile(mediafile) {
@@ -88,24 +97,26 @@ export default class Viewer {
 
   /**
    * Insert a HTMLElement (image or video) into the viewer.
-   * 
+   *
    * @param {HTMLElement} elem That should be inserted into the DOM of the viewer
-   * 
+   *
    * @memberOf Viewer
    */
   showElement(elem) {
     if(this.view.hasChildNodes()) {
       this.view.removeChild(this.view.firstChild)
     }
+    this._elem = elem
+    this.updateElementStyle()
     this.view.appendChild(elem)
   }
 
   /**
    * Shows an error message in the viewer.
    * E.g. when opening a directory with no media files
-   * 
+   *
    * @param {string} message Error message
-   * 
+   *
    * @memberOf Viewer
    */
   showError(message) {
@@ -117,9 +128,9 @@ export default class Viewer {
 
   /**
    * Opens a file or folder in the viewer and hides the dropszone.
-   * 
+   *
    * @param {string} file Path of the file/folder
-   * 
+   *
    * @memberOf Viewer
    */
   openFile(file) {
@@ -134,7 +145,7 @@ export default class Viewer {
 
   /**
    * Toggles playback of the current video
-   * 
+   *
    * @memberOf Viewer
    */
   togglePlayPause() {
@@ -146,9 +157,9 @@ export default class Viewer {
 
   /**
    * Forward a video by a certain length
-   * 
+   *
    * @param {numer} len Forward interval
-   * 
+   *
    * @memberOf Viewer
    */
   forwardVideo(len) {
@@ -160,9 +171,9 @@ export default class Viewer {
 
   /**
    * Rewinds a video by a certain length
-   * 
+   *
    * @param {number} len Rewind interval
-   * 
+   *
    * @memberOf Viewer
    */
   rewindVideo(len) {
@@ -174,9 +185,9 @@ export default class Viewer {
 
   /**
    * Updates the status bar with the full path of the currently viewed file.
-   * 
+   *
    * @param {string} filename
-   * 
+   *
    * @memberOf Viewer
    */
   updateCurrentFileName(filename) {
@@ -185,13 +196,13 @@ export default class Viewer {
 
   /**
    * Updates the title of the window with the current directory name.
-   * 
+   *
    * @param {string} dirname Name of the directory
-   * 
+   *
    * @memberOf Viewer
    */
   updateCurrentDirectory(dirname) {
-    console.log('updateCurrentDirectory')
+    console.log('updateCurrentDirectory', dirname)
     let appname = require('../../package.json').productName
     if(dirname) {
       document.title = appname + ' - ' + dirname
@@ -202,7 +213,7 @@ export default class Viewer {
 
   /**
    * Initializes all the listeners for the evens fired by Container.
-   * 
+   *
    * @memberOf Viewer
    */
   initEventlisteners() {
@@ -211,7 +222,7 @@ export default class Viewer {
       console.log('onFirstFile')
       if(data) {
         this.isViewing = true
-        this.counter.updateCurrent(data.index + 1)      
+        this.counter.updateCurrent(data.index + 1)
         this.updateCurrentFileName(data.mediafile.filepath)
         this.showFile(data.mediafile)
         setTimeout(() => {
@@ -261,7 +272,7 @@ export default class Viewer {
 
   /**
    * Initializes the stuff to handle drag and drop in the app.
-   * 
+   *
    * @todo outsoruce into a new file
    * @memberOf Viewer
    */
@@ -320,7 +331,7 @@ export default class Viewer {
 
   /**
    * Fullscreen on double click stuff.
-   * 
+   *
    * @memberOf Viewer
    */
   initViewHandler() {
@@ -328,26 +339,80 @@ export default class Viewer {
       console.log('view.dblclick')
       appToggleFullscreen()
     }
+    window.addEventListener('keyup', (e) => {
+      if (e.keyCode == 27) { // ESC key
+        if(isFullscreen()) {
+          appToggleFullscreen()
+        } else {
+          console.log('esc else', isCloseWithESC())
+          if (isCloseWithESC()) {
+            closeApp()
+          }
+        }
+      }
+    })
+  }
+
+  updateElementStyle() {
+    if(!isPlaybackUIEnabled()) {
+      applyClass(this._elem, 'no-ui')
+      return
+    }
+
+    if(isFullscreen()) {
+      if(isAutohidePlaybackUI()) {
+        applyClass(this._elem, 'no-ui')
+      }
+    } else {
+      if(isPlaybackUIEnabled()) {
+        applyClass(this._elem, '')
+      }
+    }
+  }
+
+  updateStatusbarStyle() {
+    if(!isStatusbarEnabled()) {
+      this.hideStatusbar()
+      return
+    }
+
+    if(isFullscreen()) {
+      if(isAutohideStatusbar()) {
+        this.hideStatusbar()
+      }
+    } else {
+      if(isStatusbarEnabled()) {
+        this.showStatusbar()
+      }
+    }
+  }
+
+  hideStatusbar() {
+    this.statusbar.style.display = 'none'
+    this.autoheight.className = 'notoolbar'
+  }
+
+  showStatusbar() {
+    this.statusbar.style.display = 'flex'
+    this.autoheight.className = ''
   }
 
   /**
    * Shows the area to drop files/folders into.
-   * 
+   *
    * @memberOf Viewer
    */
   showDropzone() {
-    console.log('show')
     this.dropzone.className = 'message hover'
     this.dropzone.visibility = 'visible'
   }
 
   /**
    * Hides area to drop files/folders into
-   * 
+   *
    * @memberOf Viewer
    */
   hideDropzone() {
-    console.log('hide')
     this.dropzone.className = 'message hide'
     this.dropzone.visibility = 'hidden'
   }

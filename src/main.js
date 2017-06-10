@@ -34,43 +34,48 @@ app.on('ready', () => {
   mainWindow.setMenu(null)
   if(settings.getSync('window.maximized')) {
     mainWindow.maximize()
-  }    
-  // pass args to renderer, needed for when we want to open a file/folder via context menu
-  let argIndex = process.argv.findIndex((arg) => {
-    return (arg.indexOf('-meview-open') > -1)
-  })
-  // -meview-open was passed and the idnex after that exists
-  if(argIndex > -1 && !!process.argv[argIndex+1]) {
-    mainWindow.webContents.once('did-finish-load', () => {
-      mainWindow.webContents.send('open', {
-        path: process.argv[argIndex + 1]
-      } ) 
-    })
-  } else if(settings.getSync('reopenLastFile')) {
-    let reopen = {
-      reopen: true,
-      path: settings.getSync('lastFile.dirname'),
-      file: settings.getSync('lastFile.filename')
-    }
-    mainWindow.webContents.once('did-finish-load', () => {
-      mainWindow.webContents.send('open', reopen ) 
-    })
   }
 
-  console.log(process.argv)
+  // pass args to renderer, needed for when we want to open a file/folder via context menu
+  mainWindow.webContents.once('did-finish-load', () => {
+    let cleanArgs = process.argv.filter((el) => {
+      return !el.startsWith('--')
+    })
+    if(cleanArgs.length > 1) {
+      let argIdx = 1
+      if(cleanArgs[argIdx] === '.') {
+        if(cleanArgs.length === 3) {
+          argIdx = 2
+        } else {
+          return
+        }
+      }
+      mainWindow.webContents.send('open', {
+        path: cleanArgs[argIdx]
+      })
+    } else if(settings.getSync('reopenLastFile')) {
+      let reopen = {
+        reopen: true,
+        path: settings.getSync('lastFile.dirname'),
+        file: settings.getSync('lastFile.filename')
+      }
+      mainWindow.webContents.send('open', reopen)
+    }
+  })
+
   let index = join('file://', __dirname, '..', 'index.html')
-  mainWindow.loadURL(index)  
+  mainWindow.loadURL(index)
 
   // Open the DevTools when in dev env
-  if(isEnvDeveloper()) {  
+  if(isEnvDeveloper()) {
     mainWindow.webContents.openDevTools()
-  } 
+  }
 
   mainWindow.on('close', () => {
     let [width, height] = mainWindow.getSize()
     let [x, y] = mainWindow.getPosition()
     let maximized = mainWindow.isMaximized()
-    settings.setSync('window', { 
+    settings.setSync('window', {
       width,
       height,
       'position': {x, y},
@@ -79,14 +84,13 @@ app.on('ready', () => {
   })
 
   // Emitted when the window is closed.
-  mainWindow.on('closed', () => {    
+  mainWindow.on('closed', () => {
     mainWindow = null
   })
 })
 
 ipcMain.on('folderBrowser', (event, arg) => {
   if(arg) {
-    console.log(arg)
     mainWindow.webContents.send('open', {path: arg})
   }
 })

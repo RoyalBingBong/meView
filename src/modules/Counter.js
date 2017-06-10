@@ -1,18 +1,20 @@
+import {applyClass} from '../helper.js'
+
 const empty = '- of -'
 
 /**
  * Class to manage the file counter in the status bar.
- * 
+ *
  * @export
  * @class Counter
  */
 export default class Counter {
-  
+
   /**
    * Creates an instance of Counter.
-   * 
+   *
    * @param {string} elementid HTML id of the counter input element
-   * 
+   *
    * @memberOf Counter
    */
   constructor(elementid) {
@@ -21,15 +23,15 @@ export default class Counter {
     this.max = 0
     this.initHandlers()
     this.update()
-    
+
   }
 
   /**
    * Sets the callback function so the user can input numbers to jump to
    * a certain index.
-   * 
+   *
    * @param {Function} callback
-   * 
+   *
    * @memberOf Counter
    */
   setCallback(callback) {
@@ -38,7 +40,7 @@ export default class Counter {
 
   /**
    * Initialization of the focus and unfocus (blur) handlers
-   * 
+   *
    * @memberOf Counter
    */
   initHandlers() {
@@ -64,7 +66,7 @@ export default class Counter {
   /**
    * Updates the elements with the current values.
    * E.g. "4 of 20"
-   * 
+   *
    * @memberOf Counter
    */
   update() {
@@ -82,9 +84,9 @@ export default class Counter {
 
   /**
    * Update the current index
-   * 
+   *
    * @param {number} current Current index
-   * 
+   *
    * @memberOf Counter
    */
   updateCurrent(current) {
@@ -94,9 +96,9 @@ export default class Counter {
 
   /**
    * Update the current max value.
-   * 
+   *
    * @param {number} max
-   * 
+   *
    * @memberOf Counter
    */
   updateMax(max) {

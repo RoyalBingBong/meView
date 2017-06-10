@@ -2,7 +2,7 @@ import * as helper from '../helper.js'
 import {dirname} from 'path'
 /**
  * MediaFile class to wrap an image or video into the respective HTML tag.
- * 
+ *
  * @export
  * @class MediaFile
  */
@@ -19,9 +19,9 @@ export default class MediaFile {
 
   /**
    * Is the MediaFile a video?
-   * 
+   *
    * @returns {boolean} Is video
-   * 
+   *
    * @memberOf MediaFile
    */
   isVideo() {
@@ -30,9 +30,9 @@ export default class MediaFile {
 
   /**
    * Is the MediaFile an image?
-   * 
+   *
    * @returns {boolean} Is image
-   * 
+   *
    * @memberOf MediaFile
    */
   isImage() {
@@ -41,9 +41,9 @@ export default class MediaFile {
 
   /**
    * Is the MediaFile a Buffer? Happens if the file is in a zip-archive
-   * 
+   *
    * @returns {boolean} Is buffer
-   * 
+   *
    * @memberOf MediaFile
    */
   isBuffer() {
@@ -52,9 +52,9 @@ export default class MediaFile {
 
   /**
    * Returns the filename
-   * 
+   *
    * @returns {string} Filename
-   * 
+   *
    * @memberOf MediaFile
    */
   getFilename() {
@@ -63,7 +63,7 @@ export default class MediaFile {
 
   /**
    * Starts playback, if it is a video
-   * 
+   *
    * @memberOf MediaFile
    */
   play() {
@@ -74,7 +74,7 @@ export default class MediaFile {
 
   /**
    * Stops playback, if it is a video
-   * 
+   *
    * @memberOf MediaFile
    */
   stop() { // stop = pause and reset to beginning of video
@@ -86,7 +86,7 @@ export default class MediaFile {
 
   /**
    * Pauses playback, if it is a video
-   * 
+   *
    * @memberOf MediaFile
    */
   pause() {
@@ -97,9 +97,9 @@ export default class MediaFile {
 
   /**
    * Forwards playback on the video 'len' seconds
-   * 
+   *
    * @param {number} len Number of seconds to forward the video
-   * 
+   *
    * @memberOf MediaFile
    */
   forward(len) {
@@ -108,19 +108,19 @@ export default class MediaFile {
 
   /**
    * Rewinds playback on the video 'len' seconds
-   * 
+   *
    * @param {number} len Number of seconds to rewind the video
-   * 
+   *
    * @memberOf MediaFile
    */
   rewind(len) {
     this.element.currentTime -= len
   }
 
-  
+
   /**
    * Starts or pause the playback
-   * 
+   *
    * @memberOf MediaFile
    */
   togglePlayPause() {
@@ -136,13 +136,13 @@ export default class MediaFile {
   /**
    * Embeds the media into the respective HTML elements and returns it.
    * Will also apply the default style and settings to them.
-   * 
+   *
    * @returns {HTMLImageElement|HTMLVideoElement} Media element
-   * 
+   *
    * @memberOf MediaFile
    */
   getElement() {
-    if (!this.element) {      
+    if (!this.element) {
       if (this.isImage()) {
         // create img element;
         this.element = new Image()
@@ -165,9 +165,9 @@ export default class MediaFile {
   /**
    * Returns the src for a mediafile. A normal file will return the path and a buffer will
    * be base64 encoded.
-   * 
+   *
    * @returns {string} Filepath or base64 encoded media
-   * 
+   *
    * @memberOf MediaFile
    */
   getSrc() {

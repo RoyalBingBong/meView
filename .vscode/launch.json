@@ -111,6 +111,20 @@
         "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron.exe"
       },   
       "args": ["."]
+    },
+    {
+      "name": "Root (dev, no babel)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/node_modules/electron/dist/electron.exe"
+      },    
+      "args": ["."],
+      "env": {
+        "ELECTRON_ENV": "development"
+      }
     }
   ]
 }
