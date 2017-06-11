@@ -6,7 +6,7 @@
       "muted": true,
       "skipInterval": 5
     },
-    "window":{
+    "UI":{
       "statusbar": {
         "enabled": true,
         "autohide": true

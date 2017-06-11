@@ -590,36 +590,36 @@ export function closeApp() {
 }
 
 export function isAutohidePlaybackUI() {
-  return !!settings.getSync('window.playback.autohide')
+  return !!settings.getSync('UI.playback.autohide')
 }
 
 export function toggleAutohidePlaybackUI(state) {
-  settings.setSync('window.playback.autohide', state)
+  settings.setSync('UI.playback.autohide', state)
 }
 
 export function isAutohideStatusbar() {
-  return !!settings.getSync('window.statusbar.autohide')
+  return !!settings.getSync('UI.statusbar.autohide')
 }
 
 export function toggleAutohideStatusbar(state) {
-  settings.setSync('window.statusbar.autohide', state)
+  settings.setSync('UI.statusbar.autohide', state)
 }
 
 export function isStatusbarEnabled() {
-  return !!settings.getSync('window.statusbar.enabled')
+  return !!settings.getSync('UI.statusbar.enabled')
 }
 
 export function toggleStatusbarVisibility(state) {
-  settings.setSync('window.statusbar.enabled', state)
+  settings.setSync('UI.statusbar.enabled', state)
   viewer.updateStatusbarStyle()
 }
 
 export function isPlaybackUIEnabled() {
-  return !!settings.getSync('window.playback.enabled')
+  return !!settings.getSync('UI.playback.enabled')
 }
 
 export function togglePlaybackUIVisibility(state) {
-  settings.setSync('window.playback.enabled', state)
+  settings.setSync('UI.playback.enabled', state)
   viewer.updateElementStyle()
   viewer.updateStatusbarStyle()
 }
