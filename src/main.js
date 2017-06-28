@@ -1,5 +1,5 @@
 import {app, ipcMain, BrowserWindow} from 'electron'
-import {join} from 'path'
+import {join, isAbsolute} from 'path'
 import settings from 'electron-settings'
 import {isEnvDeveloper} from './helper.js'
 import {defaultSettings} from '../config.json'
@@ -50,8 +50,16 @@ app.on('ready', () => {
           return
         }
       }
+      console.log()
+      let fileToOpen
+      if(isAbsolute(cleanArgs[argIdx])) {
+        fileToOpen = cleanArgs[argIdx]
+      } else {
+        fileToOpen = join(process.cwd(), cleanArgs[argIdx])
+      }
+
       mainWindow.webContents.send('open', {
-        path: cleanArgs[argIdx]
+        path: fileToOpen
       })
     } else if(settings.getSync('reopenLastFile')) {
       let reopen = {

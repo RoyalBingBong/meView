@@ -6,3 +6,4 @@ dist/
 app/js
 *.log
 *.asar
+testfiles/
