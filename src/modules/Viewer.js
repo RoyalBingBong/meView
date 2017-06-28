@@ -2,7 +2,7 @@ import settings from 'electron-settings'
 
 import Container from './Container.js'
 import {
-  appToggleFullscreen,
+  toggleFullscreen,
   closeApp,
   isAutohidePlaybackUI,
   isAutohideStatusbar,
@@ -289,7 +289,7 @@ export default class Viewer {
     }, false)
 
     this.dropzone.ondblclick = () => {
-      appToggleFullscreen()
+      toggleFullscreen()
     }
 
     this.dropzone.ondragover = () => {
@@ -337,12 +337,12 @@ export default class Viewer {
   initViewHandler() {
     this.view.ondblclick = () => {
       console.log('view.dblclick')
-      appToggleFullscreen()
+      toggleFullscreen()
     }
     window.addEventListener('keyup', (e) => {
       if (e.keyCode == 27) { // ESC key
         if(isFullscreen()) {
-          appToggleFullscreen()
+          toggleFullscreen()
         } else {
           console.log('esc else', isCloseWithESC())
           if (isCloseWithESC()) {

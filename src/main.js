@@ -1,20 +1,38 @@
 import {app, ipcMain, BrowserWindow} from 'electron'
 import {join, isAbsolute} from 'path'
+
+import commander from 'commander'
 import settings from 'electron-settings'
+
+import {version} from '../package.json'
+
 import {isEnvDeveloper} from './helper.js'
 import {defaultSettings} from '../config.json'
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
+commander
+  .version(version)
+  .usage('<file or folder ...> [options] ')
+  .option('-f, --fullscreen', 'open meView in fullscreen mode')
+  .option('-s, --slideshow [timer]', 'start slideshow with **timer** seconds between each image (defaults to 7)', parseInt)
+
+commander.on('--help', () => {
+  app.quit()
+})
+
+commander.parse(process.argv)
+
+
+console.log('=====================')
+console.log('fullscreen: %j', commander.fullscreen)
+console.log('slideshow: %j', commander.slideshow)
+console.log('args: %j', commander.args)
+
+
+
 let mainWindow = null
 
-// Quit when all windows are closed.
 app.on('window-all-closed', () => {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  // if (process.platform != 'darwin') {
   app.quit()
-  // }
 })
 
 app.on('ready', () => {
@@ -28,7 +46,7 @@ app.on('ready', () => {
     height: settings.getSync('window.height') || 600,
     x: settings.getSync('window.position.x') || undefined,
     y: settings.getSync('window.position.y') || undefined,
-    icon: join(__dirname, '..', 'assets/icon.png')
+    icon: join(__dirname, '..', 'assets/icon.png'),
   })
   // otherwise app will initiate with default menu, and then changes to the custom one
   mainWindow.setMenu(null)
@@ -38,26 +56,16 @@ app.on('ready', () => {
 
   // pass args to renderer, needed for when we want to open a file/folder via context menu
   mainWindow.webContents.once('did-finish-load', () => {
-    let cleanArgs = process.argv.filter((el) => {
-      return !el.startsWith('--')
-    })
-    if(cleanArgs.length > 1) {
-      let argIdx = 1
-      if(cleanArgs[argIdx] === '.') {
-        if(cleanArgs.length === 3) {
-          argIdx = 2
-        } else {
-          return
-        }
-      }
-      console.log()
-      let fileToOpen
-      if(isAbsolute(cleanArgs[argIdx])) {
-        fileToOpen = cleanArgs[argIdx]
+    let fileToOpen
+    if(commander.args.length === 1) {
+      if(isAbsolute(commander.args[0])) {
+        fileToOpen = commander.args[0]
       } else {
-        fileToOpen = join(process.cwd(), cleanArgs[argIdx])
+        fileToOpen = join(process.cwd(), commander.args[0])
       }
+      if(commander.slideshow) {
 
+      }
       mainWindow.webContents.send('open', {
         path: fileToOpen
       })
@@ -69,6 +77,11 @@ app.on('ready', () => {
       }
       mainWindow.webContents.send('open', reopen)
     }
+
+    if(commander.fullscreen) {
+      mainWindow.webContents.send('fullscreen', commander.fullscreen)
+    }
+
   })
 
   let index = join('file://', __dirname, '..', 'index.html')

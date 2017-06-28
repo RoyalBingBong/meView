@@ -18,6 +18,11 @@ ipcRenderer.on('open', (event, arg) => {
   }
 })
 
+ipcRenderer.on('fullscreen', (event, arg) => {
+  toggleFullscreen(arg)
+})
+
+
 const dialog = remote.dialog
 const BrowserWindow = remote.BrowserWindow
 
@@ -557,19 +562,23 @@ export function appRelaod(browserWindow) {
 
 
 /**
- * Toggles the fullscreen state of the app.
- * Autohides the menu bar when in fullscreen mode
- *
+ * Toggles the fullscreen state of the window
+ * 
  * @export
+ * @param {Boolean} [state] 
  */
-export function appToggleFullscreen() {
+export function toggleFullscreen(state) {
   let win = remote.getCurrentWindow()
-  win.setFullScreen(!win.isFullScreen())
-  win.setAutoHideMenuBar(win.isFullScreen())
-  win.setMenuBarVisibility(!win.isFullScreen())
+  if(state === undefined) {
+    state = !win.isFullScreen()
+  }
+  win.setFullScreen(state)
+  win.setAutoHideMenuBar(state)
+  win.setMenuBarVisibility(!state)
   viewer.updateElementStyle()
   viewer.updateStatusbarStyle()
 }
+
 
 export function isFullscreen() {
   return remote.getCurrentWindow().isFullScreen()

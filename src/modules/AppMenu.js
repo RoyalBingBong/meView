@@ -265,7 +265,7 @@ export default class AppMenu {
       label: 'Toggle Fullscreen',
       accelerator: 'F11',
       click() {  
-        controller.appToggleFullscreen()
+        controller.toggleFullscreen()
       }
     })
     windowmenu.append(item)
