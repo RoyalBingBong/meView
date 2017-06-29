@@ -17,7 +17,8 @@
       }
     },
     "display": "fit-to-window",
-    "savePath": false
+    "savePath": false,
+    "closeWithESC": true
   },
   "ELEMENTS": {
     "view": "viewer",
@@ -48,5 +49,8 @@
   ],
   "supportedArchivesFormats": [
     "zip", "cbz"
+  ],
+  "supportedMediaTypes": [
+    "jpg", "jpeg", "png", "gif", "bmp", "webp", "tiff", "svg", "ico", "webm", "mp4", "mov"
   ]
 }

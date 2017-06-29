@@ -6,4 +6,4 @@
 [![Winrar](app/assets/Folder-48.png)](https://icons8.com/web-app/12160/folder)
 [![Winrar](app/assets/Open%20Folder-48.png)](https://icons8.com/web-app/12775/open-folder)
 
-* Atom team for the windows context menu entry.
+* Atom.io team for Electron and their implementation of the windows context menu entry

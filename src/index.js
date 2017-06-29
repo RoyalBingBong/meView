@@ -1,5 +1,5 @@
 import {remote} from 'electron'
-import {closeAllWindows, beforeUnload} from './controller.js'
+import {closeAllWindows, beforeUnload} from './controller'
 
 const viewerWindow = remote.getCurrentWindow()
 
@@ -7,7 +7,6 @@ const viewerWindow = remote.getCurrentWindow()
 // e.g. other windows
 window.onbeforeunload = (e) => {
   beforeUnload()
-  closeAllWindows()
   // empty argv on refresh and close, just because
   viewerWindow.open = ''
 }

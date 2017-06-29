@@ -1,13 +1,18 @@
-import * as helper from '../helper.js'
+import {EventEmitter} from 'events'
 import {dirname} from 'path'
+
+
+import * as helper from '../helper.js'
+
 /**
  * MediaFile class to wrap an image or video into the respective HTML tag.
  *
  * @export
  * @class MediaFile
  */
-export default class MediaFile {
+export default class MediaFile extends EventEmitter {
   constructor(filename, filepath, mimetype, zipentry, filesize) {
+    super()
     this.filename = filename
     this.dirname = dirname(filepath)
     this.filepath = filepath
@@ -150,6 +155,9 @@ export default class MediaFile {
       } else if (this.isVideo()) {
         this.element = document.createElement('video')
         helper.applyVideoSettings(this.element)
+        this.element.ended = () => {
+          this.emit('ended')
+        }
       } else {
         return helper.errorElement(this)
       }

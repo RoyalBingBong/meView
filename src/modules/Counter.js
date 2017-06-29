@@ -1,4 +1,4 @@
-import {applyClass} from '../helper.js'
+import {EventEmitter} from 'events'
 
 const empty = '- of -'
 
@@ -8,7 +8,7 @@ const empty = '- of -'
  * @export
  * @class Counter
  */
-export default class Counter {
+export default class Counter extends EventEmitter{
 
   /**
    * Creates an instance of Counter.
@@ -18,24 +18,12 @@ export default class Counter {
    * @memberOf Counter
    */
   constructor(elementid) {
+    super()
     this.counter = document.getElementById(elementid)
     this.current = 0
     this.max = 0
     this.initHandlers()
     this.update()
-
-  }
-
-  /**
-   * Sets the callback function so the user can input numbers to jump to
-   * a certain index.
-   *
-   * @param {Function} callback
-   *
-   * @memberOf Counter
-   */
-  setCallback(callback) {
-    this.changeIndex = callback
   }
 
   /**
@@ -56,7 +44,7 @@ export default class Counter {
 
         if(parseInt(this.counter.value)) {
           this.current = parseInt(this.counter.value)
-          this.changeIndex(this.current)
+          this.emit('indexchanged', this.current - 1)
         }
         this.counter.blur()
       }

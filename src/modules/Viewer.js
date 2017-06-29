@@ -1,28 +1,24 @@
 import settings from 'electron-settings'
 
+import * as controller from '../controller'
+
+import Settings from '../controller/Settings.js'
+import Window from '../controller/Window.js'
+
 import Container from './Container.js'
-import {
-  toggleFullscreen,
-  closeApp,
-  isAutohidePlaybackUI,
-  isAutohideStatusbar,
-  isCloseWithESC,
-  isFullscreen,
-  isPlaybackUIEnabled,
-  isStatusbarEnabled,
-  showSelectFolder
-} from '../controller.js'
 import AppMenu from './AppMenu.js'
-import Counter from './Counter.js'
-import {applyClass} from '../helper.js'
+import Dropzone from './Dropzone.js'
+import Statusbar from './Statusbar.js'
+
 
 import {ELEMENTS} from '../../config.json'
+import {applyClass} from '../helper.js'
 
 
 /**
  * Class to manage showing of media.
  *
- * @todo Make it a real singleton: https://derickbailey.com/2016/03/09/creating-a-true-singleton-in-node-js-with-es6-symbols/
+ * @todo Make it a real singleton
  * @export
  * @class Viewer
  */
@@ -35,15 +31,14 @@ export default class Viewer {
     this.appmenu = new AppMenu()
 
     this.view = document.getElementById(ELEMENTS.view)
-    this.counter = new Counter(ELEMENTS.counter)
-    this.counter.setCallback((value) => {
-      value = value - 1
-      this.container.goto(value)
+    this.dropzone = new Dropzone(ELEMENTS.dropzone)
+    this.statusbar = new Statusbar(ELEMENTS.statusbar, ELEMENTS.counter, ELEMENTS.filetext)
+    this.counter = this.statusbar.counter
+    this.counter.on('indexchanged', (index) => {
+      this.container.goto(index)
     })
-    this.statusbar = document.getElementById(ELEMENTS.statusbar)
     this.autoheight = document.getElementById(ELEMENTS.autoheight)
     this.filename = document.getElementById(ELEMENTS.file)
-    this.dropzone = document.getElementById(ELEMENTS.dropzone)
     this.isViewing = false
 
     this.currentFile = null
@@ -61,6 +56,9 @@ export default class Viewer {
               let mf = mutation.addedNodes[0].mediafile
               if(mf.isVideo() && settings.getSync('video.autoplay')) {
                 mf.play()
+                mf.on('ended', {
+
+                })
               }
             }
           }
@@ -139,7 +137,7 @@ export default class Viewer {
       if(settings.getSync('savePath')) {
         settings.setSync('lastSearchPath', file)
       }
-      this.hideDropzone()
+      this.dropzone.hide()
     }
   }
 
@@ -236,9 +234,7 @@ export default class Viewer {
       if (data) {
         console.log((data.isEnd ? 'high end' : 'low end'))
       }
-      showSelectFolder(this.container.cwd, (newcwd) => {
-        this.openFile(newcwd)
-      })
+      Window.showFolderSelector()
     })
     this.container.on('fileAdded', (data) => {
       console.log('onFileAdded')
@@ -277,56 +273,17 @@ export default class Viewer {
    * @memberOf Viewer
    */
   initFileDropHandler() {
-    // prevent opening media directly in the window
-    window.addEventListener('dragover', (e) => {
-      e = e || event
-      e.preventDefault()
-    }, false)
-
-    window.addEventListener('drop', (e) => {
-      e = e || event
-      e.preventDefault()
-    }, false)
-
-    this.dropzone.ondblclick = () => {
-      toggleFullscreen()
-    }
-
-    this.dropzone.ondragover = () => {
-      this.showDropzone()
-      return false
-    }
-
-    this.dropzone.ondragend = () => {
-      console.log('ondragend hidden? ', this.isViewing)
+    this.dropzone.on('cancel', () => {
       if(this.isViewing) {
-        this.hideDropzone()
+        this.dropzone.hide()
       } else {
-        this.dropzone.className = 'message'
+        this.dropzone.show()
       }
-      return false
-    }
+    })
 
-    this.dropzone.ondragleave = () => {
-      console.log('ondragleave hidden? ', this.isViewing)
-      if(this.isViewing) {
-        this.hideDropzone()
-      } else {
-        this.dropzone.className = 'message'
-      }
-      return false
-    }
-
-    this.dropzone.ondrop = (e) => {
-      this.hideDropzone()
-      e.preventDefault()
-
-      let file = e.dataTransfer.files[0]
+    this.dropzone.on('drop', (file) => {
       this.container.open(file.path)
-      console.log(file)
-
-      return false
-    }
+    })
   }
 
   /**
@@ -335,18 +292,16 @@ export default class Viewer {
    * @memberOf Viewer
    */
   initViewHandler() {
-    this.view.ondblclick = () => {
-      console.log('view.dblclick')
-      toggleFullscreen()
+    document.body.ondblclick = () => {
+      Window.fullscreen = true
     }
     window.addEventListener('keyup', (e) => {
       if (e.keyCode == 27) { // ESC key
-        if(isFullscreen()) {
-          toggleFullscreen()
+        if(Window.fullscreen) {
+          Window.fullscreen = false
         } else {
-          console.log('esc else', isCloseWithESC())
-          if (isCloseWithESC()) {
-            closeApp()
+          if (Settings.closeWithESC) {
+            controller.closeApp()
           }
         }
       }
@@ -354,66 +309,39 @@ export default class Viewer {
   }
 
   updateElementStyle() {
-    if(!isPlaybackUIEnabled()) {
+    if(!Settings.playbackUIEnabled) {
       applyClass(this._elem, 'no-ui')
       return
     }
 
-    if(isFullscreen()) {
-      if(isAutohidePlaybackUI()) {
+    if(Window.fullscreen) {
+      if(Settings.playbackUIAutohide) {
         applyClass(this._elem, 'no-ui')
       }
     } else {
-      if(isPlaybackUIEnabled()) {
+      if(Settings.playbackUIEnabled) {
         applyClass(this._elem, '')
       }
     }
   }
 
   updateStatusbarStyle() {
-    if(!isStatusbarEnabled()) {
-      this.hideStatusbar()
+    if(!Settings.statusbarEnabled) {
+      this.statusbar.hide()
+      this.autoheight.className = 'notoolbar'
       return
     }
 
-    if(isFullscreen()) {
-      if(isAutohideStatusbar()) {
-        this.hideStatusbar()
+    if(Window.fullscreen) {
+      if(Settings.statusbarAutohide) {
+        this.statusbar.hide()
+        this.autoheight.className = 'notoolbar'
       }
     } else {
-      if(isStatusbarEnabled()) {
-        this.showStatusbar()
+      if(Settings.statusbarEnabled) {
+        this.statusbar.show()
+        this.autoheight.className = ''
       }
     }
-  }
-
-  hideStatusbar() {
-    this.statusbar.style.display = 'none'
-    this.autoheight.className = 'notoolbar'
-  }
-
-  showStatusbar() {
-    this.statusbar.style.display = 'flex'
-    this.autoheight.className = ''
-  }
-
-  /**
-   * Shows the area to drop files/folders into.
-   *
-   * @memberOf Viewer
-   */
-  showDropzone() {
-    this.dropzone.className = 'message hover'
-    this.dropzone.visibility = 'visible'
-  }
-
-  /**
-   * Hides area to drop files/folders into
-   *
-   * @memberOf Viewer
-   */
-  hideDropzone() {
-    this.dropzone.className = 'message hide'
-    this.dropzone.visibility = 'hidden'
   }
 }

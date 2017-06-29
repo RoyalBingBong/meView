@@ -1,7 +1,10 @@
 import {remote} from 'electron'
 const {Menu, MenuItem} = remote
 
-import * as controller from '../controller.js'
+import Settings from '../controller/Settings.js'
+import Viewer from '../controller/Viewer.js'
+import Window from '../controller/Window.js'
+import * as win32 from '../controller/Win32.js'
 import {skipIntervalValues} from '../../config.json'
 import {isEnvDeveloper} from '../helper.js'
 
@@ -41,7 +44,7 @@ export default class AppMenu {
       label: 'Open File',
       accelerator: 'CommandOrControl+Shift+O',
       click() {
-        controller.open()
+        Window.open()
       }
     })
     filemenu.append(item)
@@ -51,7 +54,7 @@ export default class AppMenu {
       label: 'Open Folder',
       accelerator: 'CommandOrControl+O',
       click() {
-        controller.open(true)
+        Window.open(true)
       }
     })
     filemenu.append(item)
@@ -61,9 +64,8 @@ export default class AppMenu {
     // Open in File Browser
     item = new MenuItem({
       label: 'Show in File Browser',
-      // accelerator: "CommandOrControl+Shift+O",
       click() {
-        controller.showInFileBrowser()
+        Window.showInFileBrowser()
       }
     })
     filemenu.append(item)
@@ -71,29 +73,13 @@ export default class AppMenu {
     // Open in default viweer
     item = new MenuItem({
       label: 'Show in Default Viewer',
-      // accelerator: "CommandOrControl+O",
       click() {
-        controller.openInDefaultViewer()
+        Window.openInDefaultViewer()
       }
     })
     filemenu.append(item)
 
     filemenu.append(new MenuItem({type: 'separator'}))
-
-    // In case I want the settings dedicated window
-    // Settings
-
-    // item = this.buildSettingsMenu()
-    // item = new MenuItem({
-    //   label: "Settings",
-    //   // accelerator: "CommandOrControl+Shift+O",
-    //   click() {
-    //     controller.openSettings();
-    //   }
-    // })
-    // filemenu.append(item)
-
-    // filemenu.append(new MenuItem({type: 'separator'}))
 
     // Close
     item = new MenuItem({
@@ -118,7 +104,7 @@ export default class AppMenu {
       label: 'Select Folder',
       accelerator: 'Up',
       click() {
-        controller.showSelectFolder()        
+        Window.showSelectFolder(Viewer.currentFile)        
       }
     })
     viewmenu.append(item)
@@ -130,7 +116,7 @@ export default class AppMenu {
       label: 'Next',
       accelerator: 'Right',
       click() {
-        controller.viewNext()
+        Viewer.viewNext()
       }
     })
     viewmenu.append(item)
@@ -140,7 +126,7 @@ export default class AppMenu {
       label: 'Previous',
       accelerator: 'Left',
       click() {
-        controller.viewPrevious()
+        Viewer.viewPrevious()
       }
     })
     viewmenu.append(item)
@@ -150,7 +136,7 @@ export default class AppMenu {
       label: 'First',
       accelerator: 'Home',
       click() {
-        controller.viewFirst()
+        Viewer.viewFirst()
       }
     })
     viewmenu.append(item)
@@ -160,7 +146,7 @@ export default class AppMenu {
       label: 'Last',
       accelerator: 'End',
       click() {
-        controller.viewLast()
+        Viewer.viewLast()
       }
     })
     viewmenu.append(item)
@@ -176,7 +162,7 @@ export default class AppMenu {
       label: 'Play/Pause',
       accelerator: 'Space',
       click() {
-        controller.videoPlayPause()
+        Viewer.videoPlayPause()
       }
     })
     viewmenu.append(item)
@@ -186,7 +172,7 @@ export default class AppMenu {
       label: 'Forward',
       accelerator: 'Shift+Right',
       click() {
-        controller.videoForward()
+        Viewer.videoForward()
       }
     })
     viewmenu.append(item)
@@ -196,7 +182,7 @@ export default class AppMenu {
       label: 'Rewind',
       accelerator: 'Shift+Left',
       click() {
-        controller.videoRewind()
+        Viewer.videoRewind()
       }
     })
     viewmenu.append(item)
@@ -211,7 +197,7 @@ export default class AppMenu {
         accelerator: 'CommandOrControl+R',
         click(menuItem, browserWindow) {        
           if (browserWindow) {
-            controller.appRelaod(browserWindow)
+            Window.reload()
           }
         }
       })
@@ -221,7 +207,7 @@ export default class AppMenu {
         label: 'Open Appdata Folder',
         click(menuItem, browserWindow) {        
           if (browserWindow) {
-            controller.openAppdata(browserWindow)
+            Window.openAppdata()
           }
         }
       })
@@ -264,8 +250,8 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Toggle Fullscreen',
       accelerator: 'F11',
-      click() {  
-        controller.toggleFullscreen()
+      click() {
+        Window.fullscreen = !Window.fullscreen
       }
     })
     windowmenu.append(item)
@@ -292,7 +278,7 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'meView on github',
       click() {
-        controller.openRepository()
+        Window.openRepository()
       }
     })
     aboutmenu.append(item)
@@ -300,7 +286,7 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Report a Bug',
       click() {
-        controller.openRepositoryIssues()
+        Window.openRepositoryIssues()
       }
     })
     aboutmenu.append(item)
@@ -310,7 +296,7 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'meView',
       click() {
-        controller.openAbout()
+        Window.openAbout()
       }
     })
     aboutmenu.append(item)
@@ -336,10 +322,10 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Save last Search Path',
       type: 'checkbox',
-      checked: controller.isSavingPath(),
+      checked: Settings.savePath,
       click(menuItem, browserWindow) {
         if(browserWindow) {
-          controller.toggleSavePath(menuItem.checked)
+          Settings.savePath = menuItem.checked
         }
       }
     })
@@ -348,10 +334,10 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Reopen last file on start',
       type: 'checkbox',
-      checked: controller.isReopenLastFile(),
+      checked: Settings.reopenLastFile,
       click(menuItem, browserWindow) {
         if(browserWindow) {
-          controller.toggleReopenLastFile(menuItem.checked)
+          Settings.reopenLastFile = menuItem.checked
         }
       }
     })
@@ -360,10 +346,10 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Close meView with ESC',
       type: 'checkbox',
-      checked: controller.isCloseWithESC(),
+      checked: Settings.closeWithESC,
       click(menuItem, browserWindow) {
         if(browserWindow) {
-          controller.toggleCloseWithESC(menuItem.checked)
+          Settings.closeWithESC = menuItem.checked
         }
       }
     })
@@ -378,14 +364,13 @@ export default class AppMenu {
 
     item = new MenuItem({
       label: 'Reset to defaults',
-      checked: controller.isSavingPath(),
       click(menuItem, browserWindow) {
         if(browserWindow) {
-          controller.resetToDefaultSettings(browserWindow)
+          Settings.resetToDefault(browserWindow)
         }
       }
     })
-    settingsmenu.append(item) 
+    settingsmenu.append(item)
 
 
     return new MenuItem({
@@ -401,14 +386,14 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Playback UI',
       type: 'checkbox',
-      checked: controller.isPlaybackUIEnabled(),
+      checked: Settings.playbackUIEnabled,
       click(menuItem, browserWindow) {
         if(browserWindow) {
-          controller.togglePlaybackUIVisibility(menuItem.checked)
+          Settings.playbackUIEnabled = menuItem.checked
           ahPlaybackUI.enabled = menuItem.checked
           if(ahPlaybackUI.checked && !menuItem.checked) {
             ahPlaybackUI.checked = false
-            controller.toggleAutohidePlaybackUI(false)
+            Settings.playbackUIAutohide = false
           }
         }
       }
@@ -418,11 +403,11 @@ export default class AppMenu {
     ahPlaybackUI = new MenuItem({
       label: 'Hide Playback UI in Fullscreen',
       type: 'checkbox',
-      enabled: controller.isPlaybackUIEnabled(),
-      checked: controller.isAutohidePlaybackUI(),
+      enabled: Settings.playbackUIEnabled,
+      checked: Settings.playbackUIAutohide,
       click(menuItem, browserWindow) {
         if(browserWindow) {
-          controller.toggleAutohidePlaybackUI(menuItem.checked)
+          Settings.playbackUIAutohide = menuItem.checked
         }
       }
     })
@@ -431,11 +416,11 @@ export default class AppMenu {
     ahStatusbar = new MenuItem({
       label: 'Hide Status Bar in Fullscreen',
       type: 'checkbox',
-      enabled: controller.isStatusbarEnabled(),
-      checked: controller.isAutohideStatusbar(),
+      enabled: Settings.statusbarEnabled,
+      checked: Settings.statusbarAutohide,
       click(menuItem, browserWindow) {
         if(browserWindow) {
-          controller.toggleAutohideStatusbar(menuItem.checked)
+          Settings.statusbarAutohide = menuItem.checked
         }
       }
     })
@@ -443,14 +428,14 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Status Bar',
       type: 'checkbox',
-      checked: controller.isStatusbarEnabled(),
+      checked: Settings.statusbarEnabled,
       click(menuItem, browserWindow) {
         if(browserWindow) {
-          controller.toggleStatusbarVisibility(menuItem.checked)
+          Settings.statusbarEnabled = menuItem.checked
           ahStatusbar.enabled = menuItem.checked
           if(ahStatusbar.checked && !menuItem.checked) {
             ahStatusbar.checked = false
-            controller.toggleAutohideStatusbar(false)
+            Settings.statusbarAutohide = false
           }
         }
       }
@@ -474,10 +459,10 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Loop',
       type: 'checkbox',
-      checked: controller.isVideoLooping(),
+      checked: Settings.videoLoop,
       click(menuItem, browserWindow) {
         if(browserWindow) {
-          controller.toggleVideoLoop(menuItem.checked)
+          Settings.videoLoop = menuItem.checked
         }
       }
     })
@@ -486,10 +471,10 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Mute',
       type: 'checkbox',
-      checked: controller.isVideoMuted(),
+      checked: Settings.videoMute,
       click(menuItem, browserWindow) {
         if(browserWindow) {
-          controller.toggleVideoMute(menuItem.checked)
+          Settings.videoMute = menuItem.checked
         }
       }
     })
@@ -498,10 +483,10 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Autoplay',
       type: 'checkbox',
-      checked: controller.isVideoAutoplayed(),
+      checked: Settings.videoAutoplay,
       click(menuItem, browserWindow) {
         if(browserWindow) {
-          controller.toggleVideoAutoplay(menuItem.checked)
+          Settings.videoAutoplay = menuItem.checked
         }
       }
     })
@@ -521,10 +506,10 @@ export default class AppMenu {
       item = new MenuItem({
         label: key,
         type: 'radio',
-        checked: controller.isCurrentSkipValue(skipIntervalValues[key]),
+        checked: Settings.isCurrentSkipInterval(skipIntervalValues[key]),
         click(menuItem, browserWindow) {
           if(browserWindow) {
-            controller.setSkipValue(skipIntervalValues[key])
+            Settings.videoSkipInterval = skipIntervalValues[key]
           }
         }
       })
@@ -543,17 +528,17 @@ export default class AppMenu {
     item = new MenuItem({
       label: 'Add to context menu in Explorer',
       type: 'checkbox',
-      checked: controller.isWinContextMenuInstalled(),
+      checked: Settings.windowsContextMenuInstalled,
       click(menuItem, browserWindow) {
         if(browserWindow) {
           if(menuItem.checked) {
-            controller.windowsInstallContextMenu((err) => {
+            win32.windowsInstallContextMenu((err) => {
               if(err) {
                 menuItem.checked = false
               }
             })
           } else {
-            controller.windowsUninstallContextMenu((err) => {
+            win32.windowsUninstallContextMenu((err) => {
               if(err) {
                 menuItem.checked = true
               }
