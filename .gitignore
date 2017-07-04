@@ -7,3 +7,4 @@ app/js
 *.log
 *.asar
 testfiles/
+npm-debug.*

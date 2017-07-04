@@ -1,5 +1,5 @@
 html, body{
-  margin: 0px;
+  margin: 1px;
   padding: 0px;
   background-color: #F5F5F5;
   cursor:default;
@@ -10,29 +10,6 @@ html, body{
     display: none;
 }*/
 
-.wrapper {
-  margin: 0;
-  padding: 0;
-  /*border: 1px solid blue;*/
-  width: 100%;
-  height: 100vh;
-  /*height: 100%;*/
-}
-
-.lefty {
-  vertical-align: top;
-  display: inline-block;
-  /*border: 1px solid red;*/
-  width: auto;
-  /*height: 100%;*/
-}
-
-.righty {
-  vertical-align: top;
-  display: inline-block;
-  width: 100px;
-  /*border: 1px solid green;*/
-}
 
 select {
   color: #000;
@@ -40,41 +17,41 @@ select {
   text-shadow: 0 0 0 #000;
 }
 
-input {
+#cwd {
   font-size: 14pt;
   margin-bottom: 2px;
-  width: 99%;
   text-overflow: ellipsis;
   direction: rtl;
   text-align: left;
   -webkit-user-select: none;
   user-select: none;  
+  height: 1.5em;
 }
+
 
 #folderselect {
   overflow:scroll;
   overflow-x: hidden;
   padding: 5px;
-  width: 325px;
-  /*height: 100%;*/
+  height: 100%;
   font-size: 12pt;
 }
 
 #folderselect:focus {
-  outline: none;
+  border-color: #ccc;
 }
 
-#controls {
+/*#controls {
   display:inline-block;
   vertical-align: top;
   padding-top: 20px;
-}
+}*/
 
-#controls button {
+/*#controls button {
   padding: 5px;
   margin: 2px;
   width: 86px;
-}
+}*/
 
 option {
   background-size: 20px 20px;

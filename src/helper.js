@@ -1,4 +1,4 @@
-import settings from 'electron-settings'
+import UserSettings from './modules/UserSettings.js'
 import {supportedMIMETypes} from '../config.json'
 import mime from 'mime'
 
@@ -11,7 +11,7 @@ export function errorElement(obj) {
 }
 
 export function applyVideoSettings(videoelement) {
-  let videosettings = settings.getSync('video')
+  let videosettings = UserSettings.video
   console.log('videosettings ', videosettings)
   videoelement = applySettings(videoelement, videosettings)
   // disable autoplay so we can preload files that might have auto

@@ -1,26 +1,37 @@
 import {EventEmitter} from 'events'
-import {remote} from 'electron'
-
+import {dialog, remote} from 'electron'
 
 import settings from 'electron-settings'
 
+import {isEnvDeveloper} from '../helper.js'
+
 import {defaultSettings} from '../../config.json'
 
-
-const dialog = remote.dialog
 
 
 settings.configure({prettify: true})
 settings.defaults(defaultSettings)
 
 let instance
-class Settings extends EventEmitter{
+class UserSettings extends EventEmitter{
   constructor() {
     if(!instance) {
       super()
       instance = this
     }
     return instance
+  }
+
+  get developerMode() {
+    if(isEnvDeveloper()) {
+      return true
+    }
+    return !!settings.getSync('developerMode')
+  }
+
+  set developerMode(devmode) {
+    settings.setSync('developerMode', devmode)
+    this.emit('developer', devmode)
   }
 
   get savePath() {
@@ -50,6 +61,10 @@ class Settings extends EventEmitter{
     settings.setSync('closeWithESC', close)
   }
 
+  get video() {
+    return settings.getSync('video')
+  }
+
   get videoLoop() {
     settings.getSync('video.loop')
   }
@@ -76,6 +91,22 @@ class Settings extends EventEmitter{
     settings.getSync('video.autoplay', autoplay)
   }
 
+  get slideshowInterval() {
+    return settings.getSync('slideshow.interval')
+  }
+
+  set slideshowInterval(interval) {
+    settings.setSync('slideshow.interval', interval)
+  }
+
+  get slideshowShuffled() {
+    return settings.getSync('slideshow.shuffle')
+  }
+
+  set slideshowShuffled(shuffle) {
+    settings.setSync('slideshow.shuffle', shuffle)
+  }
+
   get reopenLastFile() {
     return settings.getSync('reopenLastFile')
   }
@@ -85,6 +116,14 @@ class Settings extends EventEmitter{
     if(!reopen) {
       settings.deleteSync('lastFile')
     }
+  }
+
+  get lastFile() {
+    return settings.getSync('lastfile')
+  }
+
+  set lastFile(file) {
+    settings.setSync('lastFile', file)
   }
 
   get windowsContextMenuInstalled() {
@@ -100,7 +139,8 @@ class Settings extends EventEmitter{
   }
 
   set videoSkipInterval(interval) {
-    return settings.setSync('video.skipInterval', interval)
+    settings.setSync('video.skipInterval', interval)
+    this.emit('playbackui')
   }
 
   get playbackUIEnabled() {
@@ -120,13 +160,21 @@ class Settings extends EventEmitter{
     settings.setSync('UI.playback.autohide', autohide)
   }
 
+  get playbackUIIdle() {
+    return settings.getSync('UI.playback.idle')
+  }
+
+  set playbackUIIdle(hideinidle) {
+    settings.setSync('UI.playback.idle', hideinidle)
+  }
+
   get statusbarEnabled() {
     return settings.getSync('UI.statusbar.enabled')
   }
 
   set statusbarEnabled(enabled) {
     settings.setSync('UI.statusbar.enabled', enabled)
-    this.emit('statusbar', enabled)
+    this.emit('statusbar')
   }
 
   get statusbarAutohide() {
@@ -135,6 +183,16 @@ class Settings extends EventEmitter{
 
   set statusbarAutohide(autohide) {
     settings.setSync('UI.statusbar.autohide', autohide)
+    this.emit('statusbar')
+  }
+
+  get menubarAutohide() {
+    return settings.getSync('UI.menubar.autohide')
+  }
+
+  set menubarAutohide(autohide) {
+    settings.setSync('UI.menubar.autohide', autohide)
+    this.emit('menubar')
   }
 
 
@@ -143,25 +201,28 @@ class Settings extends EventEmitter{
   }
 
   resetToDefault(browserWindow) {
-    let message = 'Are you sure you want to reset to the default settings?'
+    if(!browserWindow) {
+      browserWindow = remote.getCurrentWindow()
+    }
+    let message = 'Are you sure you want to reset to the default settings? meView will reload after resetting.'
 
     if(process.platform === 'win32') {
-      message = 'Are you sure you want to reset to the default settings? This will also uninstall the Windows context menu entry of meView'
+      message = 'Are you sure you want to reset to the default settings? This will also uninstall the Windows context menu entry of meView. meView will reload after resetting.'
     }
 
-    dialog.showMessageBox(browserWindow, {
+    remote.dialog.showMessageBox(browserWindow, {
       type: 'warning',
       buttons: ['Yes', 'No'],
-      defaultId: 1,
+      defaultId: 0,
       title: 'Reset to default settings',
       message
     }, (response) => {
       if(response === 0) {
-        this.emit('reset')
         settings.resetToDefaultsSync()
+        this.emit('reset')
       }
     })
   }
 }
 
-export default new Settings()
+export default new UserSettings()

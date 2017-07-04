@@ -1,25 +1,15 @@
 import {EventEmitter} from 'events'
-import {dirname} from 'path'
 
+import UserSettings from './UserSettings.js'
 
-import * as helper from '../helper.js'
-
-/**
- * MediaFile class to wrap an image or video into the respective HTML tag.
- *
- * @export
- * @class MediaFile
- */
 export default class MediaFile extends EventEmitter {
-  constructor(filename, filepath, mimetype, zipentry, filesize) {
+  constructor(name, fullpath, mimetype) {
     super()
-    this.filename = filename
-    this.dirname = dirname(filepath)
-    this.filepath = filepath
+    this.name = name,
+    this.path = fullpath,
     this.mimetype = mimetype
-    this.zipentry = zipentry
-    this.filesize = filesize || this.zipentry.getData().length
-    this.element
+    this.loaded = false
+    this._element
   }
 
   /**
@@ -45,35 +35,14 @@ export default class MediaFile extends EventEmitter {
   }
 
   /**
-   * Is the MediaFile a Buffer? Happens if the file is in a zip-archive
-   *
-   * @returns {boolean} Is buffer
-   *
-   * @memberOf MediaFile
-   */
-  isBuffer() {
-    return !!this.zipentry
-  }
-
-  /**
-   * Returns the filename
-   *
-   * @returns {string} Filename
-   *
-   * @memberOf MediaFile
-   */
-  getFilename() {
-    return this.filename
-  }
-
-  /**
    * Starts playback, if it is a video
    *
    * @memberOf MediaFile
    */
   play() {
-    if (this.isVideo() && this.element) {
-      this.element.play()
+    // console.log('play:', this.name)
+    if (this.isVideo() && this._element) {
+      this._element.play()
     }
   }
 
@@ -83,9 +52,9 @@ export default class MediaFile extends EventEmitter {
    * @memberOf MediaFile
    */
   stop() { // stop = pause and reset to beginning of video
-    if (this.isVideo() && this.element) {
-      this.element.pause()
-      this.element.currentTime = 0
+    if (this.isVideo() && this._element) {
+      this._element.pause()
+      this._element.currentTime = 0
     }
   }
 
@@ -95,8 +64,9 @@ export default class MediaFile extends EventEmitter {
    * @memberOf MediaFile
    */
   pause() {
-    if (this.isVideo() && this.element) {
-      this.element.pause()
+    // console.log('pause:', this.name)
+    if (this.isVideo() && this._element) {
+      this._element.pause()
     }
   }
 
@@ -108,7 +78,7 @@ export default class MediaFile extends EventEmitter {
    * @memberOf MediaFile
    */
   forward(len) {
-    this.element.currentTime += len
+    this._element.currentTime += len
   }
 
   /**
@@ -119,9 +89,8 @@ export default class MediaFile extends EventEmitter {
    * @memberOf MediaFile
    */
   rewind(len) {
-    this.element.currentTime -= len
+    this._element.currentTime -= len
   }
-
 
   /**
    * Starts or pause the playback
@@ -129,8 +98,8 @@ export default class MediaFile extends EventEmitter {
    * @memberOf MediaFile
    */
   togglePlayPause() {
-    if (this.isVideo() && this.element) {
-      if(this.element.paused) {
+    if (this.isVideo() && this._element) {
+      if(this._element.paused) {
         this.play()
       } else {
         this.pause()
@@ -138,51 +107,59 @@ export default class MediaFile extends EventEmitter {
     }
   }
 
-  /**
-   * Embeds the media into the respective HTML elements and returns it.
-   * Will also apply the default style and settings to them.
-   *
-   * @returns {HTMLImageElement|HTMLVideoElement} Media element
-   *
-   * @memberOf MediaFile
-   */
-  getElement() {
-    if (!this.element) {
-      if (this.isImage()) {
-        // create img element;
-        this.element = new Image()
-        helper.applyImageSettings(this.element)
-      } else if (this.isVideo()) {
-        this.element = document.createElement('video')
-        helper.applyVideoSettings(this.element)
-        this.element.ended = () => {
+  set loop(looping) {
+    if (this.isVideo() && this._element) {
+      this._element.loop = looping
+    }
+  }
+
+  get element() {
+    if(!this._element) {
+      if(this.isImage()) {
+        this._element = new Image()
+      } else if(this.isVideo()) {
+        this._element = document.createElement('video')
+        applyVideoSettings(this._element)
+        this._element.onended = () => {
+          // console.log('ended video')
           this.emit('ended')
         }
+        // this.element.onpause = () => {
+        //   console.log('onpause', this.name)
+        // }
+        // this.element.onplaying = () => {
+        //   console.log('onplaying', this.name)
+        // }
       } else {
-        return helper.errorElement(this)
+        return errorElement(this.filename)
       }
-      helper.applyStyle(this.element)
-      this.element.src = this.getSrc()
-    } else {
-      console.log(`Returning cached MediaFile for '${this.filename}' (${this.filesize/1024} KB)`)
+      this._element.src = this.path
+      this.loaded = true
     }
-    return this.element
+    return this._element
   }
+}
 
 
-  /**
-   * Returns the src for a mediafile. A normal file will return the path and a buffer will
-   * be base64 encoded.
-   *
-   * @returns {string} Filepath or base64 encoded media
-   *
-   * @memberOf MediaFile
-   */
-  getSrc() {
-    if(this.zipentry) {
-      return 'data:' + this.mimetype + ';base64,' + this.zipentry.getData().toString('base64')
-    } else {
-      return this.filepath
-    }
+function errorElement(filename) {
+  let elem = document.createElement('p')
+  elem.innerHTML = `"${filename}" could not be displayed`
+  elem.className = 'errorElement'
+  return elem
+}
+
+function applyVideoSettings(videoelement) {
+  let videosettings = UserSettings.video
+  // console.log('videosettings ', videosettings)
+  videoelement = applySettings(videoelement, videosettings)
+  // disable autoplay so we can preload files that might have auto
+  videoelement.autoplay = false
+  return videoelement
+}
+
+function applySettings(elem, setting) {
+  for (let key in setting) {
+    elem[key] = setting[key]
   }
+  return elem
 }

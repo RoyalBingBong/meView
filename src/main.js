@@ -13,6 +13,7 @@ commander
   .version(version)
   .usage('<file or folder ...> [options] ')
   .option('-f, --fullscreen', 'open meView in fullscreen mode')
+  .option('-r, --recursive', 'opens all files in a folder and is sub-folders')
   .option('-s, --slideshow [timer]', 'start slideshow with **timer** seconds between each image (defaults to 7)', parseInt)
 
 commander.on('--help', () => {
@@ -25,6 +26,7 @@ commander.parse(process.argv)
 console.log('=====================')
 console.log('fullscreen: %j', commander.fullscreen)
 console.log('slideshow: %j', commander.slideshow)
+console.log('recursive: %j', commander.recursive)
 console.log('args: %j', commander.args)
 
 
@@ -64,17 +66,20 @@ app.on('ready', () => {
         fileToOpen = join(process.cwd(), commander.args[0])
       }
       if(commander.slideshow) {
-
+        // TODO
       }
       mainWindow.webContents.send('open', {
-        path: fileToOpen
+        filepath: fileToOpen,
+        recursive: commander.recursive,
+        slideshow: commander.slideshow
       })
     } else if(settings.getSync('reopenLastFile')) {
+      
       let reopen = {
         reopen: true,
-        path: settings.getSync('lastFile.dirname'),
-        file: settings.getSync('lastFile.filename')
+        filepath: settings.getSync('lastFile.filepath')
       }
+      console.log(reopen)
       mainWindow.webContents.send('open', reopen)
     }
 
@@ -112,6 +117,6 @@ app.on('ready', () => {
 
 ipcMain.on('folderBrowser', (event, arg) => {
   if(arg) {
-    mainWindow.webContents.send('open', {path: arg})
+    mainWindow.webContents.send('open', {filepath: arg})
   }
 })

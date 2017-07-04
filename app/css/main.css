@@ -1,17 +1,16 @@
-html, body{
-  margin: 0px;
-  padding: 0px;
+html,
+body {
   width: 100%;
   height: 100%;
   background-color: #282828;
-  cursor:default;
+  cursor: default;
   -webkit-user-select: none;
   user-select: none;
   overflow: hidden;
 }
 
 ::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 /* Always show video controls */
@@ -21,10 +20,9 @@ video::-webkit-media-controls-panel {
   opacity: .5 !important;
 }
 
-video.no-ui::-webkit-media-controls-panel {
+.novideoui video::-webkit-media-controls-panel {
   display: none !important;
 }
-
 
 #mainview {
   width: 100%;
@@ -34,54 +32,63 @@ video.no-ui::-webkit-media-controls-panel {
 
 #container {
   width: 100%;
-  height: 100%;  
+  height: 100%;
 }
 
 #autoheight {
-  height: calc(100% - 30px);
+  height: calc(100% - 1.5em);
+  max-height: 100%;
   width: 100%;
-  overflow:hidden;
-  -webkit-box-sizing:border-box;
-  box-sizing:border-box;
+  overflow: hidden;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 #autoheight.notoolbar {
   height: 100%;
 }
 
-
-div#viewer {
+#viewer {
   display: flex;
   height: 100%;
 }
 
-div#statusbar {
-  height: 30px;
-  display: flex;
+#statusbar {
   width: 100%;
+  height: 35px;
 }
 
-div#statusbar.hide {
+#statusbar input {
+  height: 1.5em;
+}
+
+#statusbar.hide {
   display: none;
 }
 
-input#filetext {
+#filetext, #counter {
+  height: 30px;
+}
+
+#filetext {
   padding-left: 5px;
   padding-right: 5px;
   margin-left: 1px;
-  width: 100%;
-  box-sizing: border-box;
 }
 
-input#counter {
-  text-align: center;  
+/* Disable blue border from pure, when clicking into the input field */
+#filetext:focus {
+  border-color: #ccc;
+}
+
+#counter {
+  text-align: center;
   padding-left: 5px;
   padding-right: 5px;
 }
 
-
-
-img, video {
+img,
+video {
   width: 100%;
   object-fit: contain;
 }
@@ -89,7 +96,9 @@ img, video {
 .message {
   /* freaking css magic right here */
   position: absolute;
-  top: 50%; left: 0;  right: 0;
+  top: 50%;
+  left: 0;
+  right: 0;
   -webkit-transform: translateY(-50%);
   display: block;
   margin-left: auto;
@@ -107,7 +116,6 @@ img, video {
   font-size: 20px;
   text-align: center;
 }
-
 
 #dropzone.message {
   padding: 20px;
@@ -133,4 +141,95 @@ img, video {
   font-size: 50px;
 }
 
+#settingscontainer {
+  z-index: 100;
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(78, 78, 78, 0.8);
+}
 
+#settings {
+  position: absolute;
+  background-color: #fff;
+  top: 25px;
+  right: 25px;
+  bottom: 25px;
+  left: 25px;
+  border-radius: 14px;
+}
+
+.settings-menu {
+  border-radius: 14px 0 0 14px;
+  height: 100%;
+}
+
+.settings-panel {
+  border-radius: 0 14px 14px 0;
+  height: 100%;
+  padding-left: 1em;
+  padding-right: 1em;
+  background-color: #eee;
+}
+
+.hidden {
+  display: none;
+}
+
+.settings-menu-selected {
+  background-color: #eee;
+}
+
+.installed {
+  color: white;
+  border-radius: 4px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  background: rgb(28, 184, 65);
+}
+
+.installed:hover,
+#resettodefault:hover {
+  background: rgb(223, 117, 20);
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  opacity: 1;
+}
+
+input[type='number'] {
+  text-align: center;
+}
+
+#resettodefault {
+  position: absolute;
+  bottom: 1em;
+}
+
+.close-settings {
+  position: absolute;
+  top: 1px;
+  right: 2px;
+}
+
+#close-settings {
+  background: none;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  color: darkgray;
+}
+
+#close-settings:hover {
+  color: black;
+}
+
+#devmodebox {
+  position: fixed;
+  bottom: 40px;
+}

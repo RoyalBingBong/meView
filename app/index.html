@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8">
     <title>meView</title>
+    <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="node_modules/purecss/build/pure-min.css">
     <link rel="stylesheet" href="css/main.css">
   </head>
   <body>
@@ -10,12 +12,17 @@
       <div id="container">
         <div id="autoheight">
           <div id="viewer">
-            
           </div>
         </div>
         <div id="statusbar">
-          <input id="counter" type="text" size="12">  
-          <input id="filetext" type="text" placeholder="No file selected" readonly />
+          <form class="pure-form pure-g">
+            <div class="pure-u-4-24">
+              <input class="pure-input-1" id="counter" type="text" >
+            </div>
+            <div class="pure-u-20-24">
+              <input class="pure-input-1" id="filetext" type="text" placeholder="No file selected" readonly />
+            </div>
+          </form>
         </div>
       </div>
       <div id="dropzone" class="message">
@@ -23,9 +30,141 @@
           Drop file or folder here
         </p>
       </div>
+      <div id="settingscontainer" class="hidden">
+        <div id="settings" class="pure-g">
+          <div class="close-settings">
+            <button id="close-settings" href="#">
+              <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="pure-u-1-5">
+            <span class="pure-menu-heading">Settings</span>
+            <div class="pure-menu settings-menu">
+              <ul id="settings-menu" class="pure-menu-list">
+                <li class="pure-menu-item" id="menu-general"><a href="#" class="pure-menu-link">General</a></li>
+                <li class="pure-menu-item" id="menu-video"><a href="#" class="pure-menu-link">Video</a></li>
+                <li class="pure-menu-item" id="menu-ui"><a href="#" class="pure-menu-link">User Interface</a></li>
+                <li class="pure-menu-item" id="menu-os"><a href="#" class="pure-menu-link">OS</a></li>
+              </ul>              
+            </div>
+            <button id="resettodefault" class="pure-button pure-u-1-5" href="#">Reset to default</button>
+          </div>
+          <div class="pure-u-4-5">
+            <div id="settings-general" class="settings-panel hidden" >
+              <span class="pure-menu-heading">General</span>
+              <form class="pure-form">
+                <label for="general-closewithesc" class="pure-checkbox">
+                  <input id="general-closewithesc" type="checkbox" value="">
+                  Close meView when pressing ESC
+                </label>
+                <label for="general-savepath" class="pure-checkbox">
+                  <input id="general-savepath" type="checkbox" value="">
+                  Save last used path when using "File > Open File" or "File > Open Folder"
+                </label>
+                <label for="general-reopenlast" class="pure-checkbox">
+                  <input id="general-reopenlast" type="checkbox" value="">
+                  Automatically reopen the last viewed file
+                </label>
+                <label for="general-slideshowinterval">
+                  Skip interval (seconds)
+                  <input id="general-slideshowinterval" class="pure-u-2-24" type="number" value="0">
+                </label>
+                <label for="general-devmode" class="pure-checkbox" id="devmodebox">
+                  <input id="general-devmode" type="checkbox" value="">
+                  Enable developer menu
+                </label>
+              </form>
+            </div>
+            <div id="settings-video" class="settings-panel hidden">
+              <span class="pure-menu-heading">Video</span>
+              <form class="pure-form pure-form-stacked">
+                <label for="video-autoplay" class="pure-checkbox">
+                  <input id="video-autoplay" type="checkbox" value="">
+                  Autoplay
+                </label>
+                <label for="video-loop" class="pure-checkbox">
+                  <input id="video-loop" type="checkbox" value="">
+                  Loop
+                </label>
+                <label for="video-mute" class="pure-checkbox">
+                  <input id="video-mute" type="checkbox" value="">
+                  Mute
+                </label>
+                <hr>
+                <label for="video-skipinterval">Skip interval (seconds)</label>
+                <input id="video-skipinterval" class="pure-u-1-5" type="number" value="0">
+                <span class="pure-form-message">Used when forwarding or rewinding a video with Shift+Right-Arrow or Shift+Left-Arrow.</span>
+              </form>
+            </div>
+            <div id="settings-ui" class="settings-panel hidden">
+              <span class="pure-menu-heading">User Interface</span>
+              <div class="pure-g">
+                <div class="pure-u-1-5">
+                  <label for="ui-menubar" class="pure-checkbox">
+                    <input id="ui-menubar" type="checkbox" checked disabled>
+                    Menubar
+                  </label>
+                </div>
+                <div class="pure-u-2-5">
+                  <label for="ui-menubarfullscreen" class="pure-checkbox">
+                    <input id="ui-menubarfullscreen" type="checkbox" value="">
+                    Hide in fullscreen mode
+                  </label>
+                </div>
+              </div>
+              <hr>
+              <div class="pure-g">
+                <div class="pure-u-1-5">
+                  <label for="ui-statusbar" class="pure-checkbox">
+                    <input id="ui-statusbar" type="checkbox" value="">
+                    Satusbar
+                  </label>
+                </div>
+                <div class="pure-u-2-5">
+                  <label for="ui-statusbarfullscreen" class="pure-checkbox">
+                    <input id="ui-statusbarfullscreen" type="checkbox" value="">
+                    Hide in fullscreen mode
+                  </label>
+                </div>
+              </div>
+              <hr>
+              <div class="pure-g">
+                <div class="pure-u-1-5">
+                  <label for="ui-player" class="pure-checkbox">
+                    <input id="ui-player" type="checkbox" value="">
+                    Player UI
+                  </label>
+                </div>
+                <div class="pure-u-2-5">
+                  <label for="ui-playerfullscreen" class="pure-checkbox">
+                    <input id="ui-playerfullscreen" type="checkbox" value="">
+                    Hide in fullscreen mode
+                  </label>
+                </div>
+                <div class="pure-u-2-5">
+                  <label for="ui-playeridle" class="pure-checkbox">
+                    <input id="ui-playeridle" type="checkbox" value="">
+                    Hide when idling
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div id="settings-os" class="settings-panel">
+              <span class="pure-menu-heading">Operating System</span>
+                <form class="pure-form pure-form-stacked">
+                  <label for="os-windows-contextmenu" class="pure-checkbox">
+                    Windows Explorer context menu
+                  </label>
+                  <button id="os-windows-contextmenu" class="pure-u-1-5 pure-button pure-button-primary" href="#">Install</button>
+                  <span class="pure-form-message">This will install a context menu entry in Windows Explorer, which allows you to rightclick a file, folder or on the directory background to it in meView.</span>
+                </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>    
     <script>
-      require("./js/index.js");
+      require("./js/meview.js");
     </script>
   </body>
 </html>

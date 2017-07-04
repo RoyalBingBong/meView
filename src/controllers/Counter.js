@@ -1,5 +1,7 @@
 import {EventEmitter} from 'events'
 
+import {ELEMENTS} from '../../config.json'
+
 const empty = '- of -'
 
 /**
@@ -17,9 +19,9 @@ export default class Counter extends EventEmitter{
    *
    * @memberOf Counter
    */
-  constructor(elementid) {
+  constructor() {
     super()
-    this.counter = document.getElementById(elementid)
+    this.counter = document.getElementById(ELEMENTS.counter)
     this.current = 0
     this.max = 0
     this.initHandlers()
@@ -32,6 +34,11 @@ export default class Counter extends EventEmitter{
    * @memberOf Counter
    */
   initHandlers() {
+    // Disable double-click, so it can't trigger fullscreen
+    this.counter.ondblclick = (e) => {
+      e.stopPropagation()
+    }
+
     this.counter.onfocus = () => {
       this.counter.value = ''
     }
@@ -44,7 +51,7 @@ export default class Counter extends EventEmitter{
 
         if(parseInt(this.counter.value)) {
           this.current = parseInt(this.counter.value)
-          this.emit('indexchanged', this.current - 1)
+          this.emit('change.index', this.current - 1)
         }
         this.counter.blur()
       }
@@ -58,7 +65,6 @@ export default class Counter extends EventEmitter{
    * @memberOf Counter
    */
   update() {
-    console.log('current', this.current, 'max', this.max)
     if(this.current && this.current > 0) {
       if(this.max > 0) {
         this.counter.value = this.current + ' of ' + this.max
@@ -78,7 +84,7 @@ export default class Counter extends EventEmitter{
    * @memberOf Counter
    */
   updateCurrent(current) {
-    this.current = current
+    this.current = current + 1
     this.update()
   }
 

@@ -1,0 +1,248 @@
+import EventEmitter from 'events'
+import {existsSync, statSync} from 'fs'
+import {basename, join, relative} from 'path'
+
+import {MediaDirectory} from './MediaDirectory.js'
+import MediaFile from './MediaFile.js'
+
+import {PRELOADRANGE, supportedArchivesFormats} from '../../config.json'
+
+console.log('preloadrange', PRELOADRANGE)
+
+export default class MediaList extends EventEmitter {
+  constructor() {
+    super()
+    this.files = []
+    this.index = 0
+    this.root
+    this.timer
+  }
+
+  open(fileorpath, {
+    recursive = false,
+    direct = undefined
+  } = {}) {
+    return new Promise((resolve, reject) => {
+      if(existsSync(fileorpath)) {
+        let stats = statSync(fileorpath)
+        if(stats.isDirectory()) {
+          MediaDirectory.openDirectory(fileorpath, recursive)
+            .then((files) => {
+              this.root = fileorpath
+              this.recursive = recursive
+              this.createMediaFileList(files, direct)
+              resolve()
+            })
+            .catch((err) => {
+              reject(err)
+            })
+        } else {
+          if(isZip(fileorpath)) {
+            MediaDirectory.openZip(fileorpath)
+              .then((files) => {
+                this.root = fileorpath
+                this.createMediaFileList(files, direct)
+                resolve()
+              })
+              .catch((err) => {
+                reject(err)
+              })
+          } else {
+            let root = join(fileorpath, '..')
+            let filename = basename(fileorpath)
+            MediaDirectory.openDirectory(root)
+              .then((files) => {
+                this.root = root
+                this.createMediaFileList(files, filename)
+                resolve()
+              })
+              .catch((err) => {
+                reject(err)
+              })
+          }
+        }
+      } else {
+        if(pathContainsZip(fileorpath)) {
+          let zipfile = getZipPath(fileorpath)
+          let filename = relative(zipfile, fileorpath).replace(/\\/g, '/')
+          return this.open(zipfile, {direct: filename})
+        }
+      }
+    })
+  }
+
+  createMediaFileList(list, watchfor) {
+    this.files = []
+    list.forEach((file, idx) => {
+      let mf = new MediaFile(file.name, file.path, file.mimetype)
+      this.files.push(mf)
+      this.emit('file.added', mf, this.files.length)
+      if(idx === 0 && !watchfor) {
+        this.emit('file.start', mf, idx)
+        this.index = idx
+        setTimeout(() => {
+          this.preloadNext(idx, PRELOADRANGE)
+        }, 100)
+      }
+      if(watchfor && file.name === watchfor) {
+        this.emit('file.start', mf, idx)
+        this.index = idx
+        setTimeout(() => {
+          this.preloadNext(idx, PRELOADRANGE)
+          this.preloadPrevious(idx, PRELOADRANGE)
+        }, 100)
+      }
+    })
+  }
+
+  goTo(index) {
+    if(index > 0 && index < this.files.length) {
+      this.index = index
+      this.emit('file.current', this.current, this.index)
+      return this.current
+    }
+  }
+
+  get first() {
+    this.index = 0
+    this.emit('file.current', this.current, this.index)
+    return this.current
+  }
+
+  get last() {
+    this.index = this.files.length - 1
+    this.emit('file.current', this.current, this.index)
+    return this.current
+  }
+
+  get next() {
+    if(this.index + 1 < this.files.length) {
+      this.index++
+      let mf = this.current
+      this.emit('file.current', mf, this.index)
+      this.preloadNext(this.index, PRELOADRANGE)
+      return mf
+    } else {
+      this.emit('end', {
+        isEnd: true
+      })
+    }
+  }
+
+  get previous() {
+    if(this.index - 1 >= 0) {
+      this.index--
+      let mf = this.current
+      this.emit('file.current', mf, this.index)
+      this.preloadPrevious(this.index, PRELOADRANGE)
+      return mf
+    } else {
+      this.emit('folderEnd', {
+        isEnd: false  // false because we can't get more "previous"
+      })
+    }
+  }
+
+  preloadNext(index, range) {
+    if(index + 1 < this.files.length) {
+      let mf = this.files[index + 1]
+      if(!mf.loaded) {
+        let elem = mf.element
+      }
+      if(range) {
+        this.preloadNext(++index, --range)
+      }
+    }
+  }
+
+  preloadPrevious(index, range) {
+    if(index - 1 >= 0) {
+      let mf = this.files[index - 1]
+      if(!mf.loaded) {
+        let elem = mf.element
+      }
+      if(range) {
+        this.preloadNext(--index, --range)
+      }
+    }
+  }
+
+  get current() {
+    return this.files[this.index]
+  }
+
+
+  slideshowNext(next, timeout) {
+    console.log('timeout', timeout * 1000)
+    if(!next) {
+      clearTimeout(this.timer)
+      return
+    }
+    if(next.isVideo()) {
+      next.loop = false
+      next.once('ended', () => {
+        this.slideshowNext(this.next, timeout)
+      })
+    } else {
+      this.timer = setTimeout(() => {
+        this.slideshowNext(this.next, timeout)
+      }, timeout * 1000)
+    }
+  }
+
+  slideshowStart(timeout, shuffled) {
+    if(shuffled) {
+      shuffle(this.files)
+    }
+    this.slideshowNext(this.first, timeout)
+  }
+
+  slideshowPause() {
+    clearInterval(this.timer)
+  }
+
+  slideshowStop() {
+    clearInterval(this.timer)
+  }
+
+  shuffle() {
+    shuffle(this.files)
+    return this.first
+  }
+
+  random() {
+    let rndindex = Math.floor(Math.random() * this.files.length)
+    this.goTo(rndindex)
+  }
+}
+
+function getZipPath(zipfile) {
+  zipfile = join(zipfile, '..')
+  if(isZip(zipfile)) {
+    return zipfile
+  } else {
+    return getZipPath(zipfile)
+  }
+}
+
+function isZip(file) {
+  return supportedArchivesFormats.some((ext) => {
+    return file.endsWith(ext)
+  })
+}
+
+function pathContainsZip(file) {
+  if(!file) {
+    return false
+  }
+  return supportedArchivesFormats.some((ext) => {
+    return file.indexOf('.'+ ext) > -1
+  })
+}
+
+function shuffle(a) {
+  for (let i = a.length; i; i--) {
+    let j = Math.floor(Math.random() * i);
+    [a[i - 1], a[j]] = [a[j], a[i - 1]]
+  }
+}

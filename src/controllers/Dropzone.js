@@ -1,9 +1,11 @@
 import {EventEmitter} from 'events'
 
+import {ELEMENTS} from '../../config.json'
+
 export default class Dropzone extends EventEmitter {
-  constructor(elementid) {
+  constructor() {
     super()
-    this.dropzone = document.getElementById(elementid)
+    this.dropzone = document.getElementById(ELEMENTS.dropzone)
     this._initEventListeners()
   }
 
@@ -18,6 +20,7 @@ export default class Dropzone extends EventEmitter {
       e = e || event
       e.preventDefault()
     }, false)
+
 
     this.dropzone.ondragover = () => {
       this.hover()
@@ -34,7 +37,7 @@ export default class Dropzone extends EventEmitter {
       e.preventDefault()
       this.hide()
       let file = e.dataTransfer.files[0]
-      this.emit('drop', file)
+      this.emit('drop', file, e.shiftKey)
       return false
     }
   }

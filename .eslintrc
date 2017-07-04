@@ -33,12 +33,7 @@
       "error",
       "always"
     ],
-    "prefer-arrow-callback": [
-      "error",
-      {
-        "allowNamedFunctions": true
-      }
-    ],
+    "prefer-arrow-callback": "error",
     "comma-spacing": [
       "error",
       {
@@ -49,6 +44,11 @@
     "no-unused-vars": "warn",
     "no-var": "error",
     "no-console": "off",
-    "no-trailing-spaces": "warn"
+    "no-trailing-spaces": [
+      "warn", 
+      {
+        "ignoreComments": true
+      }
+    ]
   }
 }

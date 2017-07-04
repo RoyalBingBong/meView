@@ -14,11 +14,18 @@
       "playback": {
         "enabled": true,
         "autohide": true
+      },
+      "menubar": {
+        "autohide": true
       }
     },
     "display": "fit-to-window",
     "savePath": false,
-    "closeWithESC": true
+    "closeWithESC": true,
+    "slideshow": {
+      "interval": 7,
+      "shuffled": false
+    }
   },
   "ELEMENTS": {
     "view": "viewer",
@@ -26,9 +33,18 @@
     "file": "filetext",
     "statusbar": "statusbar",
     "autoheight": "autoheight",
-    "dropzone": "dropzone"
+    "dropzone": "dropzone",
+    "settings": {
+      "menuprefix": "menu-",
+      "panelprefix": "settings-",
+      "close": "close-settings",
+      "container": "settingscontainer",
+      "pages": [
+        "general", "video", "ui", "os"
+      ]
+    }
   },
-  "PRELOADRANGE": 0,
+  "PRELOADRANGE": 1,
   "skipIntervalValues": {
     "1s": 1,
     "5s": 5,
