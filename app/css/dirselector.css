@@ -1,25 +1,13 @@
 html, body{
-  margin: 1px;
-  padding: 0px;
+  padding: 0.2em;
+  padding: 0.2em;
   background-color: #F5F5F5;
   cursor:default;
   overflow: hidden;
 }
 
-/*::-webkit-scrollbar {
-    display: none;
-}*/
-
-
-select {
-  color: #000;
-  color: rgba(0,0,0,0);
-  text-shadow: 0 0 0 #000;
-}
-
 #cwd {
-  font-size: 14pt;
-  margin-bottom: 2px;
+  font-size: 1em;
   text-overflow: ellipsis;
   direction: rtl;
   text-align: left;
@@ -28,32 +16,26 @@ select {
   height: 1.5em;
 }
 
+button {
+  padding: 1px;
+  margin: 1px;
+}
 
 #folderselect {
   overflow:scroll;
   overflow-x: hidden;
-  padding: 5px;
   height: 100%;
   font-size: 12pt;
+  color: #000;
+  color: rgba(0,0,0,0);
+  text-shadow: 0 0 0 #000;
 }
 
 #folderselect:focus {
   border-color: #ccc;
 }
 
-/*#controls {
-  display:inline-block;
-  vertical-align: top;
-  padding-top: 20px;
-}*/
-
-/*#controls button {
-  padding: 5px;
-  margin: 2px;
-  width: 86px;
-}*/
-
-option {
+select#folderselect option {
   background-size: 20px 20px;
   background-repeat:no-repeat;
   background-position: left middle;

@@ -1,43 +1,68 @@
 import {app, ipcMain, BrowserWindow} from 'electron'
 import {join, isAbsolute} from 'path'
+import url from 'url'
 
 import commander from 'commander'
 import settings from 'electron-settings'
+import {autoUpdater} from 'electron-updater'
 
-import {version} from '../package.json'
-
-import {isEnvDeveloper} from './helper.js'
 import {defaultSettings} from '../config.json'
+import {isEnvDeveloper} from './helper.js'
+import * as pkg from '../package.json'
+
+
+let updateDownloaded = false
+if(isEnvDeveloper()) {
+  autoUpdater.autoDownload = false
+} else {
+  autoUpdater.on('update-downloaded', () => {
+    console.log('update-downloaded')
+    updateDownloaded = true
+  })
+}
+
+
+// Workaround to make commander work with Electron
+let exe = process.argv.shift()
+if(!process.argv[0] || process.argv[0] && process.argv[0] !== '.') {
+  process.argv.unshift('')
+}
+process.argv.unshift(exe)
 
 commander
-  .version(version)
+  .version(pkg.version)
   .usage('<file or folder ...> [options] ')
   .option('-f, --fullscreen', 'open meView in fullscreen mode')
   .option('-r, --recursive', 'opens all files in a folder and is sub-folders')
   .option('-s, --slideshow [timer]', 'start slideshow with **timer** seconds between each image (defaults to 7)', parseInt)
-
 commander.on('--help', () => {
   app.quit()
 })
-
 commander.parse(process.argv)
 
-
-console.log('=====================')
-console.log('fullscreen: %j', commander.fullscreen)
-console.log('slideshow: %j', commander.slideshow)
-console.log('recursive: %j', commander.recursive)
-console.log('args: %j', commander.args)
-
-
+// console.log('=====================')
+// console.log('fullscreen: %j', commander.fullscreen)
+// console.log('slideshow: %j', commander.slideshow)
+// console.log('recursive: %j', commander.recursive)
+// console.log('args: %j', commander.args)
 
 let mainWindow = null
 
 app.on('window-all-closed', () => {
-  app.quit()
+  if(updateDownloaded) {
+    autoUpdater.quitAndInstall()
+  } else {
+    app.quit()
+  }
 })
 
 app.on('ready', () => {
+
+  // skip version check in dev environment
+  if(!isEnvDeveloper()) {
+    autoUpdater.checkForUpdates()
+  }
+
   settings.configure({
     prettify: true
   })
@@ -74,7 +99,6 @@ app.on('ready', () => {
         slideshow: commander.slideshow
       })
     } else if(settings.getSync('reopenLastFile')) {
-      
       let reopen = {
         reopen: true,
         filepath: settings.getSync('lastFile.filepath')
@@ -89,7 +113,12 @@ app.on('ready', () => {
 
   })
 
-  let index = join('file://', __dirname, '..', 'index.html')
+  let index = url.format({
+    pathname: join(__dirname, '..', 'index.html'),
+    protocol: 'file:',
+    slashes: true
+  })
+
   mainWindow.loadURL(index)
 
   // Open the DevTools when in dev env
@@ -115,8 +144,9 @@ app.on('ready', () => {
   })
 })
 
-ipcMain.on('folderBrowser', (event, arg) => {
-  if(arg) {
-    mainWindow.webContents.send('open', {filepath: arg})
+
+ipcMain.on('folderBrowser', (event, data) => {
+  if(data) {
+    mainWindow.webContents.send('open', data)
   }
 })

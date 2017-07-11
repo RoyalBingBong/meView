@@ -5,6 +5,7 @@ import Counter from '../controllers/Counter.js'
 import Filename from '../controllers/Filename.js'
 import MediaList from './MediaList.js'
 import UserSettings from './UserSettings.js'
+import Window from './Window.js'
 import {ELEMENTS} from '../../config.json'
 
 
@@ -51,6 +52,10 @@ class Viewer  {
       this.filename.name = join(this.mediafiles.root, mf.name)
       this.counter.updateCurrent(idx)
     })
+
+    this.mediafiles.on('endoflist', (last) => {
+      Window.showFolderSelector()
+    })
   }
 
   
@@ -77,20 +82,25 @@ class Viewer  {
     })
   }
 
-  slideshowStart(timeout) {
-    console.log('Viewer.slideshowStart', timeout)
-    if(!timeout) {
-      timeout = UserSettings.slideshowInterval
-    }
-    this.mediafiles.slideshowStart(timeout)
-  }
-
-  slideshowPause() {
-    this.mediafiles.slideshowPause()
+  slideshowStart(timeout, shuffled) {
+    return new Promise((resolve, reject) => {
+      if(!this.mediafiles.opened) {
+        reject()
+      }
+      if(!timeout) {
+        timeout = UserSettings.slideshowInterval
+      }
+      this.mediafiles.slideshowStart(timeout, shuffled)
+      resolve()
+    })
   }
 
   slideshowStop() {
     this.mediafiles.slideshowStop()
+  }
+
+  slideshowTogglePlayPause() {
+    this.mediafiles.slideshowTogglePlayPause()
   }
 
   shuffle() {
@@ -122,22 +132,24 @@ class Viewer  {
   }
 
   togglePlayPause() {
-    this.mediafiles.current.togglePlayPause()
+    if(this.mediafiles.current) {
+      this.mediafiles.current.togglePlayPause()
+    }
   }
 
   next() {
     this._stopcurrent()
-    let mf = this.mediafiles.next
+    this.mediafiles.next
   }
 
   previous() {
     this._stopcurrent()
-    let mf = this.mediafiles.previous
+    this.mediafiles.previous
   }
 
   first() {
     this._stopcurrent()
-    let mf = this.mediafiles.first
+    this.mediafiles.first
   }
 
   last() {

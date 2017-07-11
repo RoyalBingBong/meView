@@ -24,6 +24,10 @@ video::-webkit-media-controls-panel {
   display: none !important;
 }
 
+.center {
+  text-align: center;
+}
+
 #mainview {
   width: 100%;
   height: 100%;
@@ -141,7 +145,7 @@ video {
   font-size: 50px;
 }
 
-#settingscontainer {
+#settingscontainer, #aboutcontainer {
   z-index: 100;
   position: absolute;
   padding: 0;
@@ -153,7 +157,7 @@ video {
   background-color: rgba(78, 78, 78, 0.8);
 }
 
-#settings {
+#settings, #about {
   position: absolute;
   background-color: #fff;
   top: 25px;
@@ -162,6 +166,15 @@ video {
   left: 25px;
   border-radius: 14px;
 }
+
+#about > div > table {
+  width: 100%;
+  
+}
+
+/*#about {
+  padding: 1em;
+}*/
 
 .settings-menu {
   border-radius: 14px 0 0 14px;

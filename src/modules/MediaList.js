@@ -7,14 +7,13 @@ import MediaFile from './MediaFile.js'
 
 import {PRELOADRANGE, supportedArchivesFormats} from '../../config.json'
 
-console.log('preloadrange', PRELOADRANGE)
-
 export default class MediaList extends EventEmitter {
   constructor() {
     super()
     this.files = []
     this.index = 0
-    this.root
+    this.root = '.'
+    this.opened = false
     this.timer
   }
 
@@ -30,6 +29,7 @@ export default class MediaList extends EventEmitter {
             .then((files) => {
               this.root = fileorpath
               this.recursive = recursive
+              this.opened = true
               this.createMediaFileList(files, direct)
               resolve()
             })
@@ -41,6 +41,7 @@ export default class MediaList extends EventEmitter {
             MediaDirectory.openZip(fileorpath)
               .then((files) => {
                 this.root = fileorpath
+                this.opened = true
                 this.createMediaFileList(files, direct)
                 resolve()
               })
@@ -53,6 +54,7 @@ export default class MediaList extends EventEmitter {
             MediaDirectory.openDirectory(root)
               .then((files) => {
                 this.root = root
+                this.opened = true
                 this.createMediaFileList(files, filename)
                 resolve()
               })
@@ -104,15 +106,25 @@ export default class MediaList extends EventEmitter {
   }
 
   get first() {
-    this.index = 0
-    this.emit('file.current', this.current, this.index)
-    return this.current
+    if(this.files && this.files.length) {
+      this.index = 0
+      this.emit('file.current', this.current, this.index)
+      return this.current
+    } else {
+      this.emit('nofiles')
+    }
   }
 
   get last() {
-    this.index = this.files.length - 1
-    this.emit('file.current', this.current, this.index)
-    return this.current
+    if(this.files && this.files.length) {
+      this.index = this.files.length - 1
+      this.emit('file.current', this.current, this.index)
+      return this.current
+    } else if(this.files && this.files.length) {
+      this.emit('endoflist', true)
+    } else {
+      this.emit('nofiles')
+    }
   }
 
   get next() {
@@ -122,10 +134,10 @@ export default class MediaList extends EventEmitter {
       this.emit('file.current', mf, this.index)
       this.preloadNext(this.index, PRELOADRANGE)
       return mf
+    } else if(this.files && this.files.length) {
+      this.emit('endoflist', true)
     } else {
-      this.emit('end', {
-        isEnd: true
-      })
+      this.emit('nofiles')
     }
   }
 
@@ -136,10 +148,10 @@ export default class MediaList extends EventEmitter {
       this.emit('file.current', mf, this.index)
       this.preloadPrevious(this.index, PRELOADRANGE)
       return mf
+    } else if(this.files && this.files.length) {
+      this.emit('endoflist', false)
     } else {
-      this.emit('folderEnd', {
-        isEnd: false  // false because we can't get more "previous"
-      })
+      this.emit('nofiles')
     }
   }
 
@@ -172,8 +184,7 @@ export default class MediaList extends EventEmitter {
   }
 
 
-  slideshowNext(next, timeout) {
-    console.log('timeout', timeout * 1000)
+  slideshowNext(next) {
     if(!next) {
       clearTimeout(this.timer)
       return
@@ -181,12 +192,12 @@ export default class MediaList extends EventEmitter {
     if(next.isVideo()) {
       next.loop = false
       next.once('ended', () => {
-        this.slideshowNext(this.next, timeout)
+        this.slideshowNext(this.next)
       })
     } else {
       this.timer = setTimeout(() => {
-        this.slideshowNext(this.next, timeout)
-      }, timeout * 1000)
+        this.slideshowNext(this.next)
+      }, this.timeout * 1000)
     }
   }
 
@@ -194,23 +205,36 @@ export default class MediaList extends EventEmitter {
     if(shuffled) {
       shuffle(this.files)
     }
-    this.slideshowNext(this.first, timeout)
-  }
-
-  slideshowPause() {
-    clearInterval(this.timer)
+    this.timeout = timeout
+    this.slideshowNext(this.first)
   }
 
   slideshowStop() {
     clearInterval(this.timer)
+    this.timer = null
+  }
+
+  slideshowTogglePlayPause() {
+    console.log('slideshowTogglePlayPause', this.timer)
+    if(this.timer) {
+      this.slideshowStop()
+    } else {
+      this.slideshowNext(this.current)
+    }
   }
 
   shuffle() {
+    if(this.files && this.files.length === 0) {
+      return this.emit('nofiles')
+    }
     shuffle(this.files)
     return this.first
   }
 
   random() {
+    if(this.files && this.files.length === 0) {
+      return this.emit('nofiles')
+    }
     let rndindex = Math.floor(Math.random() * this.files.length)
     this.goTo(rndindex)
   }

@@ -25,7 +25,8 @@
     "slideshow": {
       "interval": 7,
       "shuffled": false
-    }
+    },
+    "updatereminder": true
   },
   "ELEMENTS": {
     "view": "viewer",

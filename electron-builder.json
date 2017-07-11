@@ -2,15 +2,18 @@
   "productName": "meView",
   "appId": "com.royalbingbong.meview",
   "mac" : {
+    "publish": ["github"],
     "target": ["dmg", "zip"],
     "category": "public.app-category.photography",
     "icon": "app/assets/mac.icns"
   },
   "win": {
+    "publish": ["github"],
     "target": ["nsis", "zip"],
     "icon": "app/assets/icon.ico"
   },
   "linux": {
+    "publish": ["github"],
     "target": ["deb", "7z", "zip"],
     "category": "Viewer",
     "icon": "app/assets/linux.iconset"

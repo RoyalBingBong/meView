@@ -17,6 +17,10 @@ import {skipIntervalValues} from '../../config.json'
  */
 export default class AppMenu {
   constructor() {
+    this.slideshowstate = {
+      playing: false,
+      paused: false
+    }
     this.initMenu()
   }
 
@@ -228,35 +232,47 @@ export default class AppMenu {
 
   buildSlideshowMenu() {
     let slideshowmenu = new Menu()
-    let item
-
-    item = new MenuItem({
+    let start, pause, stop, shuffled
+    start = new MenuItem({
       label: 'Start',
-      click() {
-        Viewer.slideshowStart()
+      enabled: !this.slideshowstate.playing,
+      click: () => {
+        Viewer.slideshowStart(null, UserSettings.slideshowShuffled)
+          .then(() => {
+            this.slideshowstate.playing = true
+            this.slideshowstate.paused = false
+            this.initMenu()
+          })
       }
     })
-    slideshowmenu.append(item)
+    slideshowmenu.append(start)
 
-    item = new MenuItem({
-      label: 'Pause',
-      click() {
-        Viewer.slideshowPause()
+    pause = new MenuItem({
+      label: (this.slideshowstate.playing && this.slideshowstate.paused ? 'Continue' : 'Pause'),
+      enabled: this.slideshowstate.playing,
+      click: () => {
+        this.slideshowstate.paused = !this.slideshowstate.paused
+        Viewer.slideshowTogglePlayPause()
+        this.initMenu()
       }
     })
-    slideshowmenu.append(item)
+    slideshowmenu.append(pause)
 
-    item = new MenuItem({
+    stop = new MenuItem({
       label: 'Stop',
-      click() {
+      enabled: this.slideshowstate.playing,
+      click: () => {
+        this.slideshowstate.playing = false
+        this.slideshowstate.paused = false
         Viewer.slideshowStop()
+        this.initMenu()
       }
     })
-    slideshowmenu.append(item)
+    slideshowmenu.append(stop)
 
     slideshowmenu.append(new MenuItem({type: 'separator'}))
 
-    item = new MenuItem({
+    shuffled = new MenuItem({
       label: 'Shuffle',
       type: 'checkbox',
       checked: UserSettings.slideshowShuffled,
@@ -264,7 +280,7 @@ export default class AppMenu {
         UserSettings.slideshowShuffled = menuItem.checked
       }
     })
-    slideshowmenu.append(item)
+    slideshowmenu.append(shuffled)
 
     return new MenuItem({
       label: 'Slideshow',

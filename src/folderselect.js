@@ -14,138 +14,132 @@ parDir.innerText = '.. (Parent Directory)'
 
 const selector = document.getElementById('folderselect')
 const cwdText = document.getElementById('cwd')
+const recursiveButton = document.getElementById('recursive')
 
-ipcRenderer.on('cwd', (event, cwd) => {
-  travis = new DirectoryTraverser(cwd)
-  cwdText.value = cwd
-  updateDir()
+const openButton = document.getElementById('btnOpen')
+const cancelButton = document.getElementById('btnCancel')
+
+
+ipcRenderer.on('cwd', (event, currentWorkingDir) => {
+  travis = new DirectoryTraverser(currentWorkingDir, {fileFilter: supportedArchivesFormats})
+  // cwdText.value = cwd
+  travis.cd('.')
+    .then(({cwd, files, previous, file}) => {
+      cwdText.value = cwd
+      updateSelector(cwd, files, previous)
+    })
 })
 
-function open(path) {
-  ipcRenderer.send('folderBrowser', path) // sendSync will block destroy()
-  remote.getCurrentWindow().destroy()
-}
 
-selector.ondblclick = (event) => {
-  console.log(event.target.file)
-  if(event.target.file) {
-
-    supportedArchivesFormats.forEach((ext) => {
-      if(event.target.file.name.endsWith(ext)) {
-        travis.cd(event.target.file.name)
-        open(travis.cwd)
-      }
-    })
-
-    console.log('dbl click on: ', event.target.file)
-    travis.cd(event.target.file.name)
-    updateDir()
-  } else {
-    if(event.target.value === '..') {
-      travis.cd('..')
-      updateDir()
-    } else if(event.target.value === '.') {
-      updateDir('.')
-    }
-  }
-}
-
-selector.addEventListener('keypress', () => {
-  console.log(event)
-  let key = event.which
-  // pressing 'return'
-  if(key === 13) {
-    console.log('13')
-    let val = selector.options[selector.selectedIndex].value
-    updateDir(val)
-  }
-})
-
-selector.addEventListener('keyup', () => {
-  console.log('keyup')
-  let key = event.which
-  //pressesd "left arrow"
-  if(key === 37) {
-    updateDir('..')
-  }
-  // "right arrow"
-  if(key === 39) {
-    let val = selector.options[selector.selectedIndex].value
-    updateDir(val)
-  }
-})
-
-function updateDir(dir) {
-  let prevPath
-  if(dir) {
-    if(dir === '.') {
-      open(travis.cwd)
-    } else {
-      prevPath = travis.cd(dir)
-      cwdText.value = travis.cwd
-    }
-  }
-  travis.filterDirectory(supportedArchivesFormats)
-    .then((files) => {
-      fillSelect(files, prevPath)
-    })
-    .catch((err) => {
-      console.log('filterDirectory', err)
-    })
-}
-
-function fillSelect(files, selectitem) {
+function updateSelector(cwd, files, previous) {
   while (selector.firstChild) {
     selector.removeChild(selector.firstChild)
   }
-
   selector.appendChild(curDir)
   selector.appendChild(parDir)
   let selected = false
   files.forEach((file) => {
     let opt = document.createElement('option')
-   
-    opt.value = file.name
-    if(file.name === selectitem) {
+    opt.value = opt.innerText = file
+    if(file === previous) {
       selected = true
       opt.selected = 'selected'
     }
-    opt.file = file
-    opt.innerText = file.name
     selector.appendChild(opt)
   })
-
   if(!selected) {
     curDir.selected = 'selected'
   }
 }
 
+selector.onkeyup = (e) => {
+  let key = e.which
+  // Left-Arrow
+  if(key === 37) {
+    travis.cd('..')
+      .then(({cwd, files, previous, file}) => {
+        // console.log({cwd, files, previous})
+        updateSelector(cwd, files, previous)
+      })
+  } else if(key === 39) {
+    let dirname = selector.options[selector.selectedIndex].value
+    travis.cd(dirname)
+      .then(({cwd, files, previous, file}) => {
+        // console.log({cwd, files, previous})
+        if(travis.dirname === previous || e.shiftKey || file) {
+          // Shift+Right-Arrow => Open folder recrusively
+          open(travis.cwd, e.shiftKey)
+        } else {
+          updateSelector(cwd, files, previous)
+        }
+      })
+  }
+}
+
+selector.onkeypress = (e) => {
+  let key = e.which
+  // Return or Enter
+  if(key === 13) {
+    let dirname = selector.options[selector.selectedIndex].value
+    travis.cd(dirname)
+      .then(({cwd, files, previous, file}) => {
+        if(travis.dirname === previous || event.ctrlKey  || file) {
+          open(travis.cwd, e.shiftKey)
+        } else {
+          updateSelector(cwd, files, previous)
+        }
+      })
+  }
+}
+
 // close window without chaning cwd, if ESC key was pressed
-document.addEventListener('keyup', (evt) => {
-  evt = evt || window.event
-  if (evt.keyCode === 27) { // 27 = ESC
+document.onkeyup = (e) => {
+  if (e.keyCode === 27) { // 27 = ESC
     remote.getCurrentWindow().destroy()
   }
-})
+}
 
-
-const openButton = document.getElementById('btnOpen')
-const cancelButton = document.getElementById('btnCancel')
-
-openButton.addEventListener('click', () => {
-  console.log('open click')
-  let val = selector.options[selector.selectedIndex].value
-  console.log(val)
-  travis.cd(val)
-  if(val === '..') {    
-    updateDir()
-  } else {
-    open(travis.cwd)
+function open(path, recursive) {
+  if(!recursive) {
+    recursive = recursiveButton.checked
   }
-})
+  ipcRenderer.send('folderBrowser', {
+    filepath: path,
+    recursive: recursive
+  }) // sendSync will block destroy()
+  remote.getCurrentWindow().destroy()
+}
+
+selector.ondblclick = (e) => {
+  if(e.target.value) {
+    let prev = travis.dirname
+    travis.cd(e.target.value)
+      .then(({cwd, files, previous, file}) => {
+        // console.log({cwd, files, previous})
+        if(travis.dirname === previous || e.ctrlKey || file) {
+          open(travis.cwd, e.shiftKey)
+        } else {
+          updateSelector(cwd, files, previous)
+        }
+      })
+  }
+}
+
+
+openButton.onclick = (e) => {
+  let dirname = selector.options[selector.selectedIndex].value
+
+  travis.cd(dirname)
+    .then(({cwd, files, previous, file}) => {
+      if(travis.dirname === previous || event.ctrlKey) {
+        open(travis.cwd, e.shiftKey)
+      } else {
+        updateSelector(cwd, files, previous)
+      }
+    })
+}
 
 // close window without new cwd if cancel button is clicked
-cancelButton.addEventListener('click', () => {
-  console.log('cancel click')  
+cancelButton.onclick = () => {
   remote.getCurrentWindow().destroy()
-})
+}

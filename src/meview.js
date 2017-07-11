@@ -12,21 +12,8 @@ UserSettings.on('reset', () => {
   Window.reload()
 })
 
-Window.on('open', (data) => {
-  Window.dropzone.hide()
-  if(data.slideshow) {
-    Viewer.open(data.filepath, data.recursive)
-      .then(() => {
-        Viewer.slideshowStart(data.slideshow)
-      })
-  }
-  if(data.reopen) {
-    Viewer.open(data.filepath)
-  } else {
-    Viewer.open(data.filepath, data.recursive)
-  }
-})
 
 window.onbeforeunload = (e) => {
   Window.beforeUnload()
+  Window.closeOtherWindows()
 }

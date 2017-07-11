@@ -243,8 +243,8 @@ class Window extends EventEmitter {
     }
     let [vwidth, vheight] = this.currentWindow.getSize()
     let [vx, vy] = this.currentWindow.getPosition()
-    let width = 450
-    let height = 360
+    let width = 460
+    let height = 368
     let x = Math.floor(vx + vwidth/2 - width/2)
     let y = Math.floor(vy + vheight/2 - height/2)
 
@@ -262,10 +262,10 @@ class Window extends EventEmitter {
       show: false
     }) // frame: false
     this.selectFolderWindow.setMenu(null)
-    // if(UserSettings.developerMode) {
-    //   // undocked because the window has a fixed size
-    //   this.selectFolderWindow.webContents.openDevTools({mode: 'undocked'})
-    // }
+    if(UserSettings.developerMode) {
+      // undocked because the window has a fixed size
+      this.selectFolderWindow.webContents.openDevTools({mode: 'undocked'})
+    }
 
     if(!root || root === '.') {
       if(UserSettings.savePath && UserSettings.lastSavePath) {
@@ -295,13 +295,14 @@ class Window extends EventEmitter {
    * or closing the app
    *
    */
-  closeAllWindows() {
+  closeOtherWindows() {
     let allWindows = BrowserWindow.getAllWindows()
-    allWindows.reverse().forEach((win) => {
-      if (win.id > 1) {
-        win.close()
-      }
-    })
+    if(this.selectFolderWindow) {
+      this.selectFolderWindow.destroy()
+    }
+    if(this.aboutWindow) {
+      this.aboutWindow.destroy()
+    }
   }
 
   closeApp() {
@@ -316,10 +317,6 @@ class Window extends EventEmitter {
         filepath: Viewer.currentFilepath
       }
     }
-    // this.closeAllWindows()
-    // if(isEnvDeveloper) {
-    //   this.currentWindow.open = ''
-    // }
   }
 
   _initIPCListeners() {

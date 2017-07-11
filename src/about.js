@@ -6,13 +6,27 @@ subtitle.innerText = appPackage.description
 
 let versions = document.getElementById('versions')
 
+
+let tr, name_td, version_td
+
+tr = document.createElement('tr')
+name_td = document.createElement('td')
+name_td.innerText = 'meView: '
+tr.appendChild(name_td)
+version_td = document.createElement('td')
+version_td.innerText =  appPackage.version
+tr.appendChild(version_td)
+tr.appendChild(version_td)
+versions.appendChild(tr)
+
+
 for(let name of ['electron', 'chrome', 'node', 'v8']) {
   let tr = document.createElement('tr')
   let name_td = document.createElement('td')
-  name_td.innerText = name
+  name_td.innerText = name +':'
   tr.appendChild(name_td)
   const version_td = document.createElement('td')
-  version_td.innerText = ' : ' + process.versions[name]
+  version_td.innerText = process.versions[name]
   tr.appendChild(version_td)
   versions.appendChild(tr)
 }

@@ -98,7 +98,7 @@ export function sortFiles(files) {
 export function isEnvDeveloper() {
   if(process.env.ELECTRON_ENV) {
     let env = process.env.ELECTRON_ENV.trim()
-    return (env === 'development' || env === 'dev')
+    return (env === 'development' || env === 'dev' ||  /[\\/]electron[\\/]/.test(process.execPath))
   } else {
     return false
   }

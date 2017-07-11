@@ -1,132 +1,94 @@
-import EventEmitter from 'events'
-import * as path from 'path'
-import * as fs from 'fs'
+import {readdir, statSync} from 'fs'
+import {join, relative, basename} from 'path'
 
-import * as _ from 'lodash'
+import naturalCompare from 'natural-compare-lite'
 
-const defaultOptions = {
-  filterDirectories: false,
-  filterFiles: false
-}
-
-// fileExtension: [".zip"],
-// fileSize: {
-//   "greaterthan": 500,
-//   "smallerthan": 1000
-// }
-
-/**
- * Class to easily traverse a directory tree. Used in the app's folder 
- * browser that appears when the user reached the end of a directory.
- * 
- * @export
- * @class DirectoryTraverser
- * @extends {EventEmitter}
- */
-export class DirectoryTraverser  extends EventEmitter {
-  constructor(dir, options) {
-    super()
-    this.cwd = dir
-    this.options = _.merge(defaultOptions, options)
+export class DirectoryTraverser {
+  constructor(startpath, {
+    fileFilter = undefined,
+    directories = true,
+    hidden = true
+  } = {}) {
+    this.cwd = startpath
+    this.directories = directories
+    this.filter = fileFilter
+    this.hidden = hidden
+    this.files = []
   }
 
-  /**
-   * Change directory
-   * 
-   * @param {string} dir Target dirctory
-   * @returns
-   * 
-   * @memberOf DirectoryTraverser
-   */
+  get dirname() {
+    return basename(this.cwd)
+  }
+
   cd(dir) {
-    let nextdir = path.join(this.cwd, dir)
-    let stats = fs.statSync(nextdir)
-    let previousPath = path.basename(this.cwd)
-    if(stats) {
-      // if(stats.isDirectory()) {
-      console.log('change dir to: ', nextdir)
-      this.cwd = nextdir
-      return previousPath
-      // } else if ()
-    }
-  }
-
-  /**
-   * Filters the contents of the current directory according to the passed filter.
-   * E.g. filter=['.zip'] will treat zip-files as folders
-   * 
-   * @param {string[]} filter List of file extension that 
-   * @returns {Promise}
-   * 
-   * @memberOf DirectoryTraverser
-   */
-  filterDirectory(filter) {
-    console.log(this.cwd)
+    let nextdir = join(this.cwd, dir)
     return new Promise((resolve, reject) => {
-      fs.stat(this.cwd, (err, stats) => {
-        if(err) {
-          reject(err)
+      try {
+        let nextstats = statSync(nextdir)
+        if(!nextstats.isDirectory()) {
+          this.previous = this.dirname
+          this.cwd = nextdir
+          this.files = []
+          resolve({
+            cwd: this.cwd,
+            files: this.files,
+            previous: this.previous,
+            file: true
+          })        }
+      } catch(err) {
+        reject(err)
+      }
+      readdir(nextdir, (err, files) => {
+        if(!files || files.length == 0) {
+          this.previous = this.dirname
+          this.cwd = nextdir
+          this.files = []
         } else {
-          if(stats.isFile()) {
-            return resolve([])
-          }
-        }
-      })
-
-      console.log('filterDirectory: ', this.cwd)
-
-      fs.readdir(this.cwd, (err, files) => {
-        if(err || !(files.length > 0)){
-          resolve([])
-        } else {
-          let filesStructured = []
-          files.forEach((f) => {
-            let fullname = path.join(this.cwd, f)
-            let stats
-            // fs.stat on system files deos not work, lets be gracious about it
+          let d = []
+          let f = []
+          files.forEach((file) => {
+            let filepath = join(nextdir, file)
             try {
-              stats = fs.statSync(fullname)
-            } catch(err) {
-              console.error(err)
-              return      
-            }
-            let entry
-            if(stats.isFile()) {
-              if(filter) {
-                if(isFileInFilter(f, filter)) {
-                  entry = {
-                    'name': f,
-                    'fullname': fullname
-                  }
-                } else {
-                  return
+              let filestats = statSync(filepath)
+              if(this.hidden && file.startsWith('.')) {
+                return
+              }
+              if(this.directories && filestats.isDirectory()) {
+                return d.push(file)
+              }
+              if (this.filter) {
+                if(this.filter.some((ext) => {
+                  return file.endsWith(ext)
+                })) {
+                  return f.push(file)
                 }
               } else {
-                entry = {
-                  'name': f,
-                  'fullname': fullname
-                }
+                return f.push(file)
               }
-            } else if (stats.isDirectory()) {
-              entry = {
-                'name': f,
-                'fullname': fullname,
-                'isDirectory': true
-              }
-            }
-            if(entry) {
-              filesStructured.push(entry)
+            } catch(err) {
+              return
             }
           })
-          resolve(filesStructured)
+          d = sort(d)
+          f = sort(f)
+          this.previous = this.dirname
+          this.cwd = nextdir
+          this.files = d.concat(f)
         }
+        resolve({
+          cwd: this.cwd,
+          files: this.files,
+          previous: this.previous
+        })
       })
     })
   }
 }
 
 
-function isFileInFilter(file, filter) {
-  let ext = path.extname(file).replace('.', '')
-  return (_.indexOf(filter, ext) > -1)
+function sort(arr) {
+  return arr.sort((a, b) => {
+    return naturalCompare(a.toLowerCase(), b.toLowerCase())
+  })
 }
+

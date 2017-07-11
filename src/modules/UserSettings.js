@@ -195,6 +195,13 @@ class UserSettings extends EventEmitter{
     this.emit('menubar')
   }
 
+  get updateReminder() {
+    return settings.getSync('updatereminder')
+  }
+
+  set updateReminder(enabled) {
+    settings.setSync('updatereminder', enabled)
+  }
 
   isCurrentSkipInterval(interval) {
     return settings.getSync('video.skipInterval') === interval

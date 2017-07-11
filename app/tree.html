@@ -9,24 +9,24 @@
 </head>
 
 <body>
-  <div>
-    <form class="pure-form">
-      <label for="cwd">Current folder:</label>
-      <input id="cwd" class="pure-input-1" type="text" readonly>      
-    </form>
-  </div>
-  <div>
-    <form class="pure-form pure-g">
+  <form class="pure-form">
+    <label for="cwd">Current folder
+      <input id="cwd" class="pure-input-1" type="text" readonly>
+    </label>
+    <div class="pure-g">
       <div class="pure-u-3-4">
         <select id="folderselect" onblur="this.focus()" autofocus size="14" class="pure-u-1-1"></select>
       </div>
       <div class="pure-u-1-4">
-        <button id="btnOpen" class="pure-button pure-u-1-1">Use folder</button><br />
+        <button id="btnOpen" class="pure-button pure-u-1-1">Use folder</button>
         <button id="btnCancel" class="pure-button pure-u-1-1">Cancel</button>
+        <label for="recursive" class="pure-checkbox pure-u-1-1">
+          <input id="recursive" type="checkbox">
+          Recursive
+        </label>
       </div>
-
-    </form>
-  </div>
+    </div>
+  </form>
   <script>
     require("./js/folderselect.js")
   </script>
