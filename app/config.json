@@ -25,8 +25,7 @@
     "slideshow": {
       "interval": 7,
       "shuffled": false
-    },
-    "updatereminder": true
+    }
   },
   "ELEMENTS": {
     "view": "viewer",
@@ -68,6 +67,6 @@
     "zip", "cbz"
   ],
   "supportedMediaTypes": [
-    "jpg", "jpeg", "png", "gif", "bmp", "webp", "tiff", "svg", "ico", "webm", "mp4", "mov"
+    "jpg", "jpeg", "png", "gif", "bmp", "webp", "tiff", "svg", "webm", "mp4", "mov"
   ]
 }

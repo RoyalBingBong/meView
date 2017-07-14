@@ -8,7 +8,6 @@ import UserSettings from './UserSettings.js'
 import Viewer from './Viewer.js'
 
 import AppMenu from '../controllers/AppMenu.js'
-import Dropzone from '../controllers/Dropzone.js'
 import IdleTimer from '../controllers/IdleTimer.js'
 import SettingsOverlay from '../controllers/SettingsOverlay.js'
 import SettingsPanels from '../controllers/SettingsPanels.js'
@@ -31,7 +30,6 @@ class Window extends EventEmitter {
       this.aboutWindow = null
       this.selectFolderWindow = null
       this.appmenu = new AppMenu()
-      this.dropzone = new Dropzone()
       this.idletimer = new IdleTimer()
       this.settingsoverlay = new SettingsOverlay()
       this.settingspanels = new SettingsPanels()
@@ -45,10 +43,6 @@ class Window extends EventEmitter {
   }
 
   _initEventHandlers() {
-    this.dropzone.on('drop', (file, recursive) => {
-      Viewer.open(file.path, recursive)
-    })
-
     window.addEventListener('keyup', (e) => {
       if (e.keyCode === 27) { // ESC key
         if (this.fullscreen) {
@@ -198,7 +192,7 @@ class Window extends EventEmitter {
   }
 
 
-  open(asFolder) {
+  open(asFolder, recursive) {
     let searchPath, options
     if(UserSettings.savePath && UserSettings.lastSearchPath) {
       searchPath = UserSettings.lastSearchPath
@@ -224,7 +218,7 @@ class Window extends EventEmitter {
         if(UserSettings.savePath) {
           UserSettings.lastSearchPath = files[0]
         }
-        this.emit('open', files[0])
+        Viewer.open(files[0], recursive)
       }
     })
 
@@ -327,7 +321,6 @@ class Window extends EventEmitter {
 
     ipcRenderer.on('open', (event, data) => {
       console.log('ipc - open', data)
-      this.dropzone.hide()
       if(data.slideshow) {
         Viewer.open(data.filepath, data.recursive)
           .then(() => {

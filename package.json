@@ -2,7 +2,7 @@
   "name": "meview",
   "description": "Image/Video viewer for typical web media formats. Also supports zip-archives.",
   "main": "app/js/main.js",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/RoyalBingBong/meView"
@@ -39,7 +39,7 @@
     "babel-plugin-transform-remove-console": "^6.8.4",
     "cross-env": "^5.0.1",
     "electron": "^1.6.11",
-    "electron-builder": "^19.13.0",
+    "electron-builder": "^19.16.0",
     "rimraf": "^2.6.1"
   }
 }

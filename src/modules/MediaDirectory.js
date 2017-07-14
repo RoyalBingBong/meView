@@ -22,7 +22,6 @@ export const MediaDirectory = {
    * @memberof MediaDirectory
    */
   openDirectory(directory, openrecursive = false) {
-    console.log(directory)
     return new Promise((resolve, reject) => {
       let list = []
       if(openrecursive) {
@@ -39,6 +38,9 @@ export const MediaDirectory = {
                 })
               }
             })
+            if(list.length == 0) {
+              reject(new Error(`No media files in ${directory}`))
+            }
             resolve(MediaDirectory.sort(list))
           })
           .catch((err) => {
@@ -60,6 +62,9 @@ export const MediaDirectory = {
               })
             }
           })
+          if(list.length == 0) {
+            reject(new Error(`No media files in ${directory}`))
+          }
           resolve(MediaDirectory.sort(list))
         })
       }
@@ -93,6 +98,9 @@ export const MediaDirectory = {
               mimetype
             })
           }
+        }
+        if(list.length == 0) {
+          reject(new Error(`No media files in ${zipfile}`))
         }
         resolve(MediaDirectory.sort(list))
       })

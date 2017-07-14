@@ -25,4 +25,14 @@ export default class View {
       this.view.appendChild(elem)
     }
   }
+
+  showError(message) {
+    if(this.view.hasChildNodes()) {
+      this.view.removeChild(this.view.firstChild)
+    }
+    let errElement = document.createElement('div')
+    errElement.classList.add('message')
+    errElement.innerText = message
+    this.view.appendChild(errElement)
+  }
 }

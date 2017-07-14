@@ -34,6 +34,9 @@ export default class MediaList extends EventEmitter {
               resolve()
             })
             .catch((err) => {
+              this.emit('empty', err.message)
+              this.files = []
+              this.index = 0
               reject(err)
             })
         } else {
@@ -46,6 +49,9 @@ export default class MediaList extends EventEmitter {
                 resolve()
               })
               .catch((err) => {
+                this.emit('empty', err.message)
+                this.files = []
+                this.index = 0
                 reject(err)
               })
           } else {
@@ -59,6 +65,9 @@ export default class MediaList extends EventEmitter {
                 resolve()
               })
               .catch((err) => {
+                this.emit('empty', err.message)
+                this.files = []
+                this.index = 0
                 reject(err)
               })
           }

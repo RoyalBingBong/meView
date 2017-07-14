@@ -1,11 +1,13 @@
 import {join} from 'path'
 
-import View from '../controllers/View.js'
 import Counter from '../controllers/Counter.js'
+import Dropzone from '../controllers/Dropzone.js'
 import Filename from '../controllers/Filename.js'
 import MediaList from './MediaList.js'
 import UserSettings from './UserSettings.js'
+import View from '../controllers/View.js'
 import Window from './Window.js'
+
 import {ELEMENTS} from '../../config.json'
 
 
@@ -16,13 +18,22 @@ class Viewer  {
     if(!instance) {
       this.view = new View()
       this.counter = new Counter()
+      this.dropzone = new Dropzone()
       this.filename = new Filename()
       this.mediafiles = new MediaList()
+      this._initDropzoneListener()
       this._initStatusbarListeners()
       this._initMediaListListeners()
       instance = this
     }
     return instance
+  }
+
+  _initDropzoneListener() {
+    this.dropzone.on('drop', (file, recursive) => {
+      console.log('drop')
+      this.open(file.path, recursive)
+    })
   }
 
   _initStatusbarListeners() {
@@ -40,17 +51,22 @@ class Viewer  {
         this._playcurrent(mf)
       }, 1)
       this.filename.name = join(this.mediafiles.root, mf.name)
-      this.counter.updateCurrent(idx)
+      this.counter.current = idx
     })
     this.mediafiles.on('file.added', (mf, len) => {
-      this.counter.updateMax(len)
+      this.counter.max = len
     })
 
     this.mediafiles.on('file.current', (mf, idx) => {
       this.view.show(mf)  
       this._playcurrent(mf)
       this.filename.name = join(this.mediafiles.root, mf.name)
-      this.counter.updateCurrent(idx)
+      this.counter.current = idx
+    })
+
+    this.mediafiles.on('empty', (message) => {
+      this.filename.name = message
+      this.counter.current = 0
     })
 
     this.mediafiles.on('endoflist', (last) => {
@@ -74,10 +90,12 @@ class Viewer  {
       this.mediafiles.open(fileorpath, {recursive})
         .then(() => {
           this._stopcurrent(oldcurrent)
+          this.dropzone.hide()
           resolve()
         })
-        .catch(() => {
-          reject()
+        .catch((err) => {
+          this.view.showError(err.message)
+          // reject(err)
         })
     })
   }

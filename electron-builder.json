@@ -14,7 +14,7 @@
   },
   "linux": {
     "publish": ["github"],
-    "target": ["deb", "7z", "zip"],
+    "target": ["AppImage", "deb", "7z", "zip"],
     "category": "Viewer",
     "icon": "app/assets/linux.iconset"
   }

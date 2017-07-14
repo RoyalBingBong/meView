@@ -48,7 +48,7 @@ export default class AppMenu {
     // Open File
     item = new MenuItem({
       label: 'Open File',
-      accelerator: 'CommandOrControl+Shift+O',
+      accelerator: 'O',
       click() {
         Window.open()
       }
@@ -61,6 +61,16 @@ export default class AppMenu {
       accelerator: 'CommandOrControl+O',
       click() {
         Window.open(true)
+      }
+    })
+    filemenu.append(item)
+
+    // Open Folder Recursive
+    item = new MenuItem({
+      label: 'Open Folder Recursive',
+      accelerator: 'CommandOrControl+Shift+O',
+      click() {
+        Window.open(true, true)
       }
     })
     filemenu.append(item)

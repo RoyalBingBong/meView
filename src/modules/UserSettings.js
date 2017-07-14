@@ -1,13 +1,11 @@
 import {EventEmitter} from 'events'
-import {dialog, remote} from 'electron'
+import {remote} from 'electron'
 
 import settings from 'electron-settings'
 
 import {isEnvDeveloper} from '../helper.js'
 
 import {defaultSettings} from '../../config.json'
-
-
 
 settings.configure({prettify: true})
 settings.defaults(defaultSettings)
@@ -20,6 +18,14 @@ class UserSettings extends EventEmitter{
       instance = this
     }
     return instance
+  }
+
+  get version() {
+    return settings.getSync('version')
+  }
+
+  set version(version) {
+    settings.setSync('version', version)
   }
 
   get developerMode() {
@@ -201,10 +207,6 @@ class UserSettings extends EventEmitter{
 
   set updateReminder(enabled) {
     settings.setSync('updatereminder', enabled)
-  }
-
-  isCurrentSkipInterval(interval) {
-    return settings.getSync('video.skipInterval') === interval
   }
 
   resetToDefault(browserWindow) {

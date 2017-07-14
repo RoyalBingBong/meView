@@ -22,9 +22,19 @@ export default class Counter extends EventEmitter{
   constructor() {
     super()
     this.counter = document.getElementById(ELEMENTS.counter)
-    this.current = 0
-    this.max = 0
+    this._current = 0
+    this._max = 0
     this.initHandlers()
+    this.update()
+  }
+
+  set current(curr) {
+    this._current = curr
+    this.update()
+  }
+
+  set max(max) {
+    this._max = max
     this.update()
   }
 
@@ -50,8 +60,8 @@ export default class Counter extends EventEmitter{
         e.preventDefault()
 
         if(parseInt(this.counter.value)) {
-          this.current = parseInt(this.counter.value)
-          this.emit('change.index', this.current - 1)
+          this._current = parseInt(this.counter.value)
+          this.emit('change.index', this._current - 1)
         }
         this.counter.blur()
       }
@@ -67,36 +77,12 @@ export default class Counter extends EventEmitter{
   update() {
     if(this.current && this.current > 0) {
       if(this.max > 0) {
-        this.counter.value = this.current + ' of ' + this.max
+        this.counter.value = this._current + ' of ' + this._max
       } else {
-        this.counter.value = this.current + ' of -'
+        this.counter.value = this._current + ' of -'
       }
     } else {
       this.counter.value = empty
     }
-  }
-
-  /**
-   * Update the current index
-   *
-   * @param {number} current Current index
-   *
-   * @memberOf Counter
-   */
-  updateCurrent(current) {
-    this.current = current + 1
-    this.update()
-  }
-
-  /**
-   * Update the current max value.
-   *
-   * @param {number} max
-   *
-   * @memberOf Counter
-   */
-  updateMax(max) {
-    this.max = max
-    this.update()
   }
 }
