@@ -405,7 +405,6 @@ export default class AppMenu {
 
     return new MenuItem({
       label: 'Developer',
-      visible: false,
       submenu: devmenu
     })
   }
