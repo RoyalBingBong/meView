@@ -19,6 +19,18 @@ if(isEnvDeveloper()) {
     console.log('update-downloaded')
     updateDownloaded = true
   })
+  // autoUpdater.on('checking-for-update', () => {
+  //   console.log('Checking for update...')
+  // })
+  autoUpdater.on('update-available', () => {
+    console.log('Update available.')
+  })
+  // autoUpdater.on('update-not-available', () => {
+  //   console.log('Update not available.')
+  // })
+  // autoUpdater.on('error', () => {
+  //   console.log('Error in auto-updater.')
+  // })
 }
 
 
