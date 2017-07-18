@@ -29,7 +29,7 @@ export default class Counter extends EventEmitter{
   }
 
   set current(curr) {
-    this._current = curr
+    this._current = curr + 1
     this.update()
   }
 
@@ -75,8 +75,8 @@ export default class Counter extends EventEmitter{
    * @memberOf Counter
    */
   update() {
-    if(this.current && this.current > 0) {
-      if(this.max > 0) {
+    if(this._current && this._current > 0) {
+      if(this._max > 0) {
         this.counter.value = this._current + ' of ' + this._max
       } else {
         this.counter.value = this._current + ' of -'

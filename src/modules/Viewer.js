@@ -54,6 +54,7 @@ class Viewer  {
       this.counter.current = idx
     })
     this.mediafiles.on('file.added', (mf, len) => {
+      console.log('counter.max', len)
       this.counter.max = len
     })
 
@@ -61,11 +62,14 @@ class Viewer  {
       this.view.show(mf)  
       this._playcurrent(mf)
       this.filename.name = join(this.mediafiles.root, mf.name)
+      console.log('counter.current', idx)
       this.counter.current = idx
     })
 
     this.mediafiles.on('empty', (message) => {
       this.filename.name = message
+      
+      console.log('counter.current', 0)
       this.counter.current = 0
     })
 
