@@ -37,7 +37,7 @@ if(isEnvDeveloper()) {
 // Workaround to make commander work with Electron
 let exe = process.argv.shift()
 if(!process.argv[0] || process.argv[0] && process.argv[0] !== '.') {
-  process.argv.unshift('')
+  process.argv.unshift('.')
 }
 process.argv.unshift(exe)
 
@@ -50,6 +50,8 @@ commander
 commander.on('--help', () => {
   app.quit()
 })
+
+// console.log(process.argv)
 commander.parse(process.argv)
 
 // console.log('=====================')
@@ -102,6 +104,7 @@ app.on('ready', () => {
       } else {
         fileToOpen = join(process.cwd(), commander.args[0])
       }
+      // console.log('openening: ', fileToOpen)
       if(commander.slideshow) {
         // TODO
       }
