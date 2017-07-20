@@ -11,12 +11,13 @@ import {isEnvDeveloper} from './helper.js'
 import * as pkg from '../package.json'
 
 // Workaround to make commander work with Electron properly
-let exe = process.argv.shift()
+
 let execPath = process.execPath.toLowerCase()
 if(execPath.endsWith(pkg.name) || execPath.endsWith(pkg.name + '.exe')) {
+  let exe = process.argv.shift()
   process.argv.unshift('')
+  process.argv.unshift(exe)
 }
-process.argv.unshift(exe)
 
 commander
   .version(pkg.version)
@@ -30,7 +31,6 @@ commander.on('--help', () => {
 
 // console.log(process.argv)
 commander.parse(process.argv)
-console.log(commander)
 // console.log('=====================')
 // console.log('fullscreen: %j', commander.fullscreen)
 // console.log('slideshow: %j', commander.slideshow)
