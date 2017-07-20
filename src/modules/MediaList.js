@@ -35,6 +35,7 @@ export default class MediaList extends EventEmitter {
             })
             .catch((err) => {
               this.emit('empty', err.message)
+              this.root = fileorpath
               this.files = []
               this.index = 0
               reject(err)
@@ -50,6 +51,7 @@ export default class MediaList extends EventEmitter {
               })
               .catch((err) => {
                 this.emit('empty', err.message)
+                this.root = fileorpath
                 this.files = []
                 this.index = 0
                 reject(err)
@@ -66,6 +68,7 @@ export default class MediaList extends EventEmitter {
               })
               .catch((err) => {
                 this.emit('empty', err.message)
+                this.root = root
                 this.files = []
                 this.index = 0
                 reject(err)

@@ -10,9 +10,39 @@ import {defaultSettings} from '../config.json'
 import {isEnvDeveloper} from './helper.js'
 import * as pkg from '../package.json'
 
+// Workaround to make commander work with Electron properly
+let exe = process.argv.shift()
+let execPath = process.execPath.toLowerCase()
+if(execPath.endsWith(pkg.name) || execPath.endsWith(pkg.name + '.exe')) {
+  process.argv.unshift('')
+}
+process.argv.unshift(exe)
+
+commander
+  .version(pkg.version)
+  .usage('<file or folder ...> [options] ')
+  .option('-f, --fullscreen', 'open meView in fullscreen mode')
+  .option('-r, --recursive', 'opens all files in a folder and is sub-folders')
+  .option('-s, --slideshow [timer]', 'start slideshow with **timer** seconds between each image (defaults to 7)', parseInt)
+commander.on('--help', () => {
+  app.quit()
+})
+
+// console.log(process.argv)
+commander.parse(process.argv)
+console.log(commander)
+// console.log('=====================')
+// console.log('fullscreen: %j', commander.fullscreen)
+// console.log('slideshow: %j', commander.slideshow)
+// console.log('recursive: %j', commander.recursive)
+// console.log('args: %j', commander.args)
 
 let updateDownloaded = false
-if(isEnvDeveloper()) {
+if(isEnvDeveloper()
+  || !!commander.args.length
+  || commander.fullscreen
+  || !!commander.slideshow
+  || commander.recursive ) {
   autoUpdater.autoDownload = false
 } else {
   autoUpdater.on('update-downloaded', () => {
@@ -34,32 +64,6 @@ if(isEnvDeveloper()) {
 }
 
 
-// Workaround to make commander work with Electron
-let exe = process.argv.shift()
-if(!process.argv[0] || process.argv[0] && process.argv[0] !== '.') {
-  process.argv.unshift('.')
-}
-process.argv.unshift(exe)
-
-commander
-  .version(pkg.version)
-  .usage('<file or folder ...> [options] ')
-  .option('-f, --fullscreen', 'open meView in fullscreen mode')
-  .option('-r, --recursive', 'opens all files in a folder and is sub-folders')
-  .option('-s, --slideshow [timer]', 'start slideshow with **timer** seconds between each image (defaults to 7)', parseInt)
-commander.on('--help', () => {
-  app.quit()
-})
-
-// console.log(process.argv)
-commander.parse(process.argv)
-
-// console.log('=====================')
-// console.log('fullscreen: %j', commander.fullscreen)
-// console.log('slideshow: %j', commander.slideshow)
-// console.log('recursive: %j', commander.recursive)
-// console.log('args: %j', commander.args)
-
 let mainWindow = null
 
 app.on('window-all-closed', () => {
@@ -73,7 +77,7 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
 
   // skip version check in dev environment
-  if(!isEnvDeveloper()) {
+  if(autoUpdater.autoDownload) {
     autoUpdater.checkForUpdates()
   }
 

@@ -59,7 +59,7 @@ class Viewer  {
     })
 
     this.mediafiles.on('file.current', (mf, idx) => {
-      this.view.show(mf)  
+      this.view.show(mf)
       this._playcurrent(mf)
       this.filename.name = join(this.mediafiles.root, mf.name)
       console.log('counter.current', idx)
@@ -68,9 +68,7 @@ class Viewer  {
 
     this.mediafiles.on('empty', (message) => {
       this.filename.name = message
-      
-      console.log('counter.current', 0)
-      this.counter.current = 0
+      this.counter.current = -1
     })
 
     this.mediafiles.on('endoflist', (last) => {
@@ -78,7 +76,6 @@ class Viewer  {
     })
   }
 
-  
 
   get currentFilepath() {
     return join(this.mediafiles.root, this.mediafiles.current.name)
@@ -91,10 +88,10 @@ class Viewer  {
   open(fileorpath, recursive = false) {
     return new Promise((resolve, reject) => {
       let oldcurrent = this.mediafiles.current
+      this.dropzone.hide()
       this.mediafiles.open(fileorpath, {recursive})
         .then(() => {
           this._stopcurrent(oldcurrent)
-          this.dropzone.hide()
           resolve()
         })
         .catch((err) => {
