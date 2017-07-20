@@ -1,5 +1,5 @@
 import * as appPackage from '../package.json'
-import {shell} from 'electron'
+import {remote, shell} from 'electron'
 
 let subtitle = document.getElementById('subtitle')
 subtitle.innerText = appPackage.description
@@ -38,5 +38,11 @@ for (let i = 0; i < links.length; i++) {
     console.log(links[i])
     e.preventDefault()
     shell.openExternal(links[i].href)
+  }
+}
+
+document.onkeyup = (e) => {
+  if (e.keyCode === 27) { // 27 = ESC
+    remote.getCurrentWindow().close()
   }
 }
