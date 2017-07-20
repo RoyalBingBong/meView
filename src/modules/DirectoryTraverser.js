@@ -58,7 +58,7 @@ export class DirectoryTraverser {
               }
               if (this.filter) {
                 if(this.filter.some((ext) => {
-                  return file.endsWith(ext)
+                  return file.toLowerCase().endsWith(ext)
                 })) {
                   return f.push(file)
                 }
