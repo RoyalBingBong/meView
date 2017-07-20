@@ -128,13 +128,13 @@ export const helper = {
   filterFiles(files) {
     return files.filter((file) => {
       return supportedMediaTypes.some((ext) => {
-        return file.endsWith(ext)
+        return file.toLowerCase().endsWith(ext)
       })
     })
   },
   supportedFileFormat(file) {
     return supportedMediaTypes.some((ext) => {
-      return file.endsWith(ext)
+      return file.toLowerCase().endsWith(ext)
     })
   }
 }
