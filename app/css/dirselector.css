@@ -1,9 +1,19 @@
 html, body{
-  padding: 0.2em;
-  padding: 0.2em;
-  background-color: #F5F5F5;
+  margin: 0;
+  padding: 0;
+  background-color: #333;
+  color: #999;
   cursor:default;
   overflow: hidden;
+}
+
+#title {
+  background:rgba(0,0,0,0.4);
+  padding: 5px;
+}
+
+#tree {
+  padding: 15px;
 }
 
 #cwd {
@@ -12,23 +22,36 @@ html, body{
   direction: rtl;
   text-align: left;
   -webkit-user-select: none;
-  user-select: none;  
+  user-select: none;
   height: 1.5em;
+  background: rgba(0,0,0,0.5);
+  color: #777;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 button {
   padding: 1px;
   margin: 1px;
+  background: #777;
+  border-radius: 0;
 }
 
 #folderselect {
   overflow:scroll;
   overflow-x: hidden;
-  height: 100%;
+  height: 250px;
   font-size: 12pt;
+  background: rgba(0,0,0,0.5);
+  width: 315px;
   color: #000;
-  color: rgba(0,0,0,0);
+  color: #999;
   text-shadow: 0 0 0 #000;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  margin-right: 5px;
 }
 
 #folderselect:focus {
@@ -56,4 +79,70 @@ select#folderselect option[value$=".."] {
 
 select#folderselect option[value$="zip"] {
   background-image:url("../assets/WinRAR-48.png");
+}
+
+/* Let's get this party started */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    border-radius: 0;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    border-radius: 0;
+    background: rgba(125,125,125,0.8);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: rgba(125,125,125,0.4);
+}
+
+.styled-checkbox {
+  position: absolute;
+  opacity: 0;
+}
+.styled-checkbox + label {
+  position: relative;
+  cursor: pointer;
+  padding: 0;
+}
+.styled-checkbox + label:before {
+  content: '';
+  margin-right: 10px;
+  display: inline-block;
+  vertical-align: text-top;
+  width: 20px;
+  height: 20px;
+  background: #999;
+}
+.styled-checkbox:hover + label:before {
+  background: #f35429;
+}
+.styled-checkbox:focus + label:before {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12);
+}
+.styled-checkbox:checked + label:before {
+  background: #f35429;
+}
+.styled-checkbox:disabled + label {
+  color: #b8b8b8;
+  cursor: auto;
+}
+.styled-checkbox:disabled + label:before {
+  box-shadow: none;
+  background: #ddd;
+}
+.styled-checkbox:checked + label:after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 9px;
+  background: white;
+  width: 2px;
+  height: 2px;
+  box-shadow: 2px 0 0 white, 4px 0 0 white, 4px -2px 0 white, 4px -4px 0 white, 4px -6px 0 white, 4px -8px 0 white;
+  transform: rotate(45deg);
 }

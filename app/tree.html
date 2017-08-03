@@ -9,7 +9,8 @@
 </head>
 
 <body>
-  <form class="pure-form">
+  <div id="title">Select Folder</div>
+  <form class="pure-form" id="tree">
     <label for="cwd">Current folder
       <input id="cwd" class="pure-input-1" type="text" readonly>
     </label>
@@ -20,10 +21,10 @@
       <div class="pure-u-1-4">
         <button id="btnOpen" class="pure-button pure-u-1-1">Use folder</button>
         <button id="btnCancel" class="pure-button pure-u-1-1">Cancel</button>
-        <label for="recursive" class="pure-checkbox pure-u-1-1">
-          <input id="recursive" type="checkbox">
-          Recursive
-        </label>
+        <div class="pure-u-1-1">
+          <input class="styled-checkbox" id="recursive" type="checkbox">
+          <label for="recursive">Recursive</label>
+        </div>
       </div>
     </div>
   </form>
