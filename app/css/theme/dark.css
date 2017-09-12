@@ -1,0 +1,75 @@
+.mainview,
+.mainview input,
+.dropzone,
+.folderbrowser{
+  background-color: #424242;
+  color: #fff;
+}
+
+
+
+
+#dropzone {
+  /* border-color: #bababa; */
+  border-color: #fff;
+}
+
+.selector select {
+  /* background-color: #282828; */
+  background-color: #6d6d6d;
+  /* color:#bababa; */
+  color:#fff;
+}
+
+.statusbar {
+  /* border-top: 1px solid #424242; */
+  border-top: 1px solid #6d6d6d;
+}
+
+.statusbar .filetext {
+  color: #a4a4a4
+}
+
+/*
+  Folder Browser:
+*/
+.folderbrowser input,
+.folderbrowser select {
+  border: none;
+  outline: none;
+}
+
+.folderbrowser input {
+  /* box-shadow: inset 0 0 1px #bababa;  */
+  box-shadow: inset 0 0 1px #6d6d6d; 
+}
+
+/* Current dir textbox */
+.folderbrowser .cwd {
+  background-color: #6d6d6d;
+  color:#fff;
+}
+
+.folderbrowser .button {
+  background-color: #757575;
+  color:#fff;
+  border: none; 
+  outline: none;
+  box-shadow: inset 0 0 2px #1b1b1b; 
+}
+
+/* 
+  Folder select
+*/
+.folderbrowser select::-webkit-scrollbar {
+  background-color: #a4a4a4;
+}
+.folderbrowser select::-webkit-scrollbar-button {
+  display: none;
+}
+.folderbrowser select::-webkit-scrollbar-thumb {
+  background-color: #6d6d6d;
+  box-shadow: inset 0 0 2px #1b1b1b; 
+} 
+
+

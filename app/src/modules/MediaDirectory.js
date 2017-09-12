@@ -1,12 +1,13 @@
 import {EventEmitter} from 'events'
 import {readdir, readFile, stat} from 'fs'
-import {join, relative} from 'path'
+import {join, relative, basename} from 'path'
 
 import mime from 'mime'
 import Zip from 'node-zip'
 import recursive from 'recursive-readdir'
 import naturalCompare from 'natural-compare-lite'
 
+import Locale from './Locale.js'
 import {supportedMediaTypes} from '../../config.json'
 
 export const MediaDirectory = {
@@ -38,8 +39,8 @@ export const MediaDirectory = {
                 })
               }
             })
-            if(list.length == 0) {
-              reject(new Error(`No media files in ${directory}`))
+            if(list.length === 0) {
+              reject(new Error(Locale.__('errors.nomediafiles', basename(directory))))
             }
             resolve(MediaDirectory.sort(list))
           })
@@ -63,7 +64,7 @@ export const MediaDirectory = {
             }
           })
           if(list.length == 0) {
-            reject(new Error(`No media files in ${directory}`))
+            reject(new Error(Locale.__('errors.nomediafiles', basename(directory))))
           }
           resolve(MediaDirectory.sort(list))
         })
@@ -100,7 +101,7 @@ export const MediaDirectory = {
           }
         }
         if(list.length == 0) {
-          reject(new Error(`No media files in ${zipfile}`))
+          reject(new Error(Locale.__('errors.nomediafiles', basename(zipfile))))
         }
         resolve(MediaDirectory.sort(list))
       })

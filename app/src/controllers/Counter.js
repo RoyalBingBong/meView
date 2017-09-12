@@ -2,7 +2,10 @@ import {EventEmitter} from 'events'
 
 import {ELEMENTS} from '../../config.json'
 
-const empty = '- of -'
+const sep = '/'
+const no = '−'
+
+const EMPTY = `${no} ${sep} ${no}`
 
 /**
  * Class to manage the file counter in the status bar.
@@ -28,6 +31,10 @@ export default class Counter extends EventEmitter{
     this.update()
   }
 
+  get current() {
+    return this._current
+  }
+
   set current(curr) {
     this._current = curr + 1
     this.update()
@@ -36,6 +43,10 @@ export default class Counter extends EventEmitter{
   set max(max) {
     this._max = max
     this.update()
+  }
+
+  get max() {
+    return this._max
   }
 
   /**
@@ -52,18 +63,28 @@ export default class Counter extends EventEmitter{
     this.counter.onfocus = () => {
       this.counter.value = ''
     }
+
     this.counter.onblur = () => {
+      let value = parseInt(this.counter.value)
+      // console.log('counter', value, typeof value)
+      // console.log('_current', this.current, typeof this.current)
+      // console.log('max', this.max, typeof this.max)
+      if(value > 0 && value < this.max) {
+        this.emit('counter.change', value - 1)
+      } else {
+        this.emit('counter.change', this.max - 1)
+      }
       this.update()
     }
-    this.counter.onkeypress = (e) => {
-      if(e.keyCode === 13) {
-        e.preventDefault()
 
-        if(parseInt(this.counter.value)) {
-          this._current = parseInt(this.counter.value)
-          this.emit('change.index', this._current - 1)
-        }
+    // Input validation, because type="number" inputs don't allow for nice formatting ("x of N")
+    this.counter.onkeydown = (e) => {
+      e.stopPropagation()
+      if(e.keyCode === 13) {
         this.counter.blur()
+      }
+      if(isNaN(e.key)) {
+        return false
       }
     }
   }
@@ -75,14 +96,14 @@ export default class Counter extends EventEmitter{
    * @memberOf Counter
    */
   update() {
-    if(this._current && this._current > 0) {
-      if(this._max > 0) {
-        this.counter.value = this._current + ' of ' + this._max
+    if(this.current && this.current > 0) {
+      if(this.max > 0) {
+        this.counter.value = `${this.current} ${sep} ${this.max}`
       } else {
-        this.counter.value = this._current + ' of -'
+        this.counter.value = EMPTY
       }
     } else {
-      this.counter.value = empty
+      this.counter.value = EMPTY
     }
   }
 }

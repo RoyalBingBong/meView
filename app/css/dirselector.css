@@ -1,34 +1,66 @@
-html, body{
-  padding: 0.2em;
-  padding: 0.2em;
-  background-color: #F5F5F5;
-  cursor:default;
+html, body {
+  margin: 0;
+  padding: 0;
+  font: caption;
   overflow: hidden;
 }
 
-#cwd {
-  font-size: 1em;
-  text-overflow: ellipsis;
-  direction: rtl;
-  text-align: left;
-  -webkit-user-select: none;
-  user-select: none;  
-  height: 1.5em;
+.header {
+  width: 480px;
 }
 
-button {
-  padding: 1px;
-  margin: 1px;
+.header > input {
+  margin: 0;
+  width: 100%;
+}
+
+.selector {
+  padding-top: 5px;
+  width: 480px;
+  height: 335px;
+  overflow: hidden;
+}
+
+.selectcontainer, .selectbuttons {
+  float: left;
+}
+
+.selectcontainer {
+  width: 300px;
+}
+
+.selectbuttons {
+  width: 180px;
+}
+
+.selectbuttons button {
+  width: calc(180px - .5em);
+}
+.selectbuttons input[type='checkbox'] {
+  width: 1em;
+  height: 1em;
+}
+
+button, input, select, label {
+  font-size: 1em;
+  margin: .1em;
+}
+
+label, input[type='checkbox'] {
+  font-size: 1em;
+  height: 1em;
+}
+
+button, input[type='checkbox'] {
+  margin-left: .4em;
 }
 
 #folderselect {
-  overflow:scroll;
+  width: 100%;
+  height: 335px;
+  overflow: scroll;
   overflow-x: hidden;
-  height: 100%;
-  font-size: 12pt;
-  color: #000;
-  color: rgba(0,0,0,0);
-  text-shadow: 0 0 0 #000;
+  outline: none;
 }
 
 #folderselect:focus {

@@ -1,170 +1,286 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>meView</title>
-    <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="node_modules/purecss/build/pure-min.css">
-    <link rel="stylesheet" href="css/main.css">
-  </head>
-  <body>
-    <div id="mainview">
-      <div id="container">
-        <div id="autoheight">
-          <div id="viewer">
+
+<head>
+  <meta charset="UTF-8">
+  
+  <title>meView</title>
+  <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" type="text/css">
+  <!-- <link rel="stylesheet" href="node_modules/purecss/build/pure-min.css"> -->
+  <link rel="stylesheet" href="css/core.css">
+  <link rel="stylesheet" href="css/theme/dark.css">
+</head>
+
+<body>
+    <div id="mainview" class="mainview">
+      <div id="autoheight">
+        <div id="viewer">
+        </div>
+      </div>
+      <div id="statusbar" class="statusbar">
+        <input id="counter" class="counter" type="text" />
+        <input id="filetext" class="filetext" type="text" data-i18n-placeholder="No file selected" readonly />
+      </div>
+    </div>
+    <div id="dropzonecontainer">
+      <div id="dropzone" class="dropzone">
+        <div class="message">
+          <div>
+            <div class="title" data-i18n="dropzone.title">
+              Drop file or folder here
+            </div>
+            <div class="tip" data-i18n="dropzone.tip">
+              Hold shift to open a folder recursive
+            </div>
           </div>
         </div>
-        <div id="statusbar">
-          <form class="pure-form pure-g">
-            <div class="pure-u-4-24">
-              <input class="pure-input-1" id="counter" type="text" >
-            </div>
-            <div class="pure-u-20-24">
-              <input class="pure-input-1" id="filetext" type="text" placeholder="No file selected" readonly />
-            </div>
-          </form>
-        </div>
       </div>
-      <div id="dropzone" class="message">
-        <p>
-          Drop file or folder here
-        </p>
-      </div>
-      <div id="settingscontainer" class="hidden">
-        <div id="settings" class="pure-g">
-          <div class="close-settings">
-            <button id="close-settings" href="#">
-              <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>
+    </div>
+    <div id="settingscontainer" class="">
+      <div>
+        <div class="settings-header">
+          <div class="title" data-i18n="Settings">Settings</div>
+          <button id="settings-close-x" href="#">
+              <i class="fa fa-times-circle" aria-hidden="true"></i>
             </button>
+        </div>
+        <div class="settings">
+          <div class="settings-menu">
+            <button class="settings-menu-entry" href="#" id="menu-general" >
+              <i class="fa fa-wrench" aria-hidden="true"></i>
+              <span class="spacer">&nbsp;</span>
+              <span data-i18n="General">General</span>
+            </button>
+            <button class="settings-menu-entry" href="#" id="menu-video">
+              <i class="fa fa-video-camera" aria-hidden="true"></i>
+              <span class="spacer">&nbsp;</span>
+              <span data-i18n="Video">Video</span>
+            </button>
+            <button class="settings-menu-entry" href="#" id="menu-ui">
+              <i class="fa fa-window-maximize" aria-hidden="true"></i>
+              <span class="spacer">&nbsp;</span>
+              <span data-i18n="UI">UI</span>
+            </button>
+            <button class="settings-menu-entry" href="#" id="menu-os">
+              <i class="fa fa-windows" aria-hidden="true"></i>
+              <span class="spacer">&nbsp;</span>
+              <span data-i18n="System">System</span>              
+            </button>
+            <button class="settings-menu-entry reset" href="#" id="resettodefault" data-i18n="Reset">Reset</button>
           </div>
-          <div class="pure-u-1-5">
-            <span class="pure-menu-heading">Settings</span>
-            <div class="pure-menu settings-menu">
-              <ul id="settings-menu" class="pure-menu-list">
-                <li class="pure-menu-item" id="menu-general"><a href="#" class="pure-menu-link">General</a></li>
-                <li class="pure-menu-item" id="menu-video"><a href="#" class="pure-menu-link">Video</a></li>
-                <li class="pure-menu-item" id="menu-ui"><a href="#" class="pure-menu-link">User Interface</a></li>
-                <li class="pure-menu-item" id="menu-os"><a href="#" class="pure-menu-link">OS</a></li>
-              </ul>              
-            </div>
-            <button id="resettodefault" class="pure-button pure-u-1-5" href="#">Reset to default</button>
-          </div>
-          <div class="pure-u-4-5">
-            <div id="settings-general" class="settings-panel hidden" >
-              <span class="pure-menu-heading">General</span>
-              <form class="pure-form pure-form-stacked">
-                <label for="general-closewithesc" class="pure-checkbox">
-                  <input id="general-closewithesc" type="checkbox" value="">
-                  Close meView when pressing ESC
-                </label>
-                <label for="general-savepath" class="pure-checkbox">
-                  <input id="general-savepath" type="checkbox" value="">
-                  Save last used path when using "File > Open File" or "File > Open Folder"
-                </label>
-                <label for="general-reopenlast" class="pure-checkbox">
-                  <input id="general-reopenlast" type="checkbox" value="">
-                  Automatically reopen the last viewed file
-                </label>
+          <div class="settings-panel-container">
+            <div id="settings-general" class="settings-panel hidden">
+              <h4 data-i18n="General">General</h4>
+              <form>
+                <div class="">
+                  <input id="general-closewithesc" type="checkbox">
+                  <label for="general-closewithesc" data-i18n="settings.general.closewithesc">
+                    Close meView when pressing ESC
+                  </label>
+                </div>
+                <div class="">
+                  <input id="general-savepath" type="checkbox">
+                  <label for="general-savepath" data-i18n="settings.general.savepath">
+                    Save last used path when using "File > Open File" or "File > Open Folder"
+                  </label>
+                </div>
+                <div class="">
+                  <input id="general-reopenlast" type="checkbox">
+                  <label for="general-reopenlast" data-i18n="settings.general.reopenlast">
+                    Automatically reopen the last viewed file
+                  </label>
+                </div>
                 <hr>
-                <label for="general-slideshowinterval">Slideshow interval (seconds)</label>
-                <input id="general-slideshowinterval" class="pure-u-1-5" type="number" value="0">
-                
-                <label for="general-devmode" class="pure-checkbox" id="devmodebox">
-                  <input id="general-devmode" type="checkbox" value="">
-                  Enable developer menu
-                </label>
+                <div class="">
+                  <label for="general-slideshowinterval" data-i18n="Slideshow interval">
+                    Slideshow interval:
+                  </label>
+                  <input id="general-slideshowinterval" class="" type="number" min="1" value="1">
+                  <label for="general-slideshowinterval" data-i18n="seconds">
+                </div>
+                <div class="devmode">
+                  <input id="general-devmode" type="checkbox">
+                  <label for="general-devmode" data-i18n="settings.general.devmode">
+                    Enable developer menu
+                  </label>
+                </div>
               </form>
             </div>
             <div id="settings-video" class="settings-panel hidden">
-              <span class="pure-menu-heading">Video</span>
-              <form class="pure-form pure-form-stacked">
-                <label for="video-autoplay" class="pure-checkbox">
-                  <input id="video-autoplay" type="checkbox" value="">
-                  Autoplay
-                </label>
-                <label for="video-loop" class="pure-checkbox">
-                  <input id="video-loop" type="checkbox" value="">
-                  Loop
-                </label>
-                <label for="video-mute" class="pure-checkbox">
-                  <input id="video-mute" type="checkbox" value="">
-                  Mute
-                </label>
+              <h4 data-i18n="Video">Video</h4>
+              <form>
+                <div>
+                  <input id="video-autoplay" type="checkbox">
+                  <label for="video-autoplay" data-i18n="Autoplay">
+                    Autoplay
+                  </label>
+                </div>
+
+                <div>
+                  <input id="video-loop" type="checkbox">
+                  <label for="video-loop" data-i18n="Loop">
+                    Loop
+                  </label>
+                </div>
+
+                <div>
+                  <input id="video-mute" type="checkbox">
+                  <label for="video-mute" data-i18n="Mute">
+                    Mute
+                  </label>
+                </div>
                 <hr>
-                <label for="video-skipinterval">Skip interval (seconds)</label>
-                <input id="video-skipinterval" class="pure-u-1-5" type="number" value="0">
-                <span class="pure-form-message">Used when forwarding or rewinding a video with Shift+Right-Arrow or Shift+Left-Arrow.</span>
+
+                <label for="video-skipinterval" data-i18n="Skip interval">
+                  Skip interval
+                </label>
+                <input id="video-skipinterval" class="" type="number" min="1" value="1">
+                <label for="video-skipinterval" data-i18n="seconds">
+                  seconds
+                </label>
+                <p class="info" data-i18n="settings.info.skipinterval">Used when forwarding or rewinding a video with Shift+Right-Arrow or Shift+Left-Arrow.</p>
               </form>
             </div>
             <div id="settings-ui" class="settings-panel hidden">
-              <span class="pure-menu-heading">User Interface</span>
-              <div class="pure-g">
-                <div class="pure-u-1-5">
-                  <label for="ui-menubar" class="pure-checkbox">
-                    <input id="ui-menubar" type="checkbox" checked disabled>
+              <h4 data-i18n="User Interface">User Interface</h4>
+              <div class="">
+                <div class="cb">
+                  <label for="ui-language" data-i18n="Language">
+                    Language
+                  </label>
+                </div>
+                <div class="cb">
+                  <select name="" id="ui-language">
+
+                  </select>
+                </div>
+                <div class="cb-clear"></div>
+              </div>
+              <hr>
+              <div class="">
+                <div class="cb">
+                  <input id="ui-menubar" type="checkbox" checked disabled>
+                  <label for="ui-menubar" data-i18n="Menubar">
                     Menubar
                   </label>
                 </div>
-                <div class="pure-u-2-5">
-                  <label for="ui-menubarfullscreen" class="pure-checkbox">
-                    <input id="ui-menubarfullscreen" type="checkbox" value="">
-                    Hide in fullscreen mode
+                <div class="cb">
+                  <input id="ui-menubarfullscreen" type="checkbox">
+                  <label for="ui-menubarfullscreen" data-i18n="Hide in fullscreen">
+                    Hide in fullscreen
                   </label>
                 </div>
+                <div class="cb-clear"></div>
               </div>
               <hr>
-              <div class="pure-g">
-                <div class="pure-u-1-5">
-                  <label for="ui-statusbar" class="pure-checkbox">
-                    <input id="ui-statusbar" type="checkbox" value="">
+              <div class="">
+                <div class="cb">
+                  <input id="ui-statusbar" type="checkbox">
+                  <label for="ui-statusbar" data-i18n="Satusbar">
                     Satusbar
                   </label>
                 </div>
-                <div class="pure-u-2-5">
-                  <label for="ui-statusbarfullscreen" class="pure-checkbox">
-                    <input id="ui-statusbarfullscreen" type="checkbox" value="">
-                    Hide in fullscreen mode
+                <div class="cb">
+                  <input id="ui-statusbarfullscreen" type="checkbox">
+                  <label for="ui-statusbarfullscreen" data-i18n="Hide in fullscreen">
+                    Hide in fullscreen
                   </label>
                 </div>
+                <div class="cb-clear"></div>
               </div>
               <hr>
-              <div class="pure-g">
-                <div class="pure-u-1-5">
-                  <label for="ui-player" class="pure-checkbox">
-                    <input id="ui-player" type="checkbox" value="">
+              <div class="">
+                <div class="cb">
+                  <input id="ui-player" type="checkbox">
+                  <label for="ui-player" data-i18n="Player UI">
                     Player UI
                   </label>
                 </div>
-                <div class="pure-u-2-5">
-                  <label for="ui-playerfullscreen" class="pure-checkbox">
-                    <input id="ui-playerfullscreen" type="checkbox" value="">
-                    Hide in fullscreen mode
+                <div class="cb">
+                  <input id="ui-playerfullscreen" type="checkbox">
+                  <label for="ui-playerfullscreen" data-i18n="Hide in fullscreen">
+                    Hide in fullscreen
                   </label>
                 </div>
-                <div class="pure-u-2-5">
-                  <label for="ui-playeridle" class="pure-checkbox">
-                    <input id="ui-playeridle" type="checkbox" value="">
+                <div class="cb">
+                  <input id="ui-playeridle" type="checkbox">
+                  <label for="ui-playeridle" data-i18n="Hide when idling">
                     Hide when idling
                   </label>
                 </div>
+                <div class="cb-clear"></div>
               </div>
             </div>
-            <div id="settings-os" class="settings-panel">
-              <span class="pure-menu-heading">Operating System</span>
-                <form class="pure-form pure-form-stacked">
-                  <label for="os-windows-contextmenu" class="pure-checkbox">
-                    Windows Explorer context menu
-                  </label>
-                  <button id="os-windows-contextmenu" class="pure-u-1-5 pure-button pure-button-primary" href="#">Install</button>
-                  <span class="pure-form-message">This will install a context menu entry in Windows Explorer, which allows you to rightclick a file, folder or on the directory background to it in meView.</span>
-                </form>
+            <div id="settings-os" class="settings-panel hidden">
+              <h4 data-i18n="Operating System">Operating System</h4>
+              <form>
+                <label for="os-windows-contextmenu" data-i18n="settings.os.wincontext">
+                  Windows Explorer context menu
+                </label>
+                <button id="os-windows-contextmenu" class=""  href="#" data-i18n="Install">Install</button>
+                <p class="info" data-i18n="settings.info.wincontext">This will install a context menu entry in Windows Explorer, which allows you to rightclick a file, folder or on the directory background to it in meView.</p>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="settings-footer">
+          <button id="settings-close" href="#" data-i18n="Close">Close</button>
+        </div>
+      </div>
+    </div>
+    <div id="aboutcontainer" class="hidden">
+      <div id="about">
+        <div class="logo">
+          <img class="logo" src="assets/logo.png" alt="meView">
+        </div>
+        <div class="aboutinfo">
+          <div class="dtable">
+            <div class="dtbody">
+              <div class="dtrow">
+                <div class="dtheading">About</div>
+                <div class="dtcell">meView is media viewer that provides a seamless viewing experience for images and videos alike. It also supports viewing those files from zip archives.</div>
+              </div>
+              <div class="dtrow">
+                <div class="dtheading">Versions</div>
+                <div class="dtcell">
+                  <div class="dtable">
+                    <div class="dtbody">
+                      <div class="dtrow">
+                        <div class="dtcell">meView</div>
+                        <div class="dtcell" id="app">v0.0.0</div>
+                      </div>
+                      <div class="dtrow">
+                        <div class="dtcell">node</div>
+                        <div class="dtcell" id="node">v0.0.0</div>
+                      </div>
+                      <div class="dtrow">
+                        <div class="dtcell">electron</div>
+                        <div class="dtcell" id="electron">v0.0.0</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="dtrow">
+                <div class="dtheading">Credits</div>
+                <div class="dtcell"><span>Icons used in meView are from</span> <a href="https://icons8.com/">Icon8</a></div>
+              </div>
+              <div class="dtrow">
+                <div class="dtheading">Links</div>
+                <div class="dtcell">
+                    <a href="https://github.com/RoyalBingBong/meView"><i class="fa fa-github fa-2x" aria-hidden="true"></i></a>,
+                    <a href="https://twitter.com/royalbingbong"><i class="fa fa-twitter fa-2x" aria-hidden="true"></i></a> <br>
+                    David K. (2017)
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>    
-    <script>
-      require("./js/meview.js");
-    </script>
-  </body>
+    </div>
+  <script>
+    require("./js/meview.js");
+  </script>
+</body>
+
 </html>

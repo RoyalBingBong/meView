@@ -1,6 +1,7 @@
 import {remote} from 'electron'
 const {Menu, MenuItem} = remote
 
+import Locale from '../modules/Locale.js'
 import UserSettings from '../modules/UserSettings.js'
 import Viewer from '../modules/Viewer.js'
 import Window from '../modules/Window.js'
@@ -47,7 +48,7 @@ export default class AppMenu {
 
     // Open File
     item = new MenuItem({
-      label: 'Open File',
+      label: Locale.__('Open File'),
       accelerator: 'O',
       click() {
         Window.open()
@@ -57,7 +58,7 @@ export default class AppMenu {
 
     // Open Folder
     item = new MenuItem({
-      label: 'Open Folder',
+      label: Locale.__('Open Folder'),
       accelerator: 'CommandOrControl+O',
       click() {
         Window.open(true)
@@ -67,7 +68,7 @@ export default class AppMenu {
 
     // Open Folder Recursive
     item = new MenuItem({
-      label: 'Open Folder Recursive',
+      label: Locale.__('Open Folder Recursive'),
       accelerator: 'CommandOrControl+Shift+O',
       click() {
         Window.open(true, true)
@@ -79,7 +80,7 @@ export default class AppMenu {
 
     // Open in File Browser
     item = new MenuItem({
-      label: 'Show in File Browser',
+      label: Locale.__('Show in File Browser'),
       click() {
         Window.showInFileBrowser()
       }
@@ -88,7 +89,7 @@ export default class AppMenu {
 
     // Open in default viweer
     item = new MenuItem({
-      label: 'Show in Default Viewer',
+      label: Locale.__('Show in Default Viewer'),
       click() {
         Window.openInDefaultViewer()
       }
@@ -99,7 +100,7 @@ export default class AppMenu {
 
     // Open meView settings
     item = new MenuItem({
-      label: 'Settings',
+      label: Locale.__('Settings'),
       click() {
         Window.openSettings()
       }
@@ -110,14 +111,14 @@ export default class AppMenu {
 
     // Close
     item = new MenuItem({
-      label: 'Quit',
+      label: Locale.__('Quit'),
       accelerator: 'Alt+Q',
       role: 'quit'
     })
     filemenu.append(item)
 
     return new MenuItem({
-      label: 'File',
+      label: Locale.__('File'),
       submenu: filemenu
     })
   }
@@ -128,7 +129,7 @@ export default class AppMenu {
 
     // Select Folder
     item = new MenuItem({
-      label: 'Select Folder',
+      label: Locale.__('Select Folder'),
       accelerator: 'Up',
       click() {
         Window.showFolderSelector()
@@ -140,7 +141,7 @@ export default class AppMenu {
 
     // Next image/video
     item = new MenuItem({
-      label: 'Next',
+      label: Locale.__('Next'),
       accelerator: 'Right',
       click() {
         Viewer.next()
@@ -150,7 +151,7 @@ export default class AppMenu {
 
     // Previous image/video
     item = new MenuItem({
-      label: 'Previous',
+      label: Locale.__('Previous'),
       accelerator: 'Left',
       click() {
         Viewer.previous()
@@ -160,7 +161,7 @@ export default class AppMenu {
 
     // First image/video in current folder/zip
     item = new MenuItem({
-      label: 'First',
+      label: Locale.__('First'),
       accelerator: 'Home',
       click() {
         Viewer.first()
@@ -170,7 +171,7 @@ export default class AppMenu {
 
     // Last image/video in current folder/zip
     item = new MenuItem({
-      label: 'Last',
+      label: Locale.__('Last'),
       accelerator: 'End',
       click() {
         Viewer.last()
@@ -181,7 +182,7 @@ export default class AppMenu {
     viewmenu.append(new MenuItem({type: 'separator'}))
 
     item = new MenuItem({
-      label: 'Shuffle',
+      label: Locale.__('Shuffle'),
       accelerator: 'S',
       click() {
         Viewer.shuffle()
@@ -190,7 +191,7 @@ export default class AppMenu {
     viewmenu.append(item)
 
     item = new MenuItem({
-      label: 'Random',
+      label: Locale.__('Random'),
       accelerator: 'R',
       click() {
         Viewer.random()
@@ -206,7 +207,7 @@ export default class AppMenu {
 
     // Play/Pause video
     item = new MenuItem({
-      label: 'Play/Pause',
+      label: Locale.__('Play/Pause'),
       accelerator: 'Space',
       click() {
         Viewer.togglePlayPause()
@@ -216,7 +217,7 @@ export default class AppMenu {
 
     // Forward video
     item = new MenuItem({
-      label: 'Forward',
+      label: Locale.__('Forward'),
       accelerator: 'Shift+Right',
       click() {
         Viewer.forward()
@@ -226,7 +227,7 @@ export default class AppMenu {
 
     // Rewind video
     item = new MenuItem({
-      label: 'Rewind',
+      label: Locale.__('Rewind'),
       accelerator: 'Shift+Left',
       click() {
         Viewer.rewind()
@@ -235,7 +236,7 @@ export default class AppMenu {
     viewmenu.append(item)
 
     return new MenuItem({
-      label: 'View',
+      label: Locale.__('View'),
       submenu: viewmenu
     })
   }
@@ -244,7 +245,7 @@ export default class AppMenu {
     let slideshowmenu = new Menu()
     let start, pause, stop, shuffled
     start = new MenuItem({
-      label: 'Start',
+      label: Locale.__('Start'),
       enabled: !this.slideshowstate.playing,
       click: () => {
         Viewer.slideshowStart(null, UserSettings.slideshowShuffled)
@@ -269,7 +270,7 @@ export default class AppMenu {
     slideshowmenu.append(pause)
 
     stop = new MenuItem({
-      label: 'Stop',
+      label: Locale.__('Stop'),
       enabled: this.slideshowstate.playing,
       click: () => {
         this.slideshowstate.playing = false
@@ -283,7 +284,7 @@ export default class AppMenu {
     slideshowmenu.append(new MenuItem({type: 'separator'}))
 
     shuffled = new MenuItem({
-      label: 'Shuffle',
+      label: Locale.__('Shuffle'),
       type: 'checkbox',
       checked: UserSettings.slideshowShuffled,
       click(menuItem) {
@@ -293,7 +294,7 @@ export default class AppMenu {
     slideshowmenu.append(shuffled)
 
     return new MenuItem({
-      label: 'Slideshow',
+      label: Locale.__('Slideshow'),
       submenu: slideshowmenu
     })
   }
@@ -304,7 +305,7 @@ export default class AppMenu {
 
     // minimize
     item = new MenuItem({
-      label: 'Minimize',
+      label: Locale.__('Minimize'),
       accelerator: 'CommandOrControl+M',
       role: 'minimize'
     })
@@ -312,7 +313,7 @@ export default class AppMenu {
 
     // Toggle fullscreen
     item = new MenuItem({
-      label: 'Toggle Fullscreen',
+      label: Locale.__('Toggle Fullscreen'),
       accelerator: 'F11',
       click() {
         Window.setFullscreen(!Window.fullscreen)
@@ -322,14 +323,14 @@ export default class AppMenu {
 
     // Close app
     item = new MenuItem({
-      label: 'Close',
+      label: Locale.__('Close'),
       accelerator: 'CommandOrControl+W',
       role: 'close'
     })
     windowmenu.append(item)
 
     return new MenuItem({
-      label: 'Window',
+      label: Locale.__('Window'),
       role: 'window',
       submenu: windowmenu
     })
@@ -340,7 +341,7 @@ export default class AppMenu {
     let item
 
     item = new MenuItem({
-      label: 'meView on github',
+      label: Locale.__('meView on github'),
       click() {
         Window.openRepository()
       }
@@ -348,7 +349,7 @@ export default class AppMenu {
     aboutmenu.append(item)
 
     item = new MenuItem({
-      label: 'Report a Bug',
+      label: Locale.__('Report a Bug'),
       click() {
         Window.openRepositoryIssues()
       }
@@ -358,15 +359,15 @@ export default class AppMenu {
     aboutmenu.append(new MenuItem({type: 'separator'}))
 
     item = new MenuItem({
-      label: 'meView',
+      label: Locale.__('meView'),
       click() {
-        Window.openAbout()
+        Window.showAbout()
       }
     })
     aboutmenu.append(item)
 
     return new MenuItem({
-      label: 'About',
+      label: Locale.__('About'),
       role: 'about',
       submenu: aboutmenu
     })
@@ -376,14 +377,14 @@ export default class AppMenu {
     let devmenu = new Menu()
     let item
     item = new MenuItem({
-      label: 'Reload',
+      label: Locale.__('Reload'),
       accelerator: 'CommandOrControl+R',
       role: 'reload'
     })
     devmenu.append(item)
 
     item = new MenuItem({
-      label: 'Open Appdata Folder',
+      label: Locale.__('Open Appdata Folder'),
       click(menuItem, browserWindow) {
         if (browserWindow) {
           Window.openAppdata()
@@ -393,7 +394,7 @@ export default class AppMenu {
     devmenu.append(item)
 
     item = new MenuItem({
-      label: 'Toggle Developer Tools',
+      label: Locale.__('Toggle Developer Tools'),
       accelerator: 'F12',
       click(menuItem, browserWindow) {
         if (browserWindow) {
@@ -404,185 +405,8 @@ export default class AppMenu {
     devmenu.append(item)
 
     return new MenuItem({
-      label: 'Developer',
+      label: Locale.__('Developer'),
       submenu: devmenu
-    })
-  }
-
-  buildInterfaceSettingsMenu() {
-    let intmenu = new Menu()
-    let item, ahPlaybackUI, ahStatusbar, hideCounter, hidePathbar
-
-    item = new MenuItem({
-      label: 'Playback UI',
-      type: 'checkbox',
-      checked: UserSettings.playbackUIEnabled,
-      click(menuItem, browserWindow) {
-        if(browserWindow) {
-          UserSettings.playbackUIEnabled = menuItem.checked
-          ahPlaybackUI.enabled = menuItem.checked
-          if(ahPlaybackUI.checked && !menuItem.checked) {
-            ahPlaybackUI.checked = false
-            UserSettings.playbackUIAutohide = false
-          }
-        }
-      }
-    })
-    intmenu.append(item)
-
-    ahPlaybackUI = new MenuItem({
-      label: 'Hide Playback UI in Fullscreen',
-      type: 'checkbox',
-      enabled: UserSettings.playbackUIEnabled,
-      checked: UserSettings.playbackUIAutohide,
-      click(menuItem, browserWindow) {
-        if(browserWindow) {
-          UserSettings.playbackUIAutohide = menuItem.checked
-        }
-      }
-    })
-    intmenu.append(ahPlaybackUI)
-
-    ahStatusbar = new MenuItem({
-      label: 'Hide Status Bar in Fullscreen',
-      type: 'checkbox',
-      enabled: UserSettings.statusbarEnabled,
-      checked: UserSettings.statusbarAutohide,
-      click(menuItem, browserWindow) {
-        if(browserWindow) {
-          UserSettings.statusbarAutohide = menuItem.checked
-        }
-      }
-    })
-
-    item = new MenuItem({
-      label: 'Status Bar',
-      type: 'checkbox',
-      checked: UserSettings.statusbarEnabled,
-      click(menuItem, browserWindow) {
-        if(browserWindow) {
-          UserSettings.statusbarEnabled = menuItem.checked
-          ahStatusbar.enabled = menuItem.checked
-          if(ahStatusbar.checked && !menuItem.checked) {
-            ahStatusbar.checked = false
-            UserSettings.statusbarAutohide = false
-          }
-        }
-      }
-    })
-    intmenu.append(item)
-    intmenu.append(ahStatusbar)
-
-    return new MenuItem({
-      label: 'User Interface',
-      submenu: intmenu
-    })
-  }
-
-  buildVideoSettingsMenu() {
-    let videomenu = new Menu()
-    let item
-
-    item = this.buildVideoSettingsSkipMenu()
-    videomenu.append(item)
-
-    item = new MenuItem({
-      label: 'Loop',
-      type: 'checkbox',
-      checked: UserSettings.videoLoop,
-      click(menuItem, browserWindow) {
-        if(browserWindow) {
-          UserSettings.videoLoop = menuItem.checked
-        }
-      }
-    })
-    videomenu.append(item)
-
-    item = new MenuItem({
-      label: 'Mute',
-      type: 'checkbox',
-      checked: UserSettings.videoMute,
-      click(menuItem, browserWindow) {
-        if(browserWindow) {
-          UserSettings.videoMute = menuItem.checked
-        }
-      }
-    })
-    videomenu.append(item)
-
-    item = new MenuItem({
-      label: 'Autoplay',
-      type: 'checkbox',
-      checked: UserSettings.videoAutoplay,
-      click(menuItem, browserWindow) {
-        if(browserWindow) {
-          UserSettings.videoAutoplay = menuItem.checked
-        }
-      }
-    })
-    videomenu.append(item)
-
-    return new MenuItem({
-      label: 'Video',
-      submenu: videomenu
-    })
-  }
-
-  buildVideoSettingsSkipMenu() {
-    let videoskipmenu = new Menu()
-    let item
-
-    for (let key in skipIntervalValues) {
-      item = new MenuItem({
-        label: key,
-        type: 'radio',
-        checked: UserSettings.isCurrentSkipInterval(skipIntervalValues[key]),
-        click(menuItem, browserWindow) {
-          if(browserWindow) {
-            UserSettings.videoSkipInterval = skipIntervalValues[key]
-          }
-        }
-      })
-      videoskipmenu.append(item)
-    }
-
-    return new MenuItem({
-      label: 'Skip interval',
-      submenu: videoskipmenu
-    })
-  }
-
-  buildWindowsMenu() {
-    let windowsmenu = new Menu()
-    let item
-    item = new MenuItem({
-      label: 'Add to context menu in Explorer',
-      type: 'checkbox',
-      checked: UserSettings.windowsContextMenuInstalled,
-      click(menuItem, browserWindow) {
-        if(browserWindow) {
-          if(menuItem.checked) {
-            win32.windowsInstallContextMenu((err) => {
-              if(err) {
-                menuItem.checked = false
-              }
-            })
-          } else {
-            win32.windowsUninstallContextMenu((err) => {
-              if(err) {
-                menuItem.checked = true
-              }
-            })
-          }
-        }
-      }
-    })
-    windowsmenu.append(item)
-
-
-    return new MenuItem({
-      label: 'Windows',
-      submenu: windowsmenu
     })
   }
 }

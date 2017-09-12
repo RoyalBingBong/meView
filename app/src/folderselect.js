@@ -4,6 +4,10 @@ import {DirectoryTraverser} from './modules/DirectoryTraverser.js'
 
 import {supportedArchivesFormats} from '../config.json'
 
+import Language from './controllers/Language.js'
+
+const lang = new Language()
+lang.update()
 let travis
 const curDir = document.createElement('option')
 curDir.value = '.'
@@ -14,7 +18,7 @@ parDir.innerText = '.. (Parent Directory)'
 
 const selector = document.getElementById('folderselect')
 const cwdText = document.getElementById('cwd')
-const recursiveButton = document.getElementById('recursive')
+const recursiveCheckbox = document.getElementById('recursive')
 
 const openButton = document.getElementById('btnOpen')
 const cancelButton = document.getElementById('btnCancel')
@@ -32,6 +36,7 @@ ipcRenderer.on('cwd', (event, currentWorkingDir) => {
 
 
 function updateSelector(cwd, files, previous) {
+  cwdText.value = cwd
   while (selector.firstChild) {
     selector.removeChild(selector.firstChild)
   }
@@ -50,6 +55,10 @@ function updateSelector(cwd, files, previous) {
   if(!selected) {
     curDir.selected = 'selected'
   }
+}
+
+recursiveCheckbox.onchange = (e) => {
+  recursiveCheckbox.manuallyChecked = recursiveCheckbox.checked
 }
 
 selector.onkeyup = (e) => {
@@ -92,16 +101,29 @@ selector.onkeypress = (e) => {
   }
 }
 
+document.onkeydown = (e) => {
+  if(e.key === 'Shift') {
+    if(!recursiveCheckbox.manuallyChecked) {
+      recursiveCheckbox.checked = true
+    }
+  }
+}
+
 // close window without chaning cwd, if ESC key was pressed
 document.onkeyup = (e) => {
   if (e.keyCode === 27) { // 27 = ESC
     remote.getCurrentWindow().destroy()
   }
+  if(e.key === 'Shift') {
+    if(!recursiveCheckbox.manuallyChecked) {
+      recursiveCheckbox.checked = false
+    }
+  }
 }
 
 function open(path, recursive) {
   if(!recursive) {
-    recursive = recursiveButton.checked
+    recursive = recursiveCheckbox.checked
   }
   ipcRenderer.send('folderBrowser', {
     filepath: path,

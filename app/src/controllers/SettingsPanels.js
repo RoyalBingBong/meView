@@ -1,8 +1,8 @@
+import Locale from '../modules/Locale.js'
 import UserSettings from '../modules/UserSettings.js'
 import * as Win32 from '../modules/Win32.js'
-import Window from '../modules/Window.js'
 
-// import {ELEMENTS} from '../../config.json'
+import {languages} from '../../config.json'
 
 // const {menuprefix, panelprefix} = ELEMENTS.settings
 
@@ -29,6 +29,7 @@ export default class SettingsPanels {
     }
 
     this.ui = {
+      language: document.getElementById('ui-language'),
       menubarFullscreen: document.getElementById('ui-menubarfullscreen'),
       statusbar: document.getElementById('ui-statusbar'),
       statusbarFullscreen: document.getElementById('ui-statusbarfullscreen'),
@@ -72,6 +73,28 @@ export default class SettingsPanels {
     /**
      * UI
      */
+
+    let currentLang = UserSettings.locale
+    let options = []
+    for(let lang in languages) {
+      let option = document.createElement('option')
+      option.innerText = languages[lang]
+      option.value = lang
+      if(lang == currentLang) {
+        option.selected = true
+      }
+      options.push(option)
+    }
+    options = options.sort((a, b) => {
+      if (a.innerText > b.innerText) return 1
+      if (a.innerText < b.innerText) return -1
+      return 0
+    })
+    options.map((el) => {
+      this.ui.language.appendChild(el)
+    })
+
+
     this.ui.menubarFullscreen.checked = UserSettings.menubarAutohide
     this.ui.statusbar.checked = UserSettings.statusbarEnabled
     this.ui.statusbarFullscreen.checked = UserSettings.statusbarAutohide
@@ -135,6 +158,10 @@ export default class SettingsPanels {
 
   _initUISettingsHandler() {
 
+    this.ui.language.onchange = (e) => {
+      Locale.setLocale(e.target.value)
+    }
+
     this.ui.menubarFullscreen.onchange = () => {
       UserSettings.menubarAutohide = this.ui.menubarFullscreen.checked
     }
@@ -173,13 +200,13 @@ export default class SettingsPanels {
   _initOsSettingsHandler() {
     this.os.windows.contextMenuButton.onmouseover = () => {
       if(UserSettings.windowsContextMenuInstalled) {
-        this.os.windows.contextMenuButton.innerText = 'Uninstall'
+        this.os.windows.contextMenuButton.innerText = Locale.__('Uninstall')
       }
     }
 
     this.os.windows.contextMenuButton.onmouseleave = () => {
       if(UserSettings.windowsContextMenuInstalled) {
-        this.os.windows.contextMenuButton.innerText = 'Installed'
+        this.os.windows.contextMenuButton.innerText = Locale.__('Installed')
       }
     }
 
@@ -188,7 +215,7 @@ export default class SettingsPanels {
         Win32.windowsUninstallContextMenu()
           .then(() => {
             this.os.windows.contextMenuButton.classList.remove('installed')
-            this.os.windows.contextMenuButton.innerText = 'Install'
+            this.os.windows.contextMenuButton.innerText = Locale.__('Install')
           })
       } else {
         Win32.windowsInstallContextMenu()

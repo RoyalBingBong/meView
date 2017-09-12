@@ -1,6 +1,6 @@
 import {ELEMENTS} from '../../config.json'
 
-const {container, close, pages, menuprefix, panelprefix} = ELEMENTS.settings
+const {container, close, closex, pages, menuprefix, panelprefix} = ELEMENTS.settings
 
 const defaultPage = 'general'
 
@@ -8,29 +8,32 @@ export default class SettingsOverlay {
   constructor() {
     this.container = document.getElementById(container)
     this.close = document.getElementById(close)
-    this.close.onclick = () => {
-      this.hide()
-    }
+    this.closex = document.getElementById(closex)
     this.menu = {}
     this.panels = {}
     pages.forEach((suffix) => {
       let entryid = menuprefix + suffix
       let panelid = panelprefix + suffix
-      this.menu[suffix] = {
-        entry: document.getElementById(entryid),
-        link: document.getElementById(entryid).querySelector('a')
-      }
+      this.menu[suffix] = document.getElementById(entryid)
       this.panels[suffix] = document.getElementById(panelid)
     })
-
-    this.hide()
+    // this.hide()
     this._initEventListener()
     this.clickEntry(defaultPage)
   }
 
+  get visible() {
+    return !this.container.classList.contains('hidden')
+  }
+
   _initEventListener() {
+    this.close.onclick = this.closex.onclick = () => {
+      this.hide()
+    }
+
     for (let entry in this.menu) {
-      this.menu[entry].link.onclick = () => {
+      this.menu[entry].onclick = (e) => {
+        e.preventDefault()
         this.clickEntry(entry)
       }
     }
@@ -43,7 +46,7 @@ export default class SettingsOverlay {
   clickEntry(entry) {
     this.hidePanels()
     this.showPanel(entry)
-    this.menu[entry].entry.classList.add('pure-menu-selected', 'settings-menu-selected')
+    this.menu[entry].classList.add('selected')
   }
 
   hidePanels() {
@@ -51,7 +54,7 @@ export default class SettingsOverlay {
       this.panels[id].classList.add('hidden')
     }
     for (let entry in this.menu) {
-      this.menu[entry].entry.classList.remove('pure-menu-selected', 'settings-menu-selected')
+      this.menu[entry].classList.remove('selected')
     }
   }
 
@@ -62,12 +65,10 @@ export default class SettingsOverlay {
 
   hide() {
     this.container.classList.add('hidden')
-    this.visible = false
   }
 
   show() {
     this.clickEntry(defaultPage)
     this.container.classList.remove('hidden')
-    this.visible = true
   }
 }

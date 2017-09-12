@@ -4,29 +4,33 @@
 <head>
   <meta charset="utf-8">
   <title>Select Directory</title>
-  <link rel="stylesheet" href="node_modules/purecss/build/pure-min.css">
   <link rel="stylesheet" href="css/dirselector.css">
+  <link rel="stylesheet" href="css/theme/dark.css">
 </head>
 
-<body>
-  <form class="pure-form">
-    <label for="cwd">Current folder
-      <input id="cwd" class="pure-input-1" type="text" readonly>
-    </label>
-    <div class="pure-g">
-      <div class="pure-u-3-4">
+<body class="folderbrowser">
+  <div>
+    <div class="header">
+      <label for="cwd" class="block" data-i18n="Current folder">
+        Current folder:
+      </label> <br>
+      <input id="cwd" class="cwd" type="text" readonly>
+    </div>
+    
+    <div class="selector">
+      <div class="selectcontainer">
         <select id="folderselect" onblur="this.focus()" autofocus size="14" class="pure-u-1-1"></select>
       </div>
-      <div class="pure-u-1-4">
-        <button id="btnOpen" class="pure-button pure-u-1-1">Use folder</button>
-        <button id="btnCancel" class="pure-button pure-u-1-1">Cancel</button>
-        <label for="recursive" class="pure-checkbox pure-u-1-1">
-          <input id="recursive" type="checkbox">
+      <div class="selectbuttons">
+        <button id="btnOpen" class="button" data-i18n="Open">Open</button> <br>
+        <button id="btnCancel" class="button" data-i18n="Cancel">Cancel</button> <br>
+        <input id="recursive" type="checkbox">
+        <label for="recursive" class="" data-i18n="Recursive">
           Recursive
         </label>
       </div>
     </div>
-  </form>
+  </div>
   <script>
     require("./js/folderselect.js")
   </script>

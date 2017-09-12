@@ -2,9 +2,11 @@ import {EventEmitter} from 'events'
 
 import {ELEMENTS} from '../../config.json'
 
+
 export default class Dropzone extends EventEmitter {
   constructor() {
     super()
+    this.initial = true
     this.dropzone = document.getElementById(ELEMENTS.dropzone)
     this._initEventListeners()
   }
@@ -22,14 +24,18 @@ export default class Dropzone extends EventEmitter {
     }, false)
 
 
-    this.dropzone.ondragover = () => {
+    this.dropzone.ondragover = (e) => {
       this.hover()
       return false
     }
 
-    this.dropzone.ondragend = this.dropzone.ondragleave = () => {
-      this.show()
-      this.emit('cancel')
+    this.dropzone.ondragend = this.dropzone.ondragleave = (e) => {
+      console.log(e)
+      if(this.initial) {
+        this.show()
+      } else {
+        this.hide()
+      }
       return false
     }
 
@@ -42,22 +48,22 @@ export default class Dropzone extends EventEmitter {
     }
   }
 
-  get visible() {
-    return this.dropzone.visibility === 'visible'
-  }
-
   hover() {
-    this.dropzone.className = 'message hover'
-    this.dropzone.visibility = 'visible'
+    this.dropzone.classList.remove('hide')
+    this.dropzone.classList.add('hover')
   }
 
   show() {
-    this.dropzone.className = 'message'
-    this.dropzone.visibility = 'visible'
+    if(this.dropzone.classList.contains('hide')) {
+      this.dropzone.classList.remove('hide')
+    }
+    if(this.dropzone.classList.contains('hover')) {
+      this.dropzone.classList.remove('hover')
+    }
   }
 
   hide() {
-    this.dropzone.className = 'message hide'
-    this.dropzone.visibility = 'hidden'
+    this.dropzone.classList.add('hide')
+    this.initial = false
   }
 }

@@ -4,11 +4,14 @@ import {shell, remote, ipcRenderer} from 'electron'
 
 import {isEnvDeveloper} from '../helper.js'
 import {repository, bugs} from '../../package.json'
+import Locale from './Locale.js'
 import UserSettings from './UserSettings.js'
 import Viewer from './Viewer.js'
 
+import About from '../controllers/About.js'
 import AppMenu from '../controllers/AppMenu.js'
 import IdleTimer from '../controllers/IdleTimer.js'
+import Language from '../controllers/Language.js'
 import SettingsOverlay from '../controllers/SettingsOverlay.js'
 import SettingsPanels from '../controllers/SettingsPanels.js'
 import Statusbar from '../controllers/Statusbar'
@@ -26,16 +29,17 @@ class Window extends EventEmitter {
     if(!instance) {
       super()
       instance = this
+      this.about = new About()
       this.currentWindow = remote.getCurrentWindow()
-      this.aboutWindow = null
       this.selectFolderWindow = null
       this.appmenu = new AppMenu()
       this.idletimer = new IdleTimer()
+      this.language = new Language()
       this.settingsoverlay = new SettingsOverlay()
       this.settingspanels = new SettingsPanels()
       this.statusbar = new Statusbar()
       this.viewport = new Viewport()
-
+      this.language.update()
       this._initIPCListeners()
       this._initEventHandlers()
     }
@@ -43,16 +47,22 @@ class Window extends EventEmitter {
   }
 
   _initEventHandlers() {
-    window.addEventListener('keyup', (e) => {
+    window.addEventListener('keydown', (e) => {
       if (e.keyCode === 27) { // ESC key
+        if(this.about.visible) {
+          this.about.hide()
+          return
+        }
+        if(this.settingsoverlay.visible) {
+          this.settingsoverlay.hide()
+          return
+        }
         if (this.fullscreen) {
           this.setFullscreen(false)
-        } else {
-          if (this.settingsoverlay.visible) {
-            this.settingsoverlay.hide()
-          } else if(UserSettings.closeWithESC) {
-            this.closeApp()
-          }
+          return
+        }
+        if(UserSettings.closeWithESC) {
+          this.closeApp()
         }
       }
     })
@@ -73,6 +83,9 @@ class Window extends EventEmitter {
         this.viewport.videoUI(!isIdle)
       }
       this.viewport.mouseCursor(!isIdle)
+    })
+    Locale.on('change', () => {
+      this.appmenu.reload()
     })
   }
 
@@ -153,25 +166,12 @@ class Window extends EventEmitter {
     remote.app.exit()
   }
 
-  openAbout() {
-    this.aboutWindow = new BrowserWindow({
-      parent: this.currentWindow,
-      icon: join(__dirname, '..', '..', 'assets/icon.png'),
-      modal: true,
-      width: 690,
-      height: 350,
-      fullscreenable: false,
-      show: false,
-      minimizable: false,
-      maximizable: false
-    })
-    this.aboutWindow.setMenu(null)
-    this.aboutWindow.setMenuBarVisibility(false)
-    this.aboutWindow.loadURL(join('file://', __dirname, '..', '..', 'about.html'))
-    this.aboutWindow.show()
-    this.aboutWindow.on('closed', () => {
-      this.aboutWindow = null
-    })
+  showAbout() {
+    this.about.show()
+  }
+
+  hideAbout() {
+    this.about.hide()
   }
 
   /**
@@ -237,14 +237,14 @@ class Window extends EventEmitter {
     }
     let [vwidth, vheight] = this.currentWindow.getSize()
     let [vx, vy] = this.currentWindow.getPosition()
-    let width = 460
-    let height = 368
+    let width = 480
+    let height = 380
     let x = Math.floor(vx + vwidth/2 - width/2)
     let y = Math.floor(vy + vheight/2 - height/2)
 
     this.selectFolderWindow = new BrowserWindow({
       parent: this.currentWindow,
-      // modal: true,
+      modal: true,
       icon: join(__dirname, '..', '..', 'assets/icon.png'),
       width,
       height,
@@ -340,7 +340,10 @@ class Window extends EventEmitter {
   }
 
   showInFileBrowser() {
-    shell.showItemInFolder(Viewer.currentFilepath)
+    let filepath = Viewer.currentFilepath
+    if(filepath && filepath != '.') {
+      shell.showItemInFolder(Viewer.currentFilepath)
+    }
   }
 
   openInDefaultViewer() {
@@ -352,6 +355,9 @@ class Window extends EventEmitter {
   }
 
   openSettings() {
+    if(this.about.visible) {
+      this.about.hide()
+    }
     this.settingsoverlay.show()
   }
 }

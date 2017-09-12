@@ -1,0 +1,478 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+  overflow: hidden;
+  font: caption;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Always show video controls */
+/*video::-webkit-media-controls-panel {*/
+video::-webkit-media-controls-panel {
+  display: flex !important;
+  opacity: .5 !important;
+}
+
+.novideoui video::-webkit-media-controls-panel {
+  display: none !important;
+}
+
+.center {
+  text-align: center;
+}
+
+#mainview  {
+  width: 100%;
+  height: 100%;
+}
+
+
+#autoheight {
+  height: calc(100% - 20px);
+  max-height: 100%;
+  width: 100%;
+  overflow: hidden;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#autoheight.notoolbar {
+  height: 100%;
+}
+
+#viewer {
+  display: flex;
+  height: 100%;
+}
+
+
+
+#statusbar {
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  height: 20px;
+}
+
+#statusbar > input {
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+}
+
+#statusbar.hide {
+  display: none;
+}
+
+#filetext, #counter {
+  height: 18px;
+}
+
+#counter {
+  position: fixed;
+  left: 0;
+  text-align: center;
+  width: 10em;
+}
+
+#filetext {
+  position: fixed;
+  left: 10em;
+  width: calc(100% - 10em);
+  user-select: none;
+}
+
+
+img, video {
+  width: 100%;
+  object-fit: contain;
+}
+
+@media (max-width: 849px), (max-height: 549px) {
+  #dropzone {
+    width: 90%;
+    height: 90%;
+  }
+}
+@media (min-width: 850px), (min-height: 550px) {
+  #dropzone {
+    width: 70%;
+    height: 60%;
+  }
+}
+
+
+.message {
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  font-size: 2em;
+  text-align: center;
+  border: 2px solid;
+}
+
+
+
+/* 
+  Center/Middle message inside the dropzone
+*/
+/* .message > div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+} */
+
+#viewer > .message, #viewer > .message > div {
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  width: 50%;
+  height: 40%;
+}
+
+#dropzonecontainer {
+  position: fixed;
+  padding: 0;
+  margin: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 1.5em);
+}
+
+#dropzonecontainer.notoolbar {
+  height: 100%;
+}
+
+
+#dropzone {
+  padding-left: 5px;
+  padding-right: 5px;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: 100;  
+  border: 10px dashed;
+  opacity: 0.6;
+  cursor: "default";
+}
+
+#dropzone > .message {
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  border: none;
+}
+
+#dropzone .title {
+  font-size: 1.5em;
+}
+
+#dropzone .tip {
+  font-size: 0.4em;
+}
+
+#dropzone.hover {
+  opacity: 1;
+}
+
+#dropzone.hide {
+  opacity: 0;
+}
+
+
+
+#settingscontainer {
+  background-color: rgba(78, 78, 78, 0.8);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+
+
+#settingscontainer > div {
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+
+.settings-header, .settings-footer {
+  background-color: #BABABA;
+  width: 100%;
+  height: 1.5em;
+  text-align: center;
+}
+
+.settings-header .title  {
+  font-size: 1.4em;
+}
+
+.settings-footer {
+  position: absolute;
+  bottom: 0;
+}
+
+.settings-footer button {
+  font-size: 1em;
+}
+
+#settings-close-x {
+  font-size: 1.4em;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: Transparent;
+  background-repeat:no-repeat;
+  border: none;
+  cursor:pointer;
+  overflow: hidden;
+  outline:none;
+  opacity: 0.5;
+}
+
+#settings-close-x:hover {
+  opacity: 1;
+}
+
+.settings {
+  background-color: #eee;
+  position: absolute;
+  top: 1.5em;
+  bottom: 1.5em;
+  width: 100%;
+}
+
+.settings-menu {
+  position: absolute;
+  width: 10em;
+  height: 100%;
+}
+
+
+.settings-menu-entry {
+  display: block;
+  background-color: inherit;
+  /* color: black; */
+  padding-top: 1em;
+  padding-bottom: 1em;
+  padding-left: .5em;
+  width: 100%;
+  border: none;
+  outline: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1em;
+  transition: 0.3s;
+}
+
+.settings-menu-entry:hover {
+  background-color: #ccc;
+}
+
+.settings-menu-entry.selected {
+  position: relative;
+  left: 1px;
+  /* width: calc(100% + 5px); */
+  background-color: #ddd;
+}
+
+.settings-menu-entry.reset {
+  position: absolute;
+  bottom: 0;
+}
+
+.settings-panel-container {
+  position: absolute;
+  left: 10em;
+  height: 100%;
+}
+
+.settings-panel {
+  background-color: #ddd;
+  padding-left: 1.5em;
+  font-size: 1.2em;
+  width: calc(100%-1.5em);
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#os-windows-contextmenu {
+  display: block;
+  outline: none;
+  margin-top: 0.5em;
+  font-size: 1em;
+  width: 8em;
+}
+
+#os-windows-contextmenu.installed {
+  background: rgb(28, 184, 65);
+}
+
+
+#os-windows-contextmenu.installed:hover,
+#resettodefault:hover {
+  background: rgb(223, 117, 20);
+}
+
+.settings-panel .info {
+  font-size: medium;
+}
+
+.settings-panel input[type="checkbox"]{
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.settings-panel input[type="number"]{
+  font-size: 1em;
+  width: 6em;
+}
+
+.settings-panel select{
+  font-size: 1em;
+  width: 8em;
+}
+
+.settings-panel hr {
+  margin-left: -.5em;
+  margin-right: 1em;
+}
+
+.cb {
+  float: left;
+  width: 10em;
+}
+
+.cb:nth-child(2) {
+  width: 12em;
+}
+
+.cb:nth-child(3) {
+  width: 16em;
+}
+
+.cb-clear {
+  clear: both;
+}
+
+.devmode {
+  position: absolute;
+  bottom: 1em;
+}
+
+.hidden {
+  display: none;
+}
+
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  opacity: 1;
+}
+
+input[type='number'] {
+  text-align: center;
+}
+
+.summary {
+  text-align: center;
+}
+
+.logo {
+  width: 200px;
+  height: 200px;
+}
+
+#aboutcontainer {
+  z-index: 1000;
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(78, 78, 78, 0.8);
+}
+
+#aboutcontainer #about {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+#about {
+  background-color: white;
+  width:535px;
+  height: 295px;
+}
+
+#about .logo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 295px;
+  width: 200px;
+}
+
+#about .aboutinfo {
+  position: absolute;
+  top: 0;
+  left: 205px;
+  width: 330;
+}
+
+/* DivTable.com */
+.dtable {
+  width: 100%;
+  height: 100%;
+  display: table;
+  text-align: left;
+}
+.dtrow {
+	display: table-row;
+}
+
+.dtheading {
+  display: table-cell;
+  vertical-align: top;
+  padding: 3px 10px;
+  font-weight: bold;
+}
+
+.dtcell {
+	display: table-cell;
+  padding: 3px 10px;
+}
+.dtbody {
+	display: table-row-group;
+}

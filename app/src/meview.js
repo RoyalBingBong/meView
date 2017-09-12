@@ -1,6 +1,7 @@
 import UserSettings from './modules/UserSettings.js'
 import Viewer from './modules/Viewer.js'
 import Window from './modules/Window.js'
+import Locale from './modules/Locale.js'
 import * as win32 from './modules/Win32.js'
 
 

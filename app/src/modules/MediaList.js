@@ -109,8 +109,8 @@ export default class MediaList extends EventEmitter {
     })
   }
 
-  goTo(index) {
-    if(index > 0 && index < this.files.length) {
+  goto(index) {
+    if(index >= 0 && index < this.files.length) {
       this.index = index
       this.emit('file.current', this.current, this.index)
       return this.current
@@ -196,51 +196,12 @@ export default class MediaList extends EventEmitter {
   }
 
 
-  slideshowNext(next) {
-    if(!next) {
-      clearTimeout(this.timer)
-      return
-    }
-    if(next.isVideo()) {
-      next.loop = false
-      next.once('ended', () => {
-        this.slideshowNext(this.next)
-      })
-    } else {
-      this.timer = setTimeout(() => {
-        this.slideshowNext(this.next)
-      }, this.timeout * 1000)
-    }
-  }
-
-  slideshowStart(timeout, shuffled) {
-    if(shuffled) {
-      shuffle(this.files)
-    }
-    this.timeout = timeout
-    this.slideshowNext(this.first)
-  }
-
-  slideshowStop() {
-    clearInterval(this.timer)
-    this.timer = null
-  }
-
-  slideshowTogglePlayPause() {
-    console.log('slideshowTogglePlayPause', this.timer)
-    if(this.timer) {
-      this.slideshowStop()
-    } else {
-      this.slideshowNext(this.current)
-    }
-  }
-
   shuffle() {
     if(this.files && this.files.length === 0) {
       return this.emit('nofiles')
     }
     shuffle(this.files)
-    return this.first
+    return this.files
   }
 
   random() {

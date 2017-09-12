@@ -85,7 +85,7 @@ class UserSettings extends EventEmitter{
   }
 
   set videoMute(muted) {
-    settings.getSync('video.muted', muted)
+    settings.setSync('video.muted', muted)
     this.emit('videomute', muted)
   }
 
@@ -112,6 +112,22 @@ class UserSettings extends EventEmitter{
   set slideshowShuffled(shuffle) {
     settings.setSync('slideshow.shuffle', shuffle)
   }
+
+  get slideshowVideoLoop() {
+    return settings.getSync('slideshow.videoloop')
+  }
+
+  set slideshowVideoLoop(loop) {
+    settings.setSync('slideshow.videoloop', loop)
+  }
+
+  get slideshowVideoFull() {
+    return settings.getSync('slideshow.videofull')
+  }
+
+  set slideshowVideoFull(full) {
+    settings.setSync('slideshow.videofull', full)
+  }  
 
   get reopenLastFile() {
     return settings.getSync('reopenLastFile')
@@ -199,6 +215,14 @@ class UserSettings extends EventEmitter{
   set menubarAutohide(autohide) {
     settings.setSync('UI.menubar.autohide', autohide)
     this.emit('menubar')
+  }
+
+  get locale() {
+    return settings.getSync('locale')
+  }
+
+  set locale(locale) {
+    settings.setSync('locale', locale)
   }
 
   get updateReminder() {

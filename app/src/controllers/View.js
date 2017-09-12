@@ -32,7 +32,7 @@ export default class View {
     }
     let errElement = document.createElement('div')
     errElement.classList.add('message')
-    errElement.innerText = message
+    errElement.innerHTML = `<div>${message}</div>`
     this.view.appendChild(errElement)
   }
 }

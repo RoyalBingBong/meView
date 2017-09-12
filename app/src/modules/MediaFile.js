@@ -23,6 +23,12 @@ export default class MediaFile extends EventEmitter {
     return this.mimetype.startsWith('video')
   }
 
+  get duration() {
+    if(this.isVideo()) {
+      return this._element.duration
+    }
+  }
+
   /**
    * Is the MediaFile an image?
    *

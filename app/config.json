@@ -37,12 +37,17 @@
     "settings": {
       "menuprefix": "menu-",
       "panelprefix": "settings-",
-      "close": "close-settings",
+      "close": "settings-close",
+      "closex": "settings-close-x",
       "container": "settingscontainer",
       "pages": [
         "general", "video", "ui", "os"
       ]
     }
+  },
+  "languages": {
+    "en": "English",
+    "de": "Deutsch"
   },
   "PRELOADRANGE": 1,
   "skipIntervalValues": {

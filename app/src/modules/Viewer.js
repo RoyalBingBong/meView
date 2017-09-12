@@ -8,10 +8,6 @@ import UserSettings from './UserSettings.js'
 import View from '../controllers/View.js'
 import Window from './Window.js'
 
-import {ELEMENTS} from '../../config.json'
-
-
-
 let instance
 class Viewer  {
   constructor() {
@@ -37,7 +33,8 @@ class Viewer  {
   }
 
   _initStatusbarListeners() {
-    this.counter.on('index.change', (idx) => {
+    this.counter.on('counter.change', (idx) => {
+      console.log('goto', idx)
       this.goto(idx)
     })
   }
@@ -54,7 +51,6 @@ class Viewer  {
       this.counter.current = idx
     })
     this.mediafiles.on('file.added', (mf, len) => {
-      console.log('counter.max', len)
       this.counter.max = len
     })
 
@@ -62,7 +58,6 @@ class Viewer  {
       this.view.show(mf)
       this._playcurrent(mf)
       this.filename.name = join(this.mediafiles.root, mf.name)
-      console.log('counter.current', idx)
       this.counter.current = idx
     })
 
@@ -72,13 +67,18 @@ class Viewer  {
     })
 
     this.mediafiles.on('endoflist', (last) => {
-      Window.showFolderSelector()
+      if(this.slideshow) {
+        // TODO maybeshow a message that the queue ended
+      } else {
+        Window.showFolderSelector()
+      }
     })
   }
 
 
   get currentFilepath() {
-    return join(this.mediafiles.root, this.mediafiles.current.name)
+    let p = join(this.mediafiles.root, (this.mediafiles.current ? this.mediafiles.current.name : '.' ))
+    return p
   }
 
   get currentRoot() {
@@ -101,6 +101,7 @@ class Viewer  {
     })
   }
 
+
   slideshowStart(timeout, shuffled) {
     return new Promise((resolve, reject) => {
       if(!this.mediafiles.opened) {
@@ -109,17 +110,63 @@ class Viewer  {
       if(!timeout) {
         timeout = UserSettings.slideshowInterval
       }
-      this.mediafiles.slideshowStart(timeout, shuffled)
+      this.slideshow = {
+        timeout,
+        loop: UserSettings.slideshowVideoLoop,
+        full: UserSettings.slideshowVideoFull
+      }
+      if(shuffled) {
+        this.mediafiles.shuffle()
+      }
+      this.timeout = timeout
+
+      this.slideshowNext(this.mediafiles.first)
       resolve()
     })
   }
 
+  slideshowNext(next) {
+    if(!next) {
+      clearTimeout(this.slideshow.timer)
+      return
+    }
+    if(next.isVideo()) {
+      let duration = next.duration
+      if(this.slideshow.loop && duration < this.slideshow.timeout) {
+        // Video is shorter than the interval -> loop it until the interval ends
+        this.slideshowTimer()
+      } else if(this.slideshow.full && duration >= this.slideshow.timeout) {
+        // Video 
+        next.loop = false
+        next.once('ended', () => {
+          this.slideshowNext(this.mediafiles.next)
+        })
+      } else {
+        next.loop = false
+        this.slideshowTimer()
+      }
+    } else {
+      this.slideshowTimer()
+    }
+  }
+
+  slideshowTimer() {
+    this.slideshow.timer = setTimeout(() => {
+      this.slideshowNext(this.mediafiles.next)
+    }, this.slideshow.timeout * 1000)
+  }
+
   slideshowStop() {
-    this.mediafiles.slideshowStop()
+    clearInterval(this.slideshow.timer)
+    this.slideshow.timer = null
   }
 
   slideshowTogglePlayPause() {
-    this.mediafiles.slideshowTogglePlayPause()
+    if(this.slideshow.timer) {
+      this.slideshowStop()
+    } else {
+      this.slideshowNext(this.mediafiles.current)
+    }
   }
 
   shuffle() {
@@ -158,27 +205,27 @@ class Viewer  {
 
   next() {
     this._stopcurrent()
-    this.mediafiles.next
+    return this.mediafiles.next
   }
 
   previous() {
     this._stopcurrent()
-    this.mediafiles.previous
+    return this.mediafiles.previous
   }
 
   first() {
     this._stopcurrent()
-    this.mediafiles.first
+    return this.mediafiles.first
   }
 
   last() {
     this._stopcurrent()
-    let mf = this.mediafiles.last
+    return this.mediafiles.last
   }
 
   goto(index) {
     this._stopcurrent()
-    this.mediafiles.goto(index)
+    return this.mediafiles.goto(index)
   }
 
   _stopcurrent(current) {
@@ -189,6 +236,7 @@ class Viewer  {
       }
     }
   }
+
   _playcurrent(current) {
     current = current || this.mediafiles.current
     if(current) {
@@ -197,6 +245,13 @@ class Viewer  {
         current.play()
       }
     }
+  }
+}
+
+function shuffle(a) {
+  for (let i = a.length; i; i--) {
+    let j = Math.floor(Math.random() * i);
+    [a[i - 1], a[j]] = [a[j], a[i - 1]]
   }
 }
 

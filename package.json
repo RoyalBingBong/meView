@@ -12,15 +12,15 @@
   },
   "homepage": "https://github.com/RoyalBingBong/meView#readme",
   "scripts": {
-    "postinstall": "cd app/ && npm install && cd ..",
+    "postinstall": "electron-builder install-app-deps",
     "start": "electron .",
     "clean": "rimraf app/js",
     "clean:dist": "rimraf dist/",
     "debug": "cross-env ELECTRON_ENV=development npm run start",
-    "babel": "npm run clean && babel -d app/js/ src/",
-    "babel:w": "npm run clean && babel -w -d app/js/ src/",
+    "babel": "npm run clean && babel -d app/js/ app/src/",
+    "babel:w": "npm run clean && babel -w -d app/js/ app/src/",
     "prebabel:prod*": "npm run clean",
-    "babel:prod": "cross-env BABEL_ENV=production babel -d app/js src/",
+    "babel:prod": "cross-env BABEL_ENV=production babel -d app/js app/src/",
     "build:win": "npm run babel && npm run clean:dist && build -w",
     "build:mac": "npm run babel && npm run clean:dist && build -m",
     "build:linux": "npm run babel && npm run clean:dist && build -l",
@@ -31,12 +31,12 @@
   "license": "ISC",
   "devDependencies": {
     "asar": "^0.13.0",
-    "babel-cli": "^6.24.1",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
-    "babel-plugin-transform-remove-console": "^6.8.4",
-    "cross-env": "^5.0.1",
-    "electron": "^1.6.11",
-    "electron-builder": "^19.16.0",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-remove-console": "^6.8.5",
+    "cross-env": "^5.0.5",
+    "electron": "^1.7.6",
+    "electron-builder": "^19.27.7",
     "rimraf": "^2.6.1"
   }
 }

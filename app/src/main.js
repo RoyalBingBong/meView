@@ -89,9 +89,12 @@ app.on('ready', () => {
   mainWindow = new BrowserWindow({
     width: settings.getSync('window.width') || 800,
     height: settings.getSync('window.height') || 600,
+    minWidth: 600,
+    minHeight: 400,
     x: settings.getSync('window.position.x') || undefined,
     y: settings.getSync('window.position.y') || undefined,
-    icon: join(__dirname, '..', 'assets/icon.png'),
+    icon: join(__dirname, '..', 'assets', `${process.platform == 'win32' ? 'icon.ico' : 'icon.png'}`),
+    show: false
   })
   // otherwise app will initiate with default menu, and then changes to the custom one
   mainWindow.setMenu(null)
@@ -140,10 +143,13 @@ app.on('ready', () => {
 
   mainWindow.loadURL(index)
 
-  // Open the DevTools when in dev env
-  if(isEnvDeveloper()) {
-    mainWindow.webContents.openDevTools()
-  }
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show()
+    // Open the DevTools when in dev env
+    if(isEnvDeveloper()) {
+      mainWindow.webContents.openDevTools()
+    }
+  })
 
   mainWindow.on('close', () => {
     let [width, height] = mainWindow.getSize()
