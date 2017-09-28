@@ -13,7 +13,6 @@ import AppMenu from '../controllers/AppMenu.js'
 import IdleTimer from '../controllers/IdleTimer.js'
 import Language from '../controllers/Language.js'
 import SettingsOverlay from '../controllers/SettingsOverlay.js'
-import SettingsPanels from '../controllers/SettingsPanels.js'
 import Statusbar from '../controllers/Statusbar'
 import Viewport from '../controllers/Viewport.js'
 
@@ -36,7 +35,6 @@ class Window extends EventEmitter {
       this.idletimer = new IdleTimer()
       this.language = new Language()
       this.settingsoverlay = new SettingsOverlay()
-      this.settingspanels = new SettingsPanels()
       this.statusbar = new Statusbar()
       this.viewport = new Viewport()
       this.language.update()

@@ -6,7 +6,7 @@ import {languages} from '../../config.json'
 
 // const {menuprefix, panelprefix} = ELEMENTS.settings
 
-export default class SettingsPanels {
+export default class Settings {
   constructor() {
     this.defaultButton = document.getElementById('resettodefault')
     this.defaultButton.onclick = () => {
@@ -17,8 +17,7 @@ export default class SettingsPanels {
       closeWithESC: document.getElementById('general-closewithesc'),
       savePath: document.getElementById('general-savepath'),
       reopenLast: document.getElementById('general-reopenlast'),
-      slideshowInterval: document.getElementById('general-slideshowinterval'),
-      devmode: document.getElementById('general-devmode')
+      slideshowInterval: document.getElementById('general-slideshowinterval')
     }
 
     this.video = {
@@ -44,12 +43,17 @@ export default class SettingsPanels {
       }
     }
 
+    this.advanced = {
+      devmode: document.getElementById('advanced-devmode')
+    }
+
     this._initCurrentSettings()
 
     this._initGeneralSettingsHandler()
     this._initVideoSettingsHandler()
     this._initUISettingsHandler()
     this._initOsSettingsHandler()
+    this._initAdvancedSettingsHandler()
   }
 
   _initCurrentSettings() {
@@ -59,7 +63,6 @@ export default class SettingsPanels {
     this.general.closeWithESC.checked = UserSettings.closeWithESC
     this.general.savePath.checked = UserSettings.savePath
     this.general.reopenLast.checked = UserSettings.reopenLastFile
-    this.general.devmode.checked = UserSettings.developerMode
     this.general.slideshowInterval.value = UserSettings.slideshowInterval
 
     /**
@@ -121,6 +124,11 @@ export default class SettingsPanels {
     } else {
       this.os.windows.contextMenuButton.classList.add('pure-button-disabled')
     }
+
+    /**
+     * Advanced
+     */
+    this.advanced.devmode.checked = UserSettings.developerMode
   }
 
   _initGeneralSettingsHandler() {
@@ -135,9 +143,6 @@ export default class SettingsPanels {
     }
     this.general.slideshowInterval.onchange = () => {
       UserSettings.slideshowInterval = parseInt(this.general.slideshowInterval.value, 10)
-    }
-    this.general.devmode.onchange = () => {
-      UserSettings.developerMode = this.general.devmode.checked
     }
   }
 
@@ -223,6 +228,12 @@ export default class SettingsPanels {
             this.os.windows.contextMenuButton.classList.add('installed')
           })
       }
+    }
+  }
+
+  _initAdvancedSettingsHandler() {
+    this.advanced.devmode.onchange = () => {
+      UserSettings.developerMode = this.general.devmode.checked
     }
   }
 }

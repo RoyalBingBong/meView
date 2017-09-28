@@ -11,9 +11,9 @@ body {
   font: caption;
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   display: none;
-}
+} */
 
 /* Always show video controls */
 /*video::-webkit-media-controls-panel {*/
@@ -269,60 +269,46 @@ img, video {
   width: 100%;
 }
 
-.settings-menu {
-  position: absolute;
-  width: 10em;
-  height: 100%;
+.labelgroup {
+  /* margin-left:24px; */
+  padding-left: 2em;
+  text-indent: -2em;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.labelgroup i {
+  text-indent: 0;
 }
 
 
-.settings-menu-entry {
-  display: block;
-  background-color: inherit;
-  /* color: black; */
-  padding-top: 1em;
-  padding-bottom: 1em;
-  padding-left: .5em;
-  width: 100%;
-  border: none;
-  outline: none;
-  text-align: left;
-  cursor: pointer;
-  font-size: 1em;
-  transition: 0.3s;
+.labelgroup > .spacer {
+  padding-left: 1.5em;
 }
 
-.settings-menu-entry:hover {
-  background-color: #ccc;
+fieldset > legend {
+  background-color: #eee;
+  font-weight: bold;
 }
 
-.settings-menu-entry.selected {
-  position: relative;
-  left: 1px;
-  /* width: calc(100% + 5px); */
-  background-color: #ddd;
+.fixie {
+  position: relative;  
+  top: 50%;
 }
 
-.settings-menu-entry.reset {
-  position: absolute;
-  bottom: 0;
+fieldset > p {
+  margin-bottom: -2px;
 }
 
 .settings-panel-container {
-  position: absolute;
-  left: 10em;
-  height: 100%;
+  position: relative;
+  /* padding-left: 1em; */
+  /* padding-left: 1em; */
+  max-height: 100%;
+  overflow: hidden;
+  overflow-y: scroll;
 }
 
-.settings-panel {
-  background-color: #ddd;
-  padding-left: 1.5em;
-  font-size: 1.2em;
-  width: calc(100%-1.5em);
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
 
 #os-windows-contextmenu {
   display: block;
@@ -342,8 +328,35 @@ img, video {
   background: rgb(223, 117, 20);
 }
 
-.settings-panel .info {
-  font-size: medium;
+form {
+  margin: 0.5em;
+}
+
+.tooltip:hover > .infotext {
+  visibility: visible;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip > .infotext{
+  visibility: hidden;
+  width: 200px;
+  background-color: #fff;
+  color: #000;
+  text-align: center;
+  border: 2px dotted #000;
+  border-radius: 6px;
+  padding: 5px 0;
+  
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 10;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -100px;
 }
 
 .settings-panel input[type="checkbox"]{

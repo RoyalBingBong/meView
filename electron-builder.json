@@ -1,6 +1,7 @@
 {
   "productName": "meView",
   "appId": "com.royalbingbong.meview",
+  "files": "!src/**",
   "mac" : {
     "publish": ["github"],
     "target": ["dmg", "zip"],

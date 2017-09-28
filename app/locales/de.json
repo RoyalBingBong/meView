@@ -49,7 +49,9 @@
 		"general": {
 			"closewithesc": "meView mit ESC schließen",
 			"savepath": "Starte im zuletzt benutzen Pfad bei \"Datei > Datei öffnen\" oder \"Datei > Ordner öffnen\"",
-			"reopenlast": "Automatisch die zuletzt geöffnente Datei anzeigen",
+			"reopenlast": "Automatisch die zuletzt geöffnente Datei anzeigen"
+		},
+		"advanced": {
 			"devmode": "Entwickler Menü aktivieren"
 		},
 		"os": {
@@ -57,7 +59,8 @@
 		},
 		"info": {
 			"skipinterval": "Wird beim vor- und zurückspuhlen von Videos verwendet (Shift+Pfeil-Rechts oder Shift+Pfeil-Links).",
-			"wincontext": "Der Eintrag im Kontext Menu des Windows Explorers, erlaubt es Dateien und Ordner schnell und einfach direkt mit meView zu öffnen."
+			"wincontext": "Der Eintrag im Kontext Menu des Windows Explorers, erlaubt es Dateien und Ordner schnell und einfach direkt mit meView zu öffnen.",
+			"reset": "Auf Werkseinstellungen zurücksetzen"
 		}
 	},
 	"Autoplay": "Automatisch abspielen",
@@ -82,5 +85,6 @@
 	"Cancel": "Abbrechen",
 	"Recursive": "Rekursiv",
 	"Slideshow": "Diashow",
-	"System": "System"
+	"System": "System",
+	"Advanced": "Advanced"
 }
