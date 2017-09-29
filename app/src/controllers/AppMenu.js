@@ -1,12 +1,10 @@
-import {remote} from 'electron'
-const {Menu, MenuItem} = remote
+import { remote } from "electron"
+const { Menu, MenuItem } = remote
 
-import Locale from '../modules/Locale.js'
-import UserSettings from '../modules/UserSettings.js'
-import Viewer from '../modules/Viewer.js'
-import Window from '../modules/Window.js'
-import * as win32 from '../modules/Win32.js'
-import {skipIntervalValues} from '../../config.json'
+import Locale from "../modules/Locale.js"
+import UserSettings from "../modules/UserSettings.js"
+import Viewer from "../modules/Viewer.js"
+import Window from "../modules/Window.js"
 
 /**
  * Generates the application menu and submenus, and creates the
@@ -31,7 +29,7 @@ export default class AppMenu {
     this.menu.append(this.buildViewMenu())
     this.menu.append(this.buildSlideshowMenu())
     this.menu.append(this.buildWindowMenu())
-    if(UserSettings.developerMode) {
+    if (UserSettings.developerMode) {
       this.menu.append(this.buildDeveloperMenu())
     }
     this.menu.append(this.buildAboutMenu())
@@ -48,8 +46,8 @@ export default class AppMenu {
 
     // Open File
     item = new MenuItem({
-      label: Locale.__('Open File'),
-      accelerator: 'O',
+      label: Locale.__("Open File"),
+      accelerator: "O",
       click() {
         Window.open()
       }
@@ -58,8 +56,8 @@ export default class AppMenu {
 
     // Open Folder
     item = new MenuItem({
-      label: Locale.__('Open Folder'),
-      accelerator: 'CommandOrControl+O',
+      label: Locale.__("Open Folder"),
+      accelerator: "CommandOrControl+O",
       click() {
         Window.open(true)
       }
@@ -68,57 +66,57 @@ export default class AppMenu {
 
     // Open Folder Recursive
     item = new MenuItem({
-      label: Locale.__('Open Folder Recursive'),
-      accelerator: 'CommandOrControl+Shift+O',
+      label: Locale.__("Open Folder Recursive"),
+      accelerator: "CommandOrControl+Shift+O",
       click() {
         Window.open(true, true)
       }
     })
     filemenu.append(item)
 
-    filemenu.append(new MenuItem({ type: 'separator' }))
+    filemenu.append(new MenuItem({ type: "separator" }))
 
     // Open in File Browser
     item = new MenuItem({
-      label: Locale.__('Show in File Browser'),
+      label: Locale.__("Show in File Browser"),
       click() {
         Window.showInFileBrowser()
       }
     })
     filemenu.append(item)
 
-    // Open in default viweer
+    // Open in default viewer
     item = new MenuItem({
-      label: Locale.__('Show in Default Viewer'),
+      label: Locale.__("Show in Default Viewer"),
       click() {
         Window.openInDefaultViewer()
       }
     })
     filemenu.append(item)
 
-    filemenu.append(new MenuItem({ type: 'separator' }))
+    filemenu.append(new MenuItem({ type: "separator" }))
 
     // Open meView settings
     item = new MenuItem({
-      label: Locale.__('Settings'),
+      label: Locale.__("Settings"),
       click() {
         Window.openSettings()
       }
     })
     filemenu.append(item)
 
-    filemenu.append(new MenuItem({type: 'separator'}))
+    filemenu.append(new MenuItem({ type: "separator" }))
 
     // Close
     item = new MenuItem({
-      label: Locale.__('Quit'),
-      accelerator: 'Alt+Q',
-      role: 'quit'
+      label: Locale.__("Quit"),
+      accelerator: "Alt+Q",
+      role: "quit"
     })
     filemenu.append(item)
 
     return new MenuItem({
-      label: Locale.__('File'),
+      label: Locale.__("File"),
       submenu: filemenu
     })
   }
@@ -129,20 +127,20 @@ export default class AppMenu {
 
     // Select Folder
     item = new MenuItem({
-      label: Locale.__('Select Folder'),
-      accelerator: 'Up',
+      label: Locale.__("Select Folder"),
+      accelerator: "Up",
       click() {
         Window.showFolderSelector()
       }
     })
     viewmenu.append(item)
 
-    viewmenu.append(new MenuItem({ type: 'separator' }))
+    viewmenu.append(new MenuItem({ type: "separator" }))
 
     // Next image/video
     item = new MenuItem({
-      label: Locale.__('Next'),
-      accelerator: 'Right',
+      label: Locale.__("Next"),
+      accelerator: "Right",
       click() {
         Viewer.next()
       }
@@ -151,8 +149,8 @@ export default class AppMenu {
 
     // Previous image/video
     item = new MenuItem({
-      label: Locale.__('Previous'),
-      accelerator: 'Left',
+      label: Locale.__("Previous"),
+      accelerator: "Left",
       click() {
         Viewer.previous()
       }
@@ -161,8 +159,8 @@ export default class AppMenu {
 
     // First image/video in current folder/zip
     item = new MenuItem({
-      label: Locale.__('First'),
-      accelerator: 'Home',
+      label: Locale.__("First"),
+      accelerator: "Home",
       click() {
         Viewer.first()
       }
@@ -171,19 +169,19 @@ export default class AppMenu {
 
     // Last image/video in current folder/zip
     item = new MenuItem({
-      label: Locale.__('Last'),
-      accelerator: 'End',
+      label: Locale.__("Last"),
+      accelerator: "End",
       click() {
         Viewer.last()
       }
     })
     viewmenu.append(item)
 
-    viewmenu.append(new MenuItem({type: 'separator'}))
+    viewmenu.append(new MenuItem({ type: "separator" }))
 
     item = new MenuItem({
-      label: Locale.__('Shuffle'),
-      accelerator: 'S',
+      label: Locale.__("Shuffle"),
+      accelerator: "S",
       click() {
         Viewer.shuffle()
       }
@@ -191,15 +189,15 @@ export default class AppMenu {
     viewmenu.append(item)
 
     item = new MenuItem({
-      label: Locale.__('Random'),
-      accelerator: 'R',
+      label: Locale.__("Random"),
+      accelerator: "R",
       click() {
         Viewer.random()
       }
     })
     viewmenu.append(item)
 
-    viewmenu.append(new MenuItem({type: 'separator'}))
+    viewmenu.append(new MenuItem({ type: "separator" }))
 
     /**
      * Video Playback controls:
@@ -207,8 +205,8 @@ export default class AppMenu {
 
     // Play/Pause video
     item = new MenuItem({
-      label: Locale.__('Play/Pause'),
-      accelerator: 'Space',
+      label: Locale.__("Play/Pause"),
+      accelerator: "Space",
       click() {
         Viewer.togglePlayPause()
       }
@@ -217,8 +215,8 @@ export default class AppMenu {
 
     // Forward video
     item = new MenuItem({
-      label: Locale.__('Forward'),
-      accelerator: 'Shift+Right',
+      label: Locale.__("Forward"),
+      accelerator: "Shift+Right",
       click() {
         Viewer.forward()
       }
@@ -227,8 +225,8 @@ export default class AppMenu {
 
     // Rewind video
     item = new MenuItem({
-      label: Locale.__('Rewind'),
-      accelerator: 'Shift+Left',
+      label: Locale.__("Rewind"),
+      accelerator: "Shift+Left",
       click() {
         Viewer.rewind()
       }
@@ -236,7 +234,7 @@ export default class AppMenu {
     viewmenu.append(item)
 
     return new MenuItem({
-      label: Locale.__('View'),
+      label: Locale.__("View"),
       submenu: viewmenu
     })
   }
@@ -245,21 +243,23 @@ export default class AppMenu {
     let slideshowmenu = new Menu()
     let start, pause, stop, shuffled
     start = new MenuItem({
-      label: Locale.__('Start'),
+      label: Locale.__("Start"),
       enabled: !this.slideshowstate.playing,
       click: () => {
-        Viewer.slideshowStart(null, UserSettings.slideshowShuffled)
-          .then(() => {
-            this.slideshowstate.playing = true
-            this.slideshowstate.paused = false
-            this.initMenu()
-          })
+        Viewer.slideshowStart(null, UserSettings.slideshowShuffled).then(() => {
+          this.slideshowstate.playing = true
+          this.slideshowstate.paused = false
+          this.initMenu()
+        })
       }
     })
     slideshowmenu.append(start)
 
     pause = new MenuItem({
-      label: (this.slideshowstate.playing && this.slideshowstate.paused ? 'Continue' : 'Pause'),
+      label:
+        this.slideshowstate.playing && this.slideshowstate.paused
+          ? "Continue"
+          : "Pause",
       enabled: this.slideshowstate.playing,
       click: () => {
         this.slideshowstate.paused = !this.slideshowstate.paused
@@ -270,7 +270,7 @@ export default class AppMenu {
     slideshowmenu.append(pause)
 
     stop = new MenuItem({
-      label: Locale.__('Stop'),
+      label: Locale.__("Stop"),
       enabled: this.slideshowstate.playing,
       click: () => {
         this.slideshowstate.playing = false
@@ -281,11 +281,11 @@ export default class AppMenu {
     })
     slideshowmenu.append(stop)
 
-    slideshowmenu.append(new MenuItem({type: 'separator'}))
+    slideshowmenu.append(new MenuItem({ type: "separator" }))
 
     shuffled = new MenuItem({
-      label: Locale.__('Shuffle'),
-      type: 'checkbox',
+      label: Locale.__("Shuffle"),
+      type: "checkbox",
       checked: UserSettings.slideshowShuffled,
       click(menuItem) {
         UserSettings.slideshowShuffled = menuItem.checked
@@ -294,7 +294,7 @@ export default class AppMenu {
     slideshowmenu.append(shuffled)
 
     return new MenuItem({
-      label: Locale.__('Slideshow'),
+      label: Locale.__("Slideshow"),
       submenu: slideshowmenu
     })
   }
@@ -305,16 +305,16 @@ export default class AppMenu {
 
     // minimize
     item = new MenuItem({
-      label: Locale.__('Minimize'),
-      accelerator: 'CommandOrControl+M',
-      role: 'minimize'
+      label: Locale.__("Minimize"),
+      accelerator: "CommandOrControl+M",
+      role: "minimize"
     })
     windowmenu.append(item)
 
     // Toggle fullscreen
     item = new MenuItem({
-      label: Locale.__('Toggle Fullscreen'),
-      accelerator: 'F11',
+      label: Locale.__("Toggle Fullscreen"),
+      accelerator: "F11",
       click() {
         Window.setFullscreen(!Window.fullscreen)
       }
@@ -323,15 +323,15 @@ export default class AppMenu {
 
     // Close app
     item = new MenuItem({
-      label: Locale.__('Close'),
-      accelerator: 'CommandOrControl+W',
-      role: 'close'
+      label: Locale.__("Close"),
+      accelerator: "CommandOrControl+W",
+      role: "close"
     })
     windowmenu.append(item)
 
     return new MenuItem({
-      label: Locale.__('Window'),
-      role: 'window',
+      label: Locale.__("Window"),
+      role: "window",
       submenu: windowmenu
     })
   }
@@ -341,7 +341,7 @@ export default class AppMenu {
     let item
 
     item = new MenuItem({
-      label: Locale.__('meView on github'),
+      label: Locale.__("meView on github"),
       click() {
         Window.openRepository()
       }
@@ -349,17 +349,17 @@ export default class AppMenu {
     aboutmenu.append(item)
 
     item = new MenuItem({
-      label: Locale.__('Report a Bug'),
+      label: Locale.__("Report a Bug"),
       click() {
         Window.openRepositoryIssues()
       }
     })
     aboutmenu.append(item)
 
-    aboutmenu.append(new MenuItem({type: 'separator'}))
+    aboutmenu.append(new MenuItem({ type: "separator" }))
 
     item = new MenuItem({
-      label: Locale.__('meView'),
+      label: Locale.__("meView"),
       click() {
         Window.showAbout()
       }
@@ -367,8 +367,8 @@ export default class AppMenu {
     aboutmenu.append(item)
 
     return new MenuItem({
-      label: Locale.__('About'),
-      role: 'about',
+      label: Locale.__("About"),
+      role: "about",
       submenu: aboutmenu
     })
   }
@@ -377,14 +377,14 @@ export default class AppMenu {
     let devmenu = new Menu()
     let item
     item = new MenuItem({
-      label: Locale.__('Reload'),
-      accelerator: 'CommandOrControl+R',
-      role: 'reload'
+      label: Locale.__("Reload"),
+      accelerator: "CommandOrControl+R",
+      role: "reload"
     })
     devmenu.append(item)
 
     item = new MenuItem({
-      label: Locale.__('Open Appdata Folder'),
+      label: Locale.__("Open Appdata Folder"),
       click(menuItem, browserWindow) {
         if (browserWindow) {
           Window.openAppdata()
@@ -394,8 +394,8 @@ export default class AppMenu {
     devmenu.append(item)
 
     item = new MenuItem({
-      label: Locale.__('Toggle Developer Tools'),
-      accelerator: 'F12',
+      label: Locale.__("Toggle Developer Tools"),
+      accelerator: "F12",
       click(menuItem, browserWindow) {
         if (browserWindow) {
           browserWindow.webContents.toggleDevTools()
@@ -405,7 +405,7 @@ export default class AppMenu {
     devmenu.append(item)
 
     return new MenuItem({
-      label: Locale.__('Developer'),
+      label: Locale.__("Developer"),
       submenu: devmenu
     })
   }

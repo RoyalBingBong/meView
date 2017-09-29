@@ -1,12 +1,10 @@
-import {ELEMENTS} from '../../config.json'
-
-import Locale from '../modules/Locale.js'
-import Window from '../modules/Window.js'
+import Locale from "../modules/Locale.js"
+import Window from "../modules/Window.js"
 
 export default class Filename {
   constructor() {
-    this.filename = document.getElementById(ELEMENTS.file)
-    this.filename.placeholder = Locale.__('No file selected')
+    this.filename = document.getElementById("filetext")
+    this.filename.placeholder = Locale.__("No file selected")
     this._initClickHandler()
   }
 

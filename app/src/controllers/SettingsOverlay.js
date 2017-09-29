@@ -1,38 +1,35 @@
-import {ELEMENTS} from '../../config.json'
-import Settings from './Settings.js'
-const {container, close, closex, pages, menuprefix, panelprefix} = ELEMENTS.settings
-
-const defaultPage = 'general'
+import Settings from "./Settings.js"
 
 export default class SettingsOverlay {
   constructor() {
-    this.container = document.getElementById(container)
-    this.close = document.getElementById(close)
-    this.closex = document.getElementById(closex)
+    this.container = document.getElementById("settingscontainer")
+    this.close = document.getElementById("settings-close")
+    this.closeX = document.getElementById("settings-close-x")
     this.panel = new Settings()
-    // this.hide()
+    this.hide()
     this._initEventListener()
   }
 
   get visible() {
-    return !this.container.classList.contains('hidden')
+    return !this.container.classList.contains("hidden")
   }
 
   _initEventListener() {
-    this.close.onclick = this.closex.onclick = () => {
+    this.close.onclick = this.closeX.onclick = () => {
       this.hide()
     }
 
+    // Disable double-click to fullscreen and vice versa
     this.container.ondblclick = (e) => {
       e.stopPropagation()
     }
   }
- 
+
   hide() {
-    this.container.classList.add('hidden')
+    this.container.classList.add("hidden")
   }
 
   show() {
-    this.container.classList.remove('hidden')
+    this.container.classList.remove("hidden")
   }
 }

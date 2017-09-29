@@ -1,10 +1,7 @@
-import {EventEmitter} from 'events'
+import { EventEmitter } from "events"
 
-import {ELEMENTS} from '../../config.json'
-
-const sep = '/'
-const no = '−'
-
+const sep = "/"
+const no = "−"
 const EMPTY = `${no} ${sep} ${no}`
 
 /**
@@ -13,18 +10,10 @@ const EMPTY = `${no} ${sep} ${no}`
  * @export
  * @class Counter
  */
-export default class Counter extends EventEmitter{
-
-  /**
-   * Creates an instance of Counter.
-   *
-   * @param {string} elementid HTML id of the counter input element
-   *
-   * @memberOf Counter
-   */
+export default class Counter extends EventEmitter {
   constructor() {
     super()
-    this.counter = document.getElementById(ELEMENTS.counter)
+    this.counter = document.getElementById("counter")
     this._current = 0
     this._max = 0
     this.initHandlers()
@@ -50,7 +39,7 @@ export default class Counter extends EventEmitter{
   }
 
   /**
-   * Initialization of the focus and unfocus (blur) handlers
+   * Initialization of the focus and blur handlers
    *
    * @memberOf Counter
    */
@@ -61,7 +50,7 @@ export default class Counter extends EventEmitter{
     }
 
     this.counter.onfocus = () => {
-      this.counter.value = ''
+      this.counter.value = ""
     }
 
     this.counter.onblur = () => {
@@ -69,10 +58,10 @@ export default class Counter extends EventEmitter{
       // console.log('counter', value, typeof value)
       // console.log('_current', this.current, typeof this.current)
       // console.log('max', this.max, typeof this.max)
-      if(value > 0 && value < this.max) {
-        this.emit('counter.change', value - 1)
+      if (value > 0 && value < this.max) {
+        this.emit("counter.change", value - 1)
       } else {
-        this.emit('counter.change', this.max - 1)
+        this.emit("counter.change", this.max - 1)
       }
       this.update()
     }
@@ -80,10 +69,10 @@ export default class Counter extends EventEmitter{
     // Input validation, because type="number" inputs don't allow for nice formatting ("x of N")
     this.counter.onkeydown = (e) => {
       e.stopPropagation()
-      if(e.keyCode === 13) {
+      if (e.keyCode === 13) {
         this.counter.blur()
       }
-      if(isNaN(e.key)) {
+      if (isNaN(e.key)) {
         return false
       }
     }
@@ -96,8 +85,8 @@ export default class Counter extends EventEmitter{
    * @memberOf Counter
    */
   update() {
-    if(this.current && this.current > 0) {
-      if(this.max > 0) {
+    if (this.current && this.current > 0) {
+      if (this.max > 0) {
         this.counter.value = `${this.current} ${sep} ${this.max}`
       } else {
         this.counter.value = EMPTY

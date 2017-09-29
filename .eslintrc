@@ -8,47 +8,28 @@
   "parserOptions": {
     "sourceType": "module"
   },
-  "rules": {
-    "indent": [
-      "error",
-      2
-    ],
-    "linebreak-style": [
-      "error",
-      "windows"
-    ],
-    "quotes": [
-      "error",
-      "single"
-    ],
-    "semi": [
-      "error",
-      "never"
-    ],
-    "eqeqeq": [
-      "warn",
-      "smart"
-    ],
-    "arrow-parens": [
-      "error",
-      "always"
-    ],
-    "prefer-arrow-callback": "error",
-    "comma-spacing": [
-      "error",
-      {
-        "before": false,
-        "after": true 
-      }
-    ],
-    "no-unused-vars": "warn",
-    "no-var": "error",
+  "rules": {    
+    "accessor-pairs": [1,{"getWithoutSet":true,"setWithoutGet":true}],
+    "default-case": 1,
+    "eqeqeq": [1,"smart"],
+    "no-floating-decimal": 1,
+    "no-multi-spaces": 1,
+    "no-path-concat": 1,
+    "array-bracket-spacing": [2,"never",{}],
+    "brace-style": [1,"1tbs",{}],
+    "eol-last": 2,
+    "key-spacing": 1,
+    "linebreak-style": [1,"windows"],
+    "no-array-constructor": 2,
     "no-console": "off",
-    "no-trailing-spaces": [
-      "warn", 
-      {
-        "ignoreComments": true
-      }
-    ]
+    "no-multiple-empty-lines": [1,{"max":1}],
+    "no-unused-vars": "warn",
+    "no-trailing-spaces": [1,{"skipBlankLines":true, "ignoreComments": true}],
+    "quotes": [1,"double","avoid-escape"],
+    "space-before-blocks": [1,"always"],
+    "space-infix-ops": 1,
+    "spaced-comment": [1,"always",{}],
+    "arrow-parens": [1,"always"],
+    "arrow-spacing": [1,{"before":true,"after":true}]
   }
 }

@@ -1,14 +1,13 @@
-import {EventEmitter} from 'events'
-import {readdir, readFile, stat} from 'fs'
-import {join, relative, basename} from 'path'
+import { readdir, readFile } from "fs"
+import { join, relative, basename } from "path"
 
-import mime from 'mime'
-import Zip from 'node-zip'
-import recursive from 'recursive-readdir'
-import naturalCompare from 'natural-compare-lite'
+import mime from "mime"
+import Zip from "node-zip"
+import recursive from "recursive-readdir"
+import naturalCompare from "natural-compare-lite"
 
-import Locale from './Locale.js'
-import {supportedMediaTypes} from '../../config.json'
+import Locale from "./Locale.js"
+import { supportedMediaTypes } from "../../config.json"
 
 export const MediaDirectory = {
   /**
@@ -25,12 +24,12 @@ export const MediaDirectory = {
   openDirectory(directory, openrecursive = false) {
     return new Promise((resolve, reject) => {
       let list = []
-      if(openrecursive) {
+      if (openrecursive) {
         recursive(directory)
           .then((files) => {
             files = helper.filterFiles(files)
             files.forEach((file) => {
-              if(helper.supportedFileFormat(file)){
+              if (helper.supportedFileFormat(file)) {
                 let mimetype = mime.lookup(file)
                 list.push({
                   name: relative(directory, file),
@@ -39,8 +38,10 @@ export const MediaDirectory = {
                 })
               }
             })
-            if(list.length === 0) {
-              reject(new Error(Locale.__('errors.nomediafiles', basename(directory))))
+            if (list.length === 0) {
+              reject(
+                new Error(Locale.__("errors.nomediafiles", basename(directory)))
+              )
             }
             resolve(MediaDirectory.sort(list))
           })
@@ -49,12 +50,12 @@ export const MediaDirectory = {
           })
       } else {
         readdir(directory, (err, files) => {
-          if(err) {
+          if (err) {
             reject(err)
           }
           files = helper.filterFiles(files)
           files.forEach((file) => {
-            if(helper.supportedFileFormat(file)){
+            if (helper.supportedFileFormat(file)) {
               let mimetype = mime.lookup(file)
               list.push({
                 name: file,
@@ -63,8 +64,10 @@ export const MediaDirectory = {
               })
             }
           })
-          if(list.length == 0) {
-            reject(new Error(Locale.__('errors.nomediafiles', basename(directory))))
+          if (list.length === 0) {
+            reject(
+              new Error(Locale.__("errors.nomediafiles", basename(directory)))
+            )
           }
           resolve(MediaDirectory.sort(list))
         })
@@ -85,23 +88,23 @@ export const MediaDirectory = {
     return new Promise((resolve, reject) => {
       let list = []
       readFile(zipfile, (err, fd) => {
-        if(err) {
+        if (err) {
           reject(err)
         }
         let unzipper = new Zip(fd)
-        for(let file in unzipper.files) {
-          if(helper.supportedFileFormat(file)) {
+        for (let file in unzipper.files) {
+          if (helper.supportedFileFormat(file)) {
             let mimetype = mime.lookup(file)
             let buf = Buffer.from(unzipper.files[file]._data.getContent())
             list.push({
               name: file,
-              path: `data:${mimetype};base64, ${buf.toString('base64')}`,
+              path: `data:${mimetype};base64, ${buf.toString("base64")}`,
               mimetype
             })
           }
         }
-        if(list.length == 0) {
-          reject(new Error(Locale.__('errors.nomediafiles', basename(zipfile))))
+        if (list.length === 0) {
+          reject(new Error(Locale.__("errors.nomediafiles", basename(zipfile))))
         }
         resolve(MediaDirectory.sort(list))
       })
@@ -123,7 +126,6 @@ export const MediaDirectory = {
     })
   }
 }
-
 
 export const helper = {
   filterFiles(files) {

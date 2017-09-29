@@ -1,20 +1,9 @@
-import UserSettings from './modules/UserSettings.js'
-import Viewer from './modules/Viewer.js'
-import Window from './modules/Window.js'
-import Locale from './modules/Locale.js'
-import * as win32 from './modules/Win32.js'
+import "./modules/UserSettings.js"
+import "./modules/Viewer.js"
+import "./modules/Locale.js"
+import Window from "./modules/Window.js"
 
-
-UserSettings.on('reset', () => {
-  console.log('reset')
-  if(UserSettings.windowsContextMenuInstalled) {
-    win32.windowsUninstallContextMenu(() => {})
-  }
-  Window.reload()
-})
-
-
-window.onbeforeunload = (e) => {
+window.onbeforeunload = () => {
   Window.beforeUnload()
   Window.closeOtherWindows()
 }

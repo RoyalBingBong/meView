@@ -1,4 +1,4 @@
-import {EventEmitter} from 'events'
+import { EventEmitter } from "events"
 
 /**
  * 
@@ -7,7 +7,7 @@ import {EventEmitter} from 'events'
  * @export
  * @class IdleTimer
  */
-export default class IdleTimer extends EventEmitter{
+export default class IdleTimer extends EventEmitter {
   constructor(timeout = 5000) {
     super()
     this.timeout = timeout
@@ -18,19 +18,17 @@ export default class IdleTimer extends EventEmitter{
 
   _initEventListeners() {
     document.onmousemove = () => {
-      if(this.timer) {
+      if (this.timer) {
         clearTimeout(this.timer)
       }
-      if(!this.idle) {
+      if (!this.idle) {
         this.idle = true
-        this.emit('idle', false)
+        this.emit("idle", false)
       }
       this.timer = setTimeout(() => {
         this.idle = false
-        this.emit('idle', true)
+        this.emit("idle", true)
       }, this.timeout)
     }
   }
-
-
 }

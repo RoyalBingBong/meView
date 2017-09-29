@@ -1,17 +1,17 @@
-import {join} from 'path'
+import { join } from "path"
 
-import Counter from '../controllers/Counter.js'
-import Dropzone from '../controllers/Dropzone.js'
-import Filename from '../controllers/Filename.js'
-import MediaList from './MediaList.js'
-import UserSettings from './UserSettings.js'
-import View from '../controllers/View.js'
-import Window from './Window.js'
+import Counter from "../controllers/Counter.js"
+import Dropzone from "../controllers/Dropzone.js"
+import Filename from "../controllers/Filename.js"
+import MediaList from "./MediaList.js"
+import UserSettings from "./UserSettings.js"
+import View from "../controllers/View.js"
+import Window from "./Window.js"
 
 let instance
-class Viewer  {
+class Viewer {
   constructor() {
-    if(!instance) {
+    if (!instance) {
       this.view = new View()
       this.counter = new Counter()
       this.dropzone = new Dropzone()
@@ -26,21 +26,21 @@ class Viewer  {
   }
 
   _initDropzoneListener() {
-    this.dropzone.on('drop', (file, recursive) => {
-      console.log('drop')
+    this.dropzone.on("drop", (file, recursive) => {
+      console.log("drop")
       this.open(file.path, recursive)
     })
   }
 
   _initStatusbarListeners() {
-    this.counter.on('counter.change', (idx) => {
-      console.log('goto', idx)
+    this.counter.on("counter.change", (idx) => {
+      console.log("goto", idx)
       this.goto(idx)
     })
   }
 
   _initMediaListListeners() {
-    this.mediafiles.on('file.start', (mf, idx) => {
+    this.mediafiles.on("file.start", (mf, idx) => {
       this.view.show(mf)
       // I can't tell why this super short timeout works, but it isn't there I get
       // "The play() request was interrupted by a call to pause()"
@@ -50,24 +50,25 @@ class Viewer  {
       this.filename.name = join(this.mediafiles.root, mf.name)
       this.counter.current = idx
     })
-    this.mediafiles.on('file.added', (mf, len) => {
+    this.mediafiles.on("file.added", (mf, len) => {
       this.counter.max = len
     })
 
-    this.mediafiles.on('file.current', (mf, idx) => {
+    this.mediafiles.on("file.current", (mf, idx) => {
       this.view.show(mf)
       this._playcurrent(mf)
       this.filename.name = join(this.mediafiles.root, mf.name)
       this.counter.current = idx
     })
 
-    this.mediafiles.on('empty', (message) => {
+    this.mediafiles.on("empty", (message) => {
       this.filename.name = message
       this.counter.current = -1
     })
 
-    this.mediafiles.on('endoflist', (last) => {
-      if(this.slideshow) {
+    this.mediafiles.on("endoflist", (last) => {
+      console.log("is last last", last)
+      if (this.slideshow) {
         // TODO maybeshow a message that the queue ended
       } else {
         Window.showFolderSelector()
@@ -75,9 +76,11 @@ class Viewer  {
     })
   }
 
-
   get currentFilepath() {
-    let p = join(this.mediafiles.root, (this.mediafiles.current ? this.mediafiles.current.name : '.' ))
+    let p = join(
+      this.mediafiles.root,
+      this.mediafiles.current ? this.mediafiles.current.name : "."
+    )
     return p
   }
 
@@ -86,10 +89,11 @@ class Viewer  {
   }
 
   open(fileorpath, recursive = false) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let oldcurrent = this.mediafiles.current
       this.dropzone.hide()
-      this.mediafiles.open(fileorpath, {recursive})
+      this.mediafiles
+        .open(fileorpath, { recursive })
         .then(() => {
           this._stopcurrent(oldcurrent)
           resolve()
@@ -101,13 +105,12 @@ class Viewer  {
     })
   }
 
-
   slideshowStart(timeout, shuffled) {
     return new Promise((resolve, reject) => {
-      if(!this.mediafiles.opened) {
+      if (!this.mediafiles.opened) {
         reject()
       }
-      if(!timeout) {
+      if (!timeout) {
         timeout = UserSettings.slideshowInterval
       }
       this.slideshow = {
@@ -115,7 +118,7 @@ class Viewer  {
         loop: UserSettings.slideshowVideoLoop,
         full: UserSettings.slideshowVideoFull
       }
-      if(shuffled) {
+      if (shuffled) {
         this.mediafiles.shuffle()
       }
       this.timeout = timeout
@@ -126,19 +129,19 @@ class Viewer  {
   }
 
   slideshowNext(next) {
-    if(!next) {
+    if (!next) {
       clearTimeout(this.slideshow.timer)
       return
     }
-    if(next.isVideo()) {
+    if (next.isVideo()) {
       let duration = next.duration
-      if(this.slideshow.loop && duration < this.slideshow.timeout) {
+      if (this.slideshow.loop && duration < this.slideshow.timeout) {
         // Video is shorter than the interval -> loop it until the interval ends
         this.slideshowTimer()
-      } else if(this.slideshow.full && duration >= this.slideshow.timeout) {
-        // Video 
+      } else if (this.slideshow.full && duration >= this.slideshow.timeout) {
+        // Video
         next.loop = false
-        next.once('ended', () => {
+        next.once("ended", () => {
           this.slideshowNext(this.mediafiles.next)
         })
       } else {
@@ -162,7 +165,7 @@ class Viewer  {
   }
 
   slideshowTogglePlayPause() {
-    if(this.slideshow.timer) {
+    if (this.slideshow.timer) {
       this.slideshowStop()
     } else {
       this.slideshowNext(this.mediafiles.current)
@@ -198,7 +201,7 @@ class Viewer  {
   }
 
   togglePlayPause() {
-    if(this.mediafiles.current) {
+    if (this.mediafiles.current) {
       this.mediafiles.current.togglePlayPause()
     }
   }
@@ -230,8 +233,8 @@ class Viewer  {
 
   _stopcurrent(current) {
     current = current || this.mediafiles.current
-    if(current) {
-      if(current.isVideo()) {
+    if (current) {
+      if (current.isVideo()) {
         current.stop()
       }
     }
@@ -239,19 +242,12 @@ class Viewer  {
 
   _playcurrent(current) {
     current = current || this.mediafiles.current
-    if(current) {
-      if(current.isVideo() && UserSettings.videoAutoplay) {
+    if (current) {
+      if (current.isVideo() && UserSettings.videoAutoplay) {
         current.stop()
         current.play()
       }
     }
-  }
-}
-
-function shuffle(a) {
-  for (let i = a.length; i; i--) {
-    let j = Math.floor(Math.random() * i);
-    [a[i - 1], a[j]] = [a[j], a[i - 1]]
   }
 }
 

@@ -1,4 +1,4 @@
-Copyright (c) 2017, RoyalBingBong
+Copyright (c) 2017, David K. (RoyalBingBong)
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above

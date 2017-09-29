@@ -59,8 +59,18 @@
 		},
 		"info": {
 			"skipinterval": "Used when forwarding or rewinding a video with Shift+Right-Arrow or Shift+Left-Arrow.",
-			"wincontext": "This will install a context menu entry in Windows Explorer, which allows you to rightclick a file, folder or on the directory background to it in meView.",
-			"reset": "Reset to default settings"
+			"wincontext": "This will install a context menu entry in Windows Explorer, which allows you to rightclick a file, folder or on the directory background to it in meView."
+		},
+		"default": "Default settings",
+		"resetdefault": "Are you sure you want to reset to the default settings? meView will reload after resetting.",
+		"resetdefaultwin32": "Are you sure you want to reset to the default settings? Resetting will also remove the Windows Explorer context menu entry! meView will restart after the reset."
+	},
+	"contextmenu": {
+		"install": {
+			"fail": "Failed to install context menu entries!"
+		},
+		"uninstall": {
+			"fail": "Failed to uninstall context menu entries!"
 		}
 	},
 	"Autoplay": "Autoplay",
@@ -69,7 +79,7 @@
 	"User Interface": "User Interface",
 	"Language": "Language",
 	"Menubar": "Menubar",
-	"Satusbar": "Satusbar",
+	"Statusbar": "Statusbar",
 	"Player UI": "Player UI",
 	"Hide in fullscreen": "Hide in fullscreen",
 	"Hide when idling": "Hide when idling",
@@ -86,5 +96,10 @@
 	"Installed": "Installed",
 	"Slideshow": "Slideshow",
 	"System": "System",
-	"Advanced": "Advanced"
+	"Advanced": "Advanced",
+	"Yes": "Yes",
+	"No": "No",
+	"Reset to default settings": "Reset to default settings",
+	"Theme": "Theme",
+	"User themes": "User themes"
 }

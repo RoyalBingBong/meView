@@ -1,9 +1,7 @@
-import {ELEMENTS} from '../../config.json'
-
 export default class Statusbar {
   constructor() {
     this.hidden = false
-    this.statusbar = document.getElementById(ELEMENTS.statusbar)
+    this.statusbar = document.getElementById("statusbar")
     this._initEventListeners()
   }
 
@@ -16,13 +14,13 @@ export default class Statusbar {
 
   show() {
     this.hidden = false
-    this.statusbar.classList.remove('hidden')
-    console.log('show', this.statusbar.classList)
+    this.statusbar.classList.remove("hidden")
+    console.log("show", this.statusbar.classList)
   }
 
   hide() {
     this.hidden = true
-    this.statusbar.classList.add('hidden')
-    console.log('hide', this.statusbar.classList)
+    this.statusbar.classList.add("hidden")
+    console.log("hide", this.statusbar.classList)
   }
 }

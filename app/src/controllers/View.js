@@ -1,11 +1,9 @@
-
-import Window from '../modules/Window.js'
-import {ELEMENTS} from '../../config.json'
+import Window from "../modules/Window.js"
 
 export default class View {
   constructor() {
-    this.view = document.getElementById(ELEMENTS.view)
-    this.autoheight = document.getElementById(ELEMENTS.autoheight)
+    this.view = document.getElementById("viewer")
+    this.autoheight = document.getElementById("autoheight")
     this._initEventListeners()
   }
 
@@ -16,10 +14,10 @@ export default class View {
   }
 
   show(mediafile) {
-    if(this.view.hasChildNodes()) {
+    if (this.view.hasChildNodes()) {
       this.view.removeChild(this.view.firstChild)
     }
-    if(mediafile) {
+    if (mediafile) {
       let elem = mediafile.element
       elem.mediafile = mediafile
       this.view.appendChild(elem)
@@ -27,11 +25,11 @@ export default class View {
   }
 
   showError(message) {
-    if(this.view.hasChildNodes()) {
+    if (this.view.hasChildNodes()) {
       this.view.removeChild(this.view.firstChild)
     }
-    let errElement = document.createElement('div')
-    errElement.classList.add('message')
+    let errElement = document.createElement("div")
+    errElement.classList.add("message")
     errElement.innerHTML = `<div>${message}</div>`
     this.view.appendChild(errElement)
   }

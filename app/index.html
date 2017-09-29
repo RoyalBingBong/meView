@@ -8,7 +8,8 @@
   <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" type="text/css">
   <!-- <link rel="stylesheet" href="node_modules/purecss/build/pure-min.css"> -->
   <link rel="stylesheet" href="css/core.css">
-  <link rel="stylesheet" href="css/theme/dark.css">
+  <!-- <link rel="stylesheet" href="css/theme/dark.css"> -->
+  <link rel="stylesheet" id="csstheme" href="css/theme/light.css">
 </head>
 
 <body>
@@ -72,7 +73,7 @@
                   <label for="general-slideshowinterval" data-i18n="Slideshow interval">
                     Slideshow interval:
                   </label>
-                  <input id="general-slideshowinterval" class="" type="number" min="1" value="1">
+                  <span><input id="general-slideshowinterval" class="" type="number" min="1" value="1"></span>
                   <label for="general-slideshowinterval" data-i18n="seconds">seconds</label>
                 </div>
               </fieldset>
@@ -105,7 +106,7 @@
                   <label for="video-skipinterval" data-i18n="Skip interval">
                     Skip interval
                   </label>
-                  <input id="video-skipinterval" class="" type="number" min="1" value="1">
+                  <span><input id="video-skipinterval" class="" type="number" min="1" value="1"></span>
                   <label for="video-skipinterval" data-i18n="seconds">
                     seconds
                   </label>
@@ -123,12 +124,29 @@
                   <div class="cb">
                     <label for="ui-language" data-i18n="Language">
                       Language
-                    </label>
+                    </label>:
                   </div>
                   <div class="cb">
-                    <select name="" id="ui-language">
-    
-                    </select>
+                    <select name="" id="ui-language"></select>
+                  </div>
+                  <div class="cb-clear"></div>
+                </div>
+
+                <hr>
+
+                <div class="labelgroup">
+                  <div class="cb">
+                    <label for="ui-theme" data-i18n="Theme">
+                      Theme
+                    </label>:
+                  </div>
+                  <div class="cb">
+                    <select name="" id="ui-theme"></select>
+                    <button class="iconbutton" id="ui-refreshthemes"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+                  </div>
+                  <div>
+                    <button class="bordered" id="ui-openuserthemes"><i class="fa fa-folder-open" aria-hidden="true"></i></button>
+                    <label for="ui-openuserthemes" data-i18n="User themes"></label>
                   </div>
                   <div class="cb-clear"></div>
                 </div>
@@ -156,8 +174,8 @@
                 <div class="labelgroup">
                   <div class="cb">
                     <input id="ui-statusbar" type="checkbox">
-                    <label for="ui-statusbar" data-i18n="Satusbar">
-                      Satusbar
+                    <label for="ui-statusbar" data-i18n="Statusbar">
+                      Statusbar
                     </label>
                   </div>
                   <div class="cb">
@@ -197,13 +215,15 @@
             <form>
               <fieldset>
                 <legend data-i18n="Operating System">Operating System</legend>
-                <label for="os-windows-contextmenu" data-i18n="settings.os.wincontext">
-                  Windows Explorer context menu
-                </label>
-                <button id="os-windows-contextmenu" class=""  href="#" data-i18n="Install">Install</button>
-                <p data-i18n="settings.info.wincontext">
-                  This will install a context menu entry in Windows Explorer, which allows you to rightclick a file, folder or on the directory background to it in meView.
-                </p>
+                <div class="labelgroup">
+                  <label for="" data-i18n="settings.os.wincontext">
+                    Windows Explorer context menu
+                  </label>:
+                  <button id="os-windows-contextmenu" class="">Install</button>
+                  <p data-i18n="settings.info.wincontext">
+                    This will install a context menu entry in Windows Explorer, which allows you to rightclick a file, folder or on the directory background to it in meView.
+                  </p>
+                </div>
 
               </fieldset>
             </form>
@@ -217,12 +237,9 @@
                   </label>
                 </div>
                 <div class="labelgroup">
-                  <!-- <span class="spacer"></span> -->
-                  
-                  <button id="resettodefault" class=""  href="#" data-i18n="Reset">Reset</button>
-                  <i class="fa fa-exclamation-triangle tooltip" aria-hidden="true">
-                      <p class="infotext" data-i18n="settings.info.reset"></p>
-                    </i>
+                  <span class="spacer"></span>       
+                  <label for=""  data-i18n="settings.default"></label>:   
+                  <button id="resettodefault" class="" data-i18n="Reset">Reset</button>
                 </div>
               </fieldset>
             </form>
@@ -268,14 +285,14 @@
               </div>
               <div class="dtrow">
                 <div class="dtheading">Credits</div>
-                <div class="dtcell"><span>Icons used in meView are from</span> <a href="https://icons8.com/">Icon8</a></div>
+                <div class="dtcell"><span>Icons used in meView are from</span> <a href="https://icons8.com/" class="external">Icon8</a></div>
               </div>
               <div class="dtrow">
                 <div class="dtheading">Links</div>
                 <div class="dtcell">
-                    <a href="https://github.com/RoyalBingBong/meView"><i class="fa fa-github fa-2x" aria-hidden="true"></i></a>,
-                    <a href="https://twitter.com/royalbingbong"><i class="fa fa-twitter fa-2x" aria-hidden="true"></i></a> <br>
-                    David K. (2017)
+                  <a href="https://github.com/RoyalBingBong/meView" class="external"><i class="fa fa-github fa-2x" aria-hidden="true"></i></a>,
+                  <a href="https://twitter.com/royalbingbong" class="external"><i class="fa fa-twitter fa-2x" aria-hidden="true"></i></a> <br>
+                  David K. (2017)
                 </div>
               </div>
             </div>

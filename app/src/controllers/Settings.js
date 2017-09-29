@@ -1,53 +1,55 @@
-import Locale from '../modules/Locale.js'
-import UserSettings from '../modules/UserSettings.js'
-import * as Win32 from '../modules/Win32.js'
+import Locale from "../modules/Locale.js"
+import UserSettings from "../modules/UserSettings.js"
+import ThemeManager from "../modules/ThemeManager.js"
+import Window from "../modules/Window.js"
+import * as Win32 from "../modules/Win32.js"
 
-import {languages} from '../../config.json'
+import InputIncDec from "./InputIncDec.js"
 
-// const {menuprefix, panelprefix} = ELEMENTS.settings
+import { languages } from "../../config.json"
 
 export default class Settings {
   constructor() {
-    this.defaultButton = document.getElementById('resettodefault')
-    this.defaultButton.onclick = () => {
-      UserSettings.resetToDefault()
-    }
-
     this.general = {
-      closeWithESC: document.getElementById('general-closewithesc'),
-      savePath: document.getElementById('general-savepath'),
-      reopenLast: document.getElementById('general-reopenlast'),
-      slideshowInterval: document.getElementById('general-slideshowinterval')
+      closeWithESC: document.getElementById("general-closewithesc"),
+      savePath: document.getElementById("general-savepath"),
+      reopenLast: document.getElementById("general-reopenlast"),
+      slideshowInterval: document.getElementById("general-slideshowinterval")
     }
 
     this.video = {
-      autoplay: document.getElementById('video-autoplay'),
-      loop: document.getElementById('video-loop'),
-      mute: document.getElementById('video-mute'),
-      skipInterval: document.getElementById('video-skipinterval'),
+      autoplay: document.getElementById("video-autoplay"),
+      loop: document.getElementById("video-loop"),
+      mute: document.getElementById("video-mute"),
+      skipInterval: document.getElementById("video-skipinterval")
     }
 
     this.ui = {
-      language: document.getElementById('ui-language'),
-      menubarFullscreen: document.getElementById('ui-menubarfullscreen'),
-      statusbar: document.getElementById('ui-statusbar'),
-      statusbarFullscreen: document.getElementById('ui-statusbarfullscreen'),
-      player: document.getElementById('ui-player'),
-      playerFullscreen: document.getElementById('ui-playerfullscreen'),
-      playeridle: document.getElementById('ui-playeridle')
+      language: document.getElementById("ui-language"),
+      theme: document.getElementById("ui-theme"),
+      refreshthemes: document.getElementById("ui-refreshthemes"),
+      openuserthemes: document.getElementById("ui-openuserthemes"),
+      menubarFullscreen: document.getElementById("ui-menubarfullscreen"),
+      statusbar: document.getElementById("ui-statusbar"),
+      statusbarFullscreen: document.getElementById("ui-statusbarfullscreen"),
+      player: document.getElementById("ui-player"),
+      playerFullscreen: document.getElementById("ui-playerfullscreen"),
+      playeridle: document.getElementById("ui-playeridle")
     }
 
     this.os = {
       windows: {
-        contextMenuButton: document.getElementById('os-windows-contextmenu')
+        contextMenuButton: document.getElementById("os-windows-contextmenu")
       }
     }
 
     this.advanced = {
-      devmode: document.getElementById('advanced-devmode')
+      devmode: document.getElementById("advanced-devmode"),
+      resetdefault: document.getElementById("resettodefault")
     }
 
     this._initCurrentSettings()
+    this._initInputNumber()
 
     this._initGeneralSettingsHandler()
     this._initVideoSettingsHandler()
@@ -78,37 +80,42 @@ export default class Settings {
      */
 
     let currentLang = UserSettings.locale
-    let options = []
-    for(let lang in languages) {
-      let option = document.createElement('option')
+    let langOptions = []
+    for (let lang in languages) {
+      let option = document.createElement("option")
       option.innerText = languages[lang]
       option.value = lang
-      if(lang == currentLang) {
+      if (lang === currentLang) {
         option.selected = true
       }
-      options.push(option)
+      langOptions.push(option)
     }
-    options = options.sort((a, b) => {
-      if (a.innerText > b.innerText) return 1
-      if (a.innerText < b.innerText) return -1
+    langOptions = langOptions.sort((a, b) => {
+      if (a.innerText > b.innerText) {
+        return 1
+      }
+      if (a.innerText < b.innerText) {
+        return -1
+      }
       return 0
     })
-    options.map((el) => {
+    langOptions.map((el) => {
       this.ui.language.appendChild(el)
     })
 
+    this._fillSelectUserThemes()
 
     this.ui.menubarFullscreen.checked = UserSettings.menubarAutohide
     this.ui.statusbar.checked = UserSettings.statusbarEnabled
     this.ui.statusbarFullscreen.checked = UserSettings.statusbarAutohide
-    if(!UserSettings.statusbarEnabled) {
+    if (!UserSettings.statusbarEnabled) {
       this.ui.statusbarFullscreen.disabled = true
     }
 
     this.ui.player.checked = UserSettings.playbackUIEnabled
     this.ui.playerFullscreen.checked = UserSettings.playbackUIAutohide
     this.ui.playeridle.checked = UserSettings.playbackUIIdle
-    if(!UserSettings.playbackUIEnabled) {
+    if (!UserSettings.playbackUIEnabled) {
       this.ui.playerFullscreen.disabled = true
       this.ui.playeridle.disabled = true
     }
@@ -116,19 +123,67 @@ export default class Settings {
     /**
      * OS
      */
-    if(process.platform === 'win32') {
-      if(UserSettings.windowsContextMenuInstalled) {
-        this.os.windows.contextMenuButton.classList.add('installed')
-        this.os.windows.contextMenuButton.innerText = 'Installed'
-      }
+    if (UserSettings.windowsContextMenuInstalled) {
+      this.os.windows.contextMenuButton.classList.add("installed")
+      this.os.windows.contextMenuButton.innerText = Locale.__("Installed")
     } else {
-      this.os.windows.contextMenuButton.classList.add('pure-button-disabled')
+      this.os.windows.contextMenuButton.innerText = Locale.__("Install")
+    }
+    if (process.platform !== "win32") {
+      this.os.windows.contextMenuButton.classList.add("pure-button-disabled")
     }
 
     /**
      * Advanced
      */
     this.advanced.devmode.checked = UserSettings.developerMode
+  }
+
+  _fillSelectUserThemes() {
+    while (this.ui.theme.hasChildNodes()) {
+      this.ui.theme.removeChild(this.ui.theme.lastChild)
+    }
+
+    let themes = ThemeManager.themes
+    let currentTheme = UserSettings.theme
+    let themeOptions = []
+    for (let i = 0; i < themes.length; i++) {
+      let option = document.createElement("option")
+      option.innerText = themes[i].name
+      option.theme = themes[i]
+      if (
+        currentTheme &&
+        currentTheme.name === themes[i].name &&
+        currentTheme.path === themes[i].path
+      ) {
+        option.selected = true
+      } else if (currentTheme === "undefined") {
+        // user has not selected a them -> use first in list a default setting
+        if (i === 0) {
+          UserSettings.theme = themes[i]
+          ThemeManager.setTheme(themes[i])
+        }
+      }
+      if (themes[i].path === ".") {
+        if (i === themes.length - 1) {
+          continue
+        }
+        option.disabled = true
+      }
+      themeOptions.push(option)
+    }
+    ThemeManager.initUserTheme()
+
+    themeOptions.map((el) => {
+      this.ui.theme.appendChild(el)
+    })
+  }
+
+  _initInputNumber() {
+    this.incdec = {
+      slideshowInterval: new InputIncDec(this.general.slideshowInterval),
+      skipinterval: new InputIncDec(this.video.skipInterval)
+    }
   }
 
   _initGeneralSettingsHandler() {
@@ -142,7 +197,26 @@ export default class Settings {
       UserSettings.reopenLastFile = this.general.reopenLast.checked
     }
     this.general.slideshowInterval.onchange = () => {
-      UserSettings.slideshowInterval = parseInt(this.general.slideshowInterval.value, 10)
+      UserSettings.slideshowInterval = parseInt(
+        this.general.slideshowInterval.value,
+        10
+      )
+    }
+
+    this.general.slideshowInterval.onwheel = (e) => {
+      e.stopPropagation()
+      e.preventDefault()
+      if (e.wheelDelta > 0) {
+        let val = parseInt(this.general.slideshowInterval.value)
+        val++
+        this.general.slideshowInterval.value = val
+        this.general.slideshowInterval.dispatchEvent(new Event("change"))
+      } else {
+        let val = parseInt(this.general.slideshowInterval.value)
+        val--
+        this.general.slideshowInterval.value = val
+        this.general.slideshowInterval.dispatchEvent(new Event("change"))
+      }
     }
   }
 
@@ -157,14 +231,48 @@ export default class Settings {
       UserSettings.videoMute = this.video.mute.checked
     }
     this.video.skipInterval.onchange = () => {
-      UserSettings.videoSkipInterval = parseInt(this.video.skipInterval.value, 10)
+      UserSettings.videoSkipInterval = parseInt(
+        this.video.skipInterval.value,
+        10
+      )
+    }
+
+    this.video.skipInterval.onwheel = (e) => {
+      e.stopPropagation()
+      e.preventDefault()
+      if (e.wheelDelta > 0) {
+        let val = parseInt(this.video.skipInterval.value)
+        val++
+        this.video.skipInterval.value = val
+        this.video.skipInterval.dispatchEvent(new Event("change"))
+      } else {
+        let val = parseInt(this.video.skipInterval.value)
+        val--
+        this.video.skipInterval.value = val
+        this.video.skipInterval.dispatchEvent(new Event("change"))
+      }
     }
   }
 
   _initUISettingsHandler() {
-
     this.ui.language.onchange = (e) => {
       Locale.setLocale(e.target.value)
+    }
+
+    this.ui.theme.onchange = (e) => {
+      let targetTheme = e.target[e.target.selectedIndex].theme
+      UserSettings.theme = targetTheme
+      ThemeManager.setTheme(targetTheme)
+    }
+
+    this.ui.refreshthemes.onclick = (e) => {
+      e.preventDefault()
+      this._fillSelectUserThemes()
+    }
+
+    this.ui.openuserthemes.onclick = (e) => {
+      e.preventDefault()
+      Window.openUserthemes()
     }
 
     this.ui.menubarFullscreen.onchange = () => {
@@ -173,7 +281,7 @@ export default class Settings {
 
     this.ui.statusbar.onchange = () => {
       UserSettings.statusbarEnabled = this.ui.statusbar.checked
-      if(!this.ui.statusbar.checked) {
+      if (!this.ui.statusbar.checked) {
         this.ui.statusbarFullscreen.disabled = true
       } else {
         this.ui.statusbarFullscreen.disabled = false
@@ -186,7 +294,7 @@ export default class Settings {
 
     this.ui.player.onchange = () => {
       UserSettings.playbackUIEnabled = this.ui.player.checked
-      if(!this.ui.player.checked) {
+      if (!this.ui.player.checked) {
         this.ui.playerFullscreen.disabled = true
       } else {
         this.ui.playerFullscreen.disabled = false
@@ -204,29 +312,28 @@ export default class Settings {
 
   _initOsSettingsHandler() {
     this.os.windows.contextMenuButton.onmouseover = () => {
-      if(UserSettings.windowsContextMenuInstalled) {
-        this.os.windows.contextMenuButton.innerText = Locale.__('Uninstall')
+      if (UserSettings.windowsContextMenuInstalled) {
+        this.os.windows.contextMenuButton.innerText = Locale.__("Uninstall")
       }
     }
 
     this.os.windows.contextMenuButton.onmouseleave = () => {
-      if(UserSettings.windowsContextMenuInstalled) {
-        this.os.windows.contextMenuButton.innerText = Locale.__('Installed')
+      if (UserSettings.windowsContextMenuInstalled) {
+        this.os.windows.contextMenuButton.innerText = Locale.__("Installed")
       }
     }
 
-    this.os.windows.contextMenuButton.onclick = () => {
-      if(UserSettings.windowsContextMenuInstalled) {
-        Win32.windowsUninstallContextMenu()
-          .then(() => {
-            this.os.windows.contextMenuButton.classList.remove('installed')
-            this.os.windows.contextMenuButton.innerText = Locale.__('Install')
-          })
+    this.os.windows.contextMenuButton.onclick = (e) => {
+      e.preventDefault()
+      if (UserSettings.windowsContextMenuInstalled) {
+        Win32.windowsUninstallContextMenu().then(() => {
+          this.os.windows.contextMenuButton.classList.remove("installed")
+          this.os.windows.contextMenuButton.innerText = Locale.__("Install")
+        })
       } else {
-        Win32.windowsInstallContextMenu()
-          .then(() => {
-            this.os.windows.contextMenuButton.classList.add('installed')
-          })
+        Win32.windowsInstallContextMenu().then(() => {
+          this.os.windows.contextMenuButton.classList.add("installed")
+        })
       }
     }
   }
@@ -234,6 +341,11 @@ export default class Settings {
   _initAdvancedSettingsHandler() {
     this.advanced.devmode.onchange = () => {
       UserSettings.developerMode = this.general.devmode.checked
+    }
+
+    this.advanced.resetdefault.onclick = (e) => {
+      e.preventDefault()
+      Window.showResetSettingsDialog()
     }
   }
 }

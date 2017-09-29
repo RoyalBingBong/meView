@@ -27,24 +27,6 @@
       "shuffled": false
     }
   },
-  "ELEMENTS": {
-    "view": "viewer",
-    "counter": "counter",
-    "file": "filetext",
-    "statusbar": "statusbar",
-    "autoheight": "autoheight",
-    "dropzone": "dropzone",
-    "settings": {
-      "menuprefix": "menu-",
-      "panelprefix": "settings-",
-      "close": "settings-close",
-      "closex": "settings-close-x",
-      "container": "settingscontainer",
-      "pages": [
-        "general", "video", "ui", "os"
-      ]
-    }
-  },
   "languages": {
     "en": "English",
     "de": "Deutsch"

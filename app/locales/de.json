@@ -12,7 +12,7 @@
 	"Open Folder": "Ordner öffnen",
 	"Open Folder Recursive": "Ordner rekursiv öffnen",
 	"Show in File Browser": "Datei im Explorer zeigen",
-	"Show in Default Viewer": "Datei mit standard Programm öffnen",
+	"Show in Default Viewer": "Datei mit Standardprogramm öffnen",
 	"Settings": "Einstellungen",
 	"Quit": "Beenden",
 	"Select Folder": "Ordner auswählen",
@@ -23,8 +23,8 @@
 	"Shuffle": "Mischen",
 	"Random": "Zufällig",
 	"Play/Pause": "Start/Pause",
-	"Forward": "Vorwärts spuhlen",
-	"Rewind": "Zurückspuhlen",
+	"Forward": "Vorspulen",
+	"Rewind": "Zurückspulen",
 	"View": "Ansicht",
 	"Start": "Start",
 	"Stop": "Stop",
@@ -49,7 +49,7 @@
 		"general": {
 			"closewithesc": "meView mit ESC schließen",
 			"savepath": "Starte im zuletzt benutzen Pfad bei \"Datei > Datei öffnen\" oder \"Datei > Ordner öffnen\"",
-			"reopenlast": "Automatisch die zuletzt geöffnente Datei anzeigen"
+			"reopenlast": "Automatisch die zuletzt betrachtete Datei öffnen"
 		},
 		"advanced": {
 			"devmode": "Entwickler Menü aktivieren"
@@ -58,9 +58,19 @@
 			"wincontext": "Windows Explorer Kontext Menu"
 		},
 		"info": {
-			"skipinterval": "Wird beim vor- und zurückspuhlen von Videos verwendet (Shift+Pfeil-Rechts oder Shift+Pfeil-Links).",
-			"wincontext": "Der Eintrag im Kontext Menu des Windows Explorers, erlaubt es Dateien und Ordner schnell und einfach direkt mit meView zu öffnen.",
-			"reset": "Auf Werkseinstellungen zurücksetzen"
+			"skipinterval": "Wird beim vor- und zurückspulen von Videos verwendet (Shift+Pfeil-Rechts oder Shift+Pfeil-Links).",
+			"wincontext": "Der Eintrag im Kontext Menu des Windows Explorers, erlaubt es Dateien und Ordner schnell und einfach direkt mit meView zu öffnen."
+		},
+		"default": "Werkseinstellungen",
+		"resetdefault": "Sind Sie sicher, dass sie die Einstellung zurücksetzen wollen? meView wird danach neu gestartet.",
+		"resetdefaultwin32": "Sind Sie sicher, dass sie die Einstellung zurücksetzen wollen? Dies entfernt auch den Kontextmenü-Eintrag im Windows Explorer! meView wird danach neu gestartet."
+	},
+	"contextmenu": {
+		"install": {
+			"fail": "Installation der Windows Explorer Kontextmenü-Einträge fehlgeschlagen!"
+		},
+		"uninstall": {
+			"fail": "Deinstallation der Windows Explorer Kontextmenü-Einträge fehlgeschlagen!"
 		}
 	},
 	"Autoplay": "Automatisch abspielen",
@@ -69,8 +79,8 @@
 	"User Interface": "Benutzeroberfläche",
 	"Language": "Sprache",
 	"Menubar": "Menüleiste",
-	"Satusbar": "Statusleiste",
-	"Player UI": "Player Steuereung",
+	"Statusbar": "Statusleiste",
+	"Player UI": "Player Steuerung",
 	"Hide in fullscreen": "Im vollbild verstecken",
 	"Hide when idling": "Automatisch ausblenden",
 	"Operating System": "Betriebssystem",
@@ -79,12 +89,17 @@
 	"Installed": "Installiert",
 	"Slideshow interval": "Diashow Zeitabstand:",
 	"seconds": "Sekunden",
-	"Skip interval": "Abstand bei Spuhlen:",
+	"Skip interval": "Abstand bei Spulen:",
 	"Current folder": "Aktueller Ordner",
 	"Open": "Öffnen",
 	"Cancel": "Abbrechen",
 	"Recursive": "Rekursiv",
 	"Slideshow": "Diashow",
 	"System": "System",
-	"Advanced": "Advanced"
+	"Advanced": "Erweitert",
+	"Yes": "Ja",
+	"No": "Nein",
+	"Reset to default settings": "Auf Werkseinstellung zurücksetzen",
+	"Theme": "Design",
+	"User themes": "Benutzer Designs"
 }

@@ -55,6 +55,10 @@ button, input[type='checkbox'] {
   margin-left: .4em;
 }
 
+#cwd {
+  padding-left: .2em;
+}
+
 #folderselect {
   width: 100%;
   height: 335px;

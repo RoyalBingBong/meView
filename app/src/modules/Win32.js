@@ -1,8 +1,7 @@
-import {remote} from 'electron'
+import Locale from "./Locale.js"
+import UserSettings from "./UserSettings.js"
 
-import UserSettings from './UserSettings.js'
-import {installContextMenu, uninstallContextMenu} from '../OS/win/registry.js'
-const {dialog} = remote
+import { installContextMenu, uninstallContextMenu } from "../OS/win/registry.js"
 
 /**
  * Install a context menu entry on Windows OS when right-clicking on
@@ -15,10 +14,8 @@ const {dialog} = remote
 export function windowsInstallContextMenu() {
   return new Promise((resolve, reject) => {
     installContextMenu((err) => {
-      if(err) {
-        let message = 'Failed to install context menu entries!'
-        // dialog.showErrorBox('meView Windows Integration', message)
-        // showErrorDialog(message)
+      if (err) {
+        let message = Locale.__("contextmenu.install.fail")
         reject(new Error(message))
       } else {
         UserSettings.windowsContextMenuInstalled = true
@@ -31,10 +28,9 @@ export function windowsInstallContextMenu() {
 export function windowsUninstallContextMenu() {
   return new Promise((resolve, reject) => {
     uninstallContextMenu((err) => {
-      if(err) {
+      if (err) {
         console.log(err)
-        let message = 'Failed to uninstall context menu entries!'
-        // dialog.showErrorBox('meView Windows Integration', message)
+        let message = Locale.__("contextmenu.uninstall.fail")
         reject(new Error(message))
       } else {
         UserSettings.windowsContextMenuInstalled = false

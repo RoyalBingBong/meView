@@ -201,7 +201,7 @@ img, video {
 
 
 #settingscontainer {
-  background-color: rgba(78, 78, 78, 0.8);
+  background-color: rgba(78, 78, 78, 0.7);
   position: fixed;
   top: 0;
   left: 0;
@@ -214,6 +214,7 @@ img, video {
 
 
 #settingscontainer > div {
+  border-radius: 5px;
   position: absolute;
   width: 80%;
   height: 80%;
@@ -222,11 +223,18 @@ img, video {
   transform: translateX(-50%) translateY(-50%);
 }
 
-
+.settings-header {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.settings-footer {
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
 .settings-header, .settings-footer {
   background-color: #BABABA;
   width: 100%;
-  height: 1.5em;
+  height: 2em;
   text-align: center;
 }
 
@@ -236,22 +244,28 @@ img, video {
 
 .settings-footer {
   position: absolute;
+  text-align: center;
+  vertical-align: middle;
   bottom: 0;
 }
 
-.settings-footer button {
+button {
   font-size: 1em;
+}
+
+.settings-footer button {
+  margin-top: .25em;
 }
 
 #settings-close-x {
   font-size: 1.4em;
   position: absolute;
-  top: 0;
-  right: 0;
+  top: -1px;
+  right: -2px;
   background-color: Transparent;
-  background-repeat:no-repeat;
+  background-repeat: no-repeat;
   border: none;
-  cursor:pointer;
+  cursor: pointer;
   overflow: hidden;
   outline:none;
   opacity: 0.5;
@@ -264,23 +278,58 @@ img, video {
 .settings {
   background-color: #eee;
   position: absolute;
-  top: 1.5em;
-  bottom: 1.5em;
+  top: 2em;
+  bottom: 2em;
   width: 100%;
 }
 
 .labelgroup {
-  /* margin-left:24px; */
-  padding-left: 2em;
-  text-indent: -2em;
+  /* padding-left: 2em;
+  text-indent: -2em; */
   margin-top: 2px;
   margin-bottom: 2px;
 }
 
-.labelgroup i {
+/* .labelgroup i {
   text-indent: 0;
+} */
+
+input.nospinner::-webkit-outer-spin-button,
+input.nospinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
+button.decrease {
+  left: 1.5em;
+  margin-left: -1.5em;
+}
+
+button.increase {
+  right: 1.5em;
+  margin-right: -1.5em;
+}
+
+.iconbutton {
+  background-color: Transparent;
+  background-repeat: no-repeat;
+  border: none;
+  overflow: hidden;
+  outline:none;
+  vertical-align: middle;
+}
+
+ button.bordered {
+  border: none;
+
+}
+
+button.decrease, button.increase  {
+  background-color: Transparent;
+  background-repeat: no-repeat;
+  border: none;
+  position: relative;
+}
 
 .labelgroup > .spacer {
   padding-left: 1.5em;
@@ -311,7 +360,6 @@ fieldset > p {
 
 
 #os-windows-contextmenu {
-  display: block;
   outline: none;
   margin-top: 0.5em;
   font-size: 1em;
@@ -382,6 +430,10 @@ form {
 .cb {
   float: left;
   width: 10em;
+}
+
+.cb select {
+  width: 12em;
 }
 
 .cb:nth-child(2) {

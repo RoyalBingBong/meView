@@ -1,13 +1,11 @@
-import {EventEmitter} from 'events'
+import { EventEmitter } from "events"
 
-import UserSettings from './UserSettings.js'
+import UserSettings from "./UserSettings.js"
 
 export default class MediaFile extends EventEmitter {
   constructor(name, fullpath, mimetype) {
     super()
-    this.name = name,
-    this.path = fullpath,
-    this.mimetype = mimetype
+    ;(this.name = name), (this.path = fullpath), (this.mimetype = mimetype)
     this.loaded = false
     this._element
   }
@@ -20,11 +18,11 @@ export default class MediaFile extends EventEmitter {
    * @memberOf MediaFile
    */
   isVideo() {
-    return this.mimetype.startsWith('video')
+    return this.mimetype.startsWith("video")
   }
 
   get duration() {
-    if(this.isVideo()) {
+    if (this.isVideo()) {
       return this._element.duration
     }
   }
@@ -37,7 +35,7 @@ export default class MediaFile extends EventEmitter {
    * @memberOf MediaFile
    */
   isImage() {
-    return this.mimetype.startsWith('image')
+    return this.mimetype.startsWith("image")
   }
 
   /**
@@ -57,7 +55,8 @@ export default class MediaFile extends EventEmitter {
    *
    * @memberOf MediaFile
    */
-  stop() { // stop = pause and reset to beginning of video
+  stop() {
+    // stop = pause and reset to beginning of video
     if (this.isVideo() && this._element) {
       this._element.pause()
       this._element.currentTime = 0
@@ -105,7 +104,7 @@ export default class MediaFile extends EventEmitter {
    */
   togglePlayPause() {
     if (this.isVideo() && this._element) {
-      if(this._element.paused) {
+      if (this._element.paused) {
         this.play()
       } else {
         this.pause()
@@ -120,15 +119,15 @@ export default class MediaFile extends EventEmitter {
   }
 
   get element() {
-    if(!this._element) {
-      if(this.isImage()) {
+    if (!this._element) {
+      if (this.isImage()) {
         this._element = new Image()
-      } else if(this.isVideo()) {
-        this._element = document.createElement('video')
+      } else if (this.isVideo()) {
+        this._element = document.createElement("video")
         applyVideoSettings(this._element)
         this._element.onended = () => {
           // console.log('ended video')
-          this.emit('ended')
+          this.emit("ended")
         }
         // this.element.onpause = () => {
         //   console.log('onpause', this.name)
@@ -146,11 +145,10 @@ export default class MediaFile extends EventEmitter {
   }
 }
 
-
 function errorElement(filename) {
-  let elem = document.createElement('p')
+  let elem = document.createElement("p")
   elem.innerHTML = `"${filename}" could not be displayed`
-  elem.className = 'errorElement'
+  elem.className = "errorElement"
   return elem
 }
 
