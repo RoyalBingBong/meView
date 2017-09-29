@@ -41,4 +41,4 @@ MeView is build on the [Electron](http://electron.atom.io/) framework and thus s
 ___
 
 # Developers
-
+Take a look at the [wiki/Developers](https://github.com/RoyalBingBong/meView/wiki/Developers).
