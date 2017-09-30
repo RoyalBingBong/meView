@@ -290,8 +290,6 @@ class Window extends EventEmitter {
       options.x = x
       options.y = y
       options.frame = false
-    } else {
-      options
     }
 
     this.selectFolderWindow = new BrowserWindow(options)
@@ -299,7 +297,7 @@ class Window extends EventEmitter {
     this.selectFolderWindow.setMenu(null)
     if (UserSettings.developerMode) {
       // undocked because the window has a fixed size
-      // this.selectFolderWindow.webContents.openDevTools({mode: 'undocked'})
+      this.selectFolderWindow.webContents.openDevTools({mode: 'undocked'})
     }
 
     if (!root || root === ".") {

@@ -130,7 +130,9 @@ export default class AppMenu {
       label: Locale.__("Select Folder"),
       accelerator: "Up",
       click() {
-        Window.showFolderSelector()
+        if(Window.currentWindow.isFocused()) {
+          Window.showFolderSelector()
+        }
       }
     })
     viewmenu.append(item)
@@ -142,7 +144,9 @@ export default class AppMenu {
       label: Locale.__("Next"),
       accelerator: "Right",
       click() {
-        Viewer.next()
+        if(Window.currentWindow.isFocused()) {
+          Viewer.next()          
+        }
       }
     })
     viewmenu.append(item)
@@ -152,7 +156,9 @@ export default class AppMenu {
       label: Locale.__("Previous"),
       accelerator: "Left",
       click() {
-        Viewer.previous()
+        if(Window.currentWindow.isFocused()) {
+          Viewer.previous()          
+        }
       }
     })
     viewmenu.append(item)

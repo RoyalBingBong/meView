@@ -7,6 +7,8 @@ import { supportedArchivesFormats } from "../config.json"
 
 import Language from "./controllers/Language.js"
 
+remote.globalShortcut.unregisterAll()
+
 ThemeManager.initUserTheme()
 
 const lang = new Language()
