@@ -269,26 +269,33 @@ class Window extends EventEmitter {
     if (this.selectFolderWindow) {
       return this.selectFolderWindow.focus()
     }
-    let [vwidth, vheight] = this.currentWindow.getSize()
-    let [vx, vy] = this.currentWindow.getPosition()
+
     let width = 480
     let height = 380
-    let x = Math.floor(vx + vwidth / 2 - width / 2)
-    let y = Math.floor(vy + vheight / 2 - height / 2)
-
-    this.selectFolderWindow = new BrowserWindow({
+    let options = {
       parent: this.currentWindow,
-      modal: true,
+      model: true,
       icon: join(__dirname, "..", "..", "assets/icon.png"),
       width,
       height,
-      x,
-      y,
-      frame: false,
       fullscreenable: false,
       resizable: false,
       show: false
-    }) // frame: false
+    }
+    if(process.platform !== "darwin") {
+      let [vwidth, vheight] = this.currentWindow.getSize()
+      let [vx, vy] = this.currentWindow.getPosition()
+      let x = Math.floor(vx + vwidth / 2 - width / 2)
+      let y = Math.floor(vy + vheight / 2 - height / 2)
+      options.x = x
+      options.y = y
+      options.frame = false
+    } else {
+      options
+    }
+
+    this.selectFolderWindow = new BrowserWindow(options)
+
     this.selectFolderWindow.setMenu(null)
     if (UserSettings.developerMode) {
       // undocked because the window has a fixed size

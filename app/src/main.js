@@ -1,4 +1,4 @@
-import { app, ipcMain, BrowserWindow } from "electron"
+import { app, ipcMain, BrowserWindow, Menu } from "electron"
 import { join, isAbsolute } from "path"
 import url from "url"
 
@@ -106,6 +106,7 @@ app.on("ready", () => {
     show: false
   })
   // otherwise app will initiate with default menu, and then changes to the custom one
+  Menu.setApplicationMenu(null)
   mainWindow.setMenu(null)
   if (settings.getSync("window.maximized")) {
     mainWindow.maximize()

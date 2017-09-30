@@ -24,7 +24,8 @@
     "build:win": "npm run babel && npm run clean:dist && build -w",
     "build:mac": "npm run babel && npm run clean:dist && build -m",
     "build:linux": "npm run babel && npm run clean:dist && build -l",
-    "debugbuild:win": "npm run clean && npm run clean:dist && npm run babel && build -w --dir"
+    "debugbuild:win": "npm run clean && npm run clean:dist && npm run babel && build -w --dir",
+    "release": "npm run babel"
   },
   "keywords": [],
   "author": "David Koch <david-k@mail.de>",
