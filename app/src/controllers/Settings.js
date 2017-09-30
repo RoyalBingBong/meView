@@ -151,17 +151,17 @@ export default class Settings {
       let option = document.createElement("option")
       option.innerText = themes[i].name
       option.theme = themes[i]
-      if (
-        currentTheme &&
-        currentTheme.name === themes[i].name &&
-        currentTheme.path === themes[i].path
-      ) {
-        option.selected = true
-      } else if (currentTheme === "undefined") {
+      if (typeof currentTheme !== "undefined") {
+        if(currentTheme.name === themes[i].name &&
+          currentTheme.path === themes[i].path) {
+            option.selected = true
+          }
+      } else {
         // user has not selected a them -> use first in list a default setting
         if (i === 0) {
           UserSettings.theme = themes[i]
           ThemeManager.setTheme(themes[i])
+          option.selected = true
         }
       }
       if (themes[i].path === ".") {

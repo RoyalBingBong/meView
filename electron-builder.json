@@ -1,7 +1,7 @@
 {
   "productName": "meView",
   "appId": "com.royalbingbong.meview",
-  "files": "!src/**",
+  "files": "!src/**",  
   "mac" : {
     "publish": ["github"],
     "target": ["dmg", "zip"],
@@ -13,6 +13,9 @@
     "target": ["nsis", "zip"],
     "icon": "app/assets/icon.ico"
   },
+  "nsis": {
+    "artifactName": "${productName}-setup-${version}.${ext}"
+  }, 
   "linux": {
     "publish": ["github"],
     "target": ["AppImage", "deb", "7z", "zip"],
