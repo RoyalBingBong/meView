@@ -69,9 +69,24 @@ class Viewer {
     this.mediafiles.on("endoflist", (last) => {
       console.log("is last last", last)
       if (this.slideshow) {
+        this.slideshowStop()
         // TODO maybeshow a message that the queue ended
       } else {
-        Window.showFolderSelector()
+        switch(UserSettings.folderEndBehaviour) {
+          case "openselectfolder":
+            Window.showFolderSelector()
+            break;
+          case "loopfolder":
+            if (last) {
+              this.first();
+            } else {
+              this.last();
+            }
+            break;
+          default:
+            break;
+        }
+        
       }
     })
   }

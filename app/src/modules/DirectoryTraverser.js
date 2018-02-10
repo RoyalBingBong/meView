@@ -21,7 +21,7 @@ export class DirectoryTraverser {
 
   cd(dir) {
     let nextdir = join(this.cwd, dir)
-    return new Promise((resolve, reject) => {
+     return new Promise((resolve, reject) => {
       try {
         let nextstats = statSync(nextdir)
         if (!nextstats.isDirectory()) {

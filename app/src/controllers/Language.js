@@ -1,5 +1,7 @@
 import Locale from "../modules/Locale.js"
 
+const hasTag = /<\w+>.*<\/\w+>/
+
 export default class Language {
   constructor() {
     this.elements = document.querySelectorAll(
@@ -18,7 +20,12 @@ export default class Language {
     this.elements.forEach((el) => {
       // console.log(el.dataset)
       if (el.dataset.i18n) {
-        el.innerText = Locale.__(el.dataset.i18n)
+        let str = Locale.__(el.dataset.i18n)
+        if(hasTag.test(str)) {
+          el.innerHTML = str
+        } else {
+          el.innerText = str
+        }
       }
       if (el.dataset.i18nPlaceholder) {
         el.placeholder = Locale.__(el.dataset.i18nPlaceholder)

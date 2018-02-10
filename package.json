@@ -2,7 +2,7 @@
   "name": "meview",
   "description": "Image/Video viewer for typical web media formats. Also supports zip-archives.",
   "main": "app/js/main.js",
-  "version": "1.5.0",
+  "version": "1.5.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/RoyalBingBong/meView"
@@ -31,13 +31,12 @@
   "author": "David Koch <david-k@mail.de>",
   "license": "ISC",
   "devDependencies": {
-    "asar": "^0.13.0",
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
-    "babel-plugin-transform-remove-console": "^6.8.5",
-    "cross-env": "^5.0.5",
-    "electron": "^1.7.8",
-    "electron-builder": "^19.33.0",
+    "babel-plugin-transform-remove-console": "^6.9.0",
+    "cross-env": "^5.1.3",
+    "electron": "^1.8.2",
+    "electron-builder": "^19.56.0",
     "rimraf": "^2.6.2"
   }
 }

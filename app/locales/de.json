@@ -49,7 +49,8 @@
 		"general": {
 			"closewithesc": "meView mit ESC schließen",
 			"savepath": "Starte im zuletzt benutzen Pfad bei \"Datei > Datei öffnen\" oder \"Datei > Ordner öffnen\"",
-			"reopenlast": "Automatisch die zuletzt betrachtete Datei öffnen"
+			"reopenlast": "Automatisch die zuletzt betrachtete Datei öffnen",
+			"folderendbehaviour": "Verhalten beim Erreichen der letzten Datei im Ordner"
 		},
 		"advanced": {
 			"devmode": "Entwickler Menü aktivieren"
@@ -58,7 +59,7 @@
 			"wincontext": "Windows Explorer Kontext Menu"
 		},
 		"info": {
-			"skipinterval": "Wird beim vor- und zurückspulen von Videos verwendet (Shift+Pfeil-Rechts oder Shift+Pfeil-Links).",
+			"skipinterval": "Wird beim vor- und zurückspulen von Videos verwendet (<kbd>Shift</kbd> + <kbd>Pfeil Rechts</kbd> oder <kbd>Shift</kbd> + <kbd>Pfeil Links</kbd>).",
 			"wincontext": "Der Eintrag im Kontext Menu des Windows Explorers, erlaubt es Dateien und Ordner schnell und einfach direkt mit meView zu öffnen."
 		},
 		"default": "Werkseinstellungen",
@@ -89,7 +90,7 @@
 	"Installed": "Installiert",
 	"Slideshow interval": "Diashow Zeitabstand:",
 	"seconds": "Sekunden",
-	"Skip interval": "Abstand bei Spulen:",
+	"Skip interval": "Spulintervall:",
 	"Current folder": "Aktueller Ordner",
 	"Open": "Öffnen",
 	"Cancel": "Abbrechen",
@@ -101,5 +102,8 @@
 	"No": "Nein",
 	"Reset to default settings": "Auf Werkseinstellung zurücksetzen",
 	"Theme": "Design",
-	"User themes": "Benutzer Designs"
+	"User themes": "Benutzer Designs",
+	"Open Select Folder": "Öffne \"Ordner auswählen\" Dialog",
+	"Loop Folder": "Beim ersten/letzten Bild neu anfangen",
+	"Do nothing": "Nichts"
 }

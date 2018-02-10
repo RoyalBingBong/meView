@@ -14,7 +14,12 @@ export default class Settings {
       closeWithESC: document.getElementById("general-closewithesc"),
       savePath: document.getElementById("general-savepath"),
       reopenLast: document.getElementById("general-reopenlast"),
-      slideshowInterval: document.getElementById("general-slideshowinterval")
+      slideshowInterval: document.getElementById("general-slideshowinterval"),
+      folderendbehaviour: {
+        openselectfolder: document.getElementById("general-folderendbehaviour-openselectfolder"),
+        loopfolder: document.getElementById("general-folderendbehaviour-loopfolder"),
+        donothing: document.getElementById("general-folderendbehaviour-donothing")
+      }
     }
 
     this.video = {
@@ -66,6 +71,21 @@ export default class Settings {
     this.general.savePath.checked = UserSettings.savePath
     this.general.reopenLast.checked = UserSettings.reopenLastFile
     this.general.slideshowInterval.value = UserSettings.slideshowInterval
+    switch(UserSettings.folderEndBehaviour) {
+      case "openselectfolder":
+        this.general.folderendbehaviour.openselectfolder.checked = true
+        break;
+      case "loopfolder":
+        this.general.folderendbehaviour.loopfolder.checked = true
+        break;
+      case "donothing":
+        this.general.folderendbehaviour.donothing.checked = true
+        break;
+      default:
+        this.general.folderendbehaviour.openselectfolder.checked = true
+        UserSettings.folderEndBehaviour = "openselectfolder"
+        break;
+    }
 
     /**
      * Video
@@ -218,6 +238,20 @@ export default class Settings {
         this.general.slideshowInterval.dispatchEvent(new Event("change"))
       }
     }
+
+    let {openselectfolder, loopfolder, donothing} = this.general.folderendbehaviour
+    function folderEndBehaviourChanged() {
+      if(openselectfolder.checked) {
+        UserSettings.folderEndBehaviour = "openselectfolder"
+      } else if(loopfolder.checked) {
+        UserSettings.folderEndBehaviour = "loopfolder"
+      } else if (donothing.checked) {
+        UserSettings.folderEndBehaviour = "donothing"
+      }
+    }
+    openselectfolder.onchange = folderEndBehaviourChanged
+    loopfolder.onchange = folderEndBehaviourChanged
+    donothing.onchange = folderEndBehaviourChanged
   }
 
   _initVideoSettingsHandler() {

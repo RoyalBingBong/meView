@@ -49,7 +49,8 @@
 		"general": {
 			"closewithesc": "Close meView when pressing ESC",
 			"savepath": "Save last used path when using \"File > Open File\" or \"File > Open Folder\"",
-			"reopenlast": "Automatically reopen the last viewed file"
+			"reopenlast": "Automatically reopen the last viewed file",
+			"folderendbehaviour": "Behavior when hitting the last file in a folder"
 		},
 		"advanced": {
 			"devmode": "Enable developer menu"
@@ -58,7 +59,7 @@
 			"wincontext": "Windows Explorer context menu"
 		},
 		"info": {
-			"skipinterval": "Used when forwarding or rewinding a video with Shift+Right-Arrow or Shift+Left-Arrow.",
+			"skipinterval": "Used when forwarding or rewinding a video with <kbd>Shift</kbd> + <kbd>Right Arrow</kbd> or <kbd>Shift</kbd> + <kbd>Left Arrow</kbd>.",
 			"wincontext": "This will install a context menu entry in Windows Explorer, which allows you to rightclick a file, folder or on the directory background to it in meView."
 		},
 		"default": "Default settings",
@@ -101,5 +102,8 @@
 	"No": "No",
 	"Reset to default settings": "Reset to default settings",
 	"Theme": "Theme",
-	"User themes": "User themes"
+	"User themes": "User themes",
+	"Open Select Folder": "Open Select Folder",
+	"Loop Folder": "Loop Folder",
+	"Do nothing": "Do nothing"
 }

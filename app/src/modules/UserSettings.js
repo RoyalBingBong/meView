@@ -70,7 +70,7 @@ class UserSettings extends EventEmitter {
   }
 
   get videoLoop() {
-    settings.getSync("video.loop")
+    return settings.getSync("video.loop")
   }
 
   set videoLoop(looping) {
@@ -241,6 +241,14 @@ class UserSettings extends EventEmitter {
 
   set theme(theme) {
     settings.setSync("UI.theme", theme)
+  }
+
+  get folderEndBehaviour() {
+    return settings.getSync("folderendbehaviour")
+  }
+
+  set folderEndBehaviour(behaviour) {
+    settings.setSync("folderendbehaviour", behaviour)
   }
 }
 

@@ -25,20 +25,14 @@
     "slideshow": {
       "interval": 7,
       "shuffled": false
-    }
+    },
+    "folderendbehaviour": "openselectfolder"
   },
   "languages": {
     "en": "English",
     "de": "Deutsch"
   },
   "PRELOADRANGE": 1,
-  "skipIntervalValues": {
-    "1s": 1,
-    "5s": 5,
-    "10s": 10,
-    "30s": 30,
-    "60s": 60
-  },
   "supportedMIMETypes": [
     "video/ogg",
     "video/webm",
