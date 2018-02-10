@@ -1,7 +1,7 @@
 {
 	"dropzone": {
 		"title": "Dateien oder Ordner hereinziehen",
-		"tip": "Shift gedrückt halten um einen Ordner rekursiv zu öffnen"
+		"tip": "<kbd>Shift</kbd> gedrückt halten um einen Ordner rekursiv zu öffnen"
 	},
 	"errors": {
 		"nomediafiles": "Keine Bilder oder Videos in \"%s\""
@@ -47,7 +47,7 @@
 	"Reset": "Zurücksetzen",
 	"settings": {
 		"general": {
-			"closewithesc": "meView mit ESC schließen",
+			"closewithesc": "meView mit <kbd>ESC</kbd> schließen",
 			"savepath": "Starte im zuletzt benutzen Pfad bei \"Datei > Datei öffnen\" oder \"Datei > Ordner öffnen\"",
 			"reopenlast": "Automatisch die zuletzt betrachtete Datei öffnen",
 			"folderendbehaviour": "Verhalten beim Erreichen der letzten Datei im Ordner"
@@ -64,7 +64,11 @@
 		},
 		"default": "Werkseinstellungen",
 		"resetdefault": "Sind Sie sicher, dass sie die Einstellung zurücksetzen wollen? meView wird danach neu gestartet.",
-		"resetdefaultwin32": "Sind Sie sicher, dass sie die Einstellung zurücksetzen wollen? Dies entfernt auch den Kontextmenü-Eintrag im Windows Explorer! meView wird danach neu gestartet."
+		"resetdefaultwin32": "Sind Sie sicher, dass sie die Einstellung zurücksetzen wollen? Dies entfernt auch den Kontextmenü-Eintrag im Windows Explorer! meView wird danach neu gestartet.",
+		"slideshow": {
+			"waitforvideo": "Auf Ende von Videos warten",
+			"startfullscreen": "Diashow im Vollbild starten"
+		}
 	},
 	"contextmenu": {
 		"install": {
@@ -90,7 +94,7 @@
 	"Installed": "Installiert",
 	"Slideshow interval": "Diashow Zeitabstand:",
 	"seconds": "Sekunden",
-	"Skip interval": "Spulintervall:",
+	"Skip interval": "Intervall beim spulen:",
 	"Current folder": "Aktueller Ordner",
 	"Open": "Öffnen",
 	"Cancel": "Abbrechen",

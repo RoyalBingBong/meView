@@ -5,7 +5,9 @@ import UserSettings from "./UserSettings.js"
 export default class MediaFile extends EventEmitter {
   constructor(name, fullpath, mimetype) {
     super()
-    ;(this.name = name), (this.path = fullpath), (this.mimetype = mimetype)
+    this.name = name
+    this.path = fullpath
+    this.mimetype = mimetype
     this.loaded = false
     this._element
   }

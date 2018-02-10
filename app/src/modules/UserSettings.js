@@ -127,6 +127,14 @@ class UserSettings extends EventEmitter {
     settings.setSync("slideshow.videofull", full)
   }
 
+  get slideshowStartFullscreen() {
+    return settings.getSync("slideshow.startfullscreen")
+  }
+
+  set slideshowStartFullscreen(fullscree) {
+    settings.setSync("slideshow.startfullscreen", fullscree)
+  }
+
   get reopenLastFile() {
     return settings.getSync("reopenLastFile")
   }

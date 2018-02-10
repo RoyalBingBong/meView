@@ -137,6 +137,9 @@ class Viewer {
         this.mediafiles.shuffle()
       }
       this.timeout = timeout
+      if (UserSettings.slideshowStartFullscreen) {
+        Window.setFullscreen(true)
+      }
 
       this.slideshowNext(this.mediafiles.first)
       resolve()

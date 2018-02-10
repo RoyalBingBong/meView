@@ -41,7 +41,7 @@
     <div>
       <div class="settings-header">
         <div class="title" data-i18n="Settings">Settings</div>
-        <button id="settings-close-x" href="#">
+        <button id="settings-close-x">
           <i class="fa fa-times-circle" aria-hidden="true"></i>
         </button>
       </div>
@@ -69,17 +69,7 @@
                 </label>
               </div>
               <div class="labelgroup">
-                <span class="spacer"></span>
-                <label for="general-slideshowinterval" data-i18n="Slideshow interval">
-                  Slideshow interval:
-                </label>
-                <span>
-                  <input id="general-slideshowinterval" class="" type="number" min="1" value="1">
-                </span>
-                <label for="general-slideshowinterval" data-i18n="seconds">seconds</label>
-              </div>
-              <div class="labelgroup">
-                <fieldset id="">
+                <fieldset>
                   <legend data-i18n="settings.general.folderendbehaviour">Behavior when hitting the end of a folder</legend>
                   <input type="radio" name="folderendbehaviour" value="openselectfolder" id="general-folderendbehaviour-openselectfolder">
                   <span class="spacer"></span>
@@ -97,6 +87,33 @@
                     Do nothing
                   </label>
                 </fieldset>
+              </div>
+            </fieldset>
+          </form>
+          <form>
+            <fieldset>
+              <legend data-i18n="Slideshow">Slideshow</legend>
+              <div class="labelgroup">
+                <span class="spacer"></span>
+                <label for="slideshow-interval" data-i18n="Slideshow interval">
+                  Slideshow interval:
+                </label>
+                <span>
+                  <input id="slideshow-interval" class="" type="number" min="1" value="1">
+                </span>
+                <label for="slideshow-interval" data-i18n="seconds">seconds</label>
+              </div>
+              <div class="labelgroup">
+                <input id="slideshow-waitforvideo" type="checkbox">
+                <label for="slideshow-waitforvideo" data-i18n="settings.slideshow.waitforvideo">
+                  Wait for videos to end before viewing the next file
+                </label>
+              </div>
+              <div class="labelgroup">
+                <input id="slideshow-startfullscreen" type="checkbox">
+                <label for="slideshow-startfullscreen" data-i18n="settings.slideshow.startfullscreen">
+                  Automatically go into fullscreen when starting
+                </label>
               </div>
             </fieldset>
           </form>
@@ -134,13 +151,13 @@
                 <label for="video-skipinterval" data-i18n="seconds">
                   seconds
                 </label>
-                <i class="fa fa-info-circle tooltip" aria-hidden="true">
+                <span class="fa fa-info-circle tooltip" aria-hidden="true">
                   <p class="infotext" data-i18n="settings.info.skipinterval">Used when forwarding or rewinding a video with Shift+Right-Arrow or Shift+Left-Arrow.</p>
-                </i>
+                </span>
+                
               </div>
             </fieldset>
           </form>
-
           <form>
             <fieldset>
               <legend data-i18n="User Interface">User Interface</legend>
@@ -151,7 +168,7 @@
                   </label>:
                 </div>
                 <div class="cb">
-                  <select name="" id="ui-language"></select>
+                  <select id="ui-language"></select>
                 </div>
                 <div class="cb-clear"></div>
               </div>
@@ -165,7 +182,7 @@
                   </label>:
                 </div>
                 <div class="cb">
-                  <select name="" id="ui-theme"></select>
+                  <select id="ui-theme"></select>
                   <button class="iconbutton" id="ui-refreshthemes">
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                   </button>
@@ -245,7 +262,7 @@
             <fieldset>
               <legend data-i18n="Operating System">Operating System</legend>
               <div class="labelgroup">
-                <label for="" data-i18n="settings.os.wincontext">
+                <label data-i18n="settings.os.wincontext">
                   Windows Explorer context menu
                 </label>:
                 <button id="os-windows-contextmenu" class="">Install</button>
@@ -268,7 +285,7 @@
               </div>
               <div class="labelgroup">
                 <span class="spacer"></span>
-                <label for="" data-i18n="settings.default"></label>:
+                <label data-i18n="settings.default"></label>:
                 <button id="resettodefault" class="" data-i18n="Reset">Reset</button>
               </div>
             </fieldset>
@@ -276,7 +293,7 @@
         </div>
       </div>
       <div class="settings-footer">
-        <button id="settings-close" href="#" data-i18n="Close">Close</button>
+        <button id="settings-close" data-i18n="Close">Close</button>
       </div>
     </div>
   </div>

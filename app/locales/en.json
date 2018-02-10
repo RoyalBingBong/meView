@@ -1,6 +1,6 @@
 {
 	"dropzone": {
-		"tip": "Hold shift to open a folder recursive",
+		"tip": "Hold <kbd>Shift</kbd> to open a folder recursive",
 		"title": "Drop file or folder here"
 	},
 	"errors": {
@@ -47,9 +47,9 @@
 	"Reset": "Reset",
 	"settings": {
 		"general": {
-			"closewithesc": "Close meView when pressing ESC",
+			"closewithesc": "Close meView when pressing <kbd>ESC</kbd>",
 			"savepath": "Save last used path when using \"File > Open File\" or \"File > Open Folder\"",
-			"reopenlast": "Automatically reopen the last viewed file",
+			"reopenlast": "Re-open the last viewed file when starting meView",
 			"folderendbehaviour": "Behavior when hitting the last file in a folder"
 		},
 		"advanced": {
@@ -60,11 +60,15 @@
 		},
 		"info": {
 			"skipinterval": "Used when forwarding or rewinding a video with <kbd>Shift</kbd> + <kbd>Right Arrow</kbd> or <kbd>Shift</kbd> + <kbd>Left Arrow</kbd>.",
-			"wincontext": "This will install a context menu entry in Windows Explorer, which allows you to rightclick a file, folder or on the directory background to it in meView."
+			"wincontext": "This will install a context menu entry in Windows Explorer, which allows you to right-click a file, folder or on the directory background to it in meView."
 		},
 		"default": "Default settings",
 		"resetdefault": "Are you sure you want to reset to the default settings? meView will reload after resetting.",
-		"resetdefaultwin32": "Are you sure you want to reset to the default settings? Resetting will also remove the Windows Explorer context menu entry! meView will restart after the reset."
+		"resetdefaultwin32": "Are you sure you want to reset to the default settings? Resetting will also remove the Windows Explorer context menu entry! meView will restart after the reset.",
+		"slideshow": {
+			"waitforvideo": "Wait for videos to end before viewing next file",
+			"startfullscreen": "Start slideshow in fullscreen"
+		}
 	},
 	"contextmenu": {
 		"install": {

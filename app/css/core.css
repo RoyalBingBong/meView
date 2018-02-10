@@ -38,6 +38,7 @@ kbd {
 video::-webkit-media-controls-panel {
   display: flex !important;
   opacity: .5 !important;
+  z-index: 1000;
 }
 
 .novideoui video::-webkit-media-controls-panel {

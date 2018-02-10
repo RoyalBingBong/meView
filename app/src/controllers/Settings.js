@@ -14,12 +14,16 @@ export default class Settings {
       closeWithESC: document.getElementById("general-closewithesc"),
       savePath: document.getElementById("general-savepath"),
       reopenLast: document.getElementById("general-reopenlast"),
-      slideshowInterval: document.getElementById("general-slideshowinterval"),
       folderendbehaviour: {
         openselectfolder: document.getElementById("general-folderendbehaviour-openselectfolder"),
         loopfolder: document.getElementById("general-folderendbehaviour-loopfolder"),
         donothing: document.getElementById("general-folderendbehaviour-donothing")
       }
+    }
+    this.slideshow = {
+      interval: document.getElementById("slideshow-interval"),
+      waitforvideo: document.getElementById("slideshow-waitforvideo"),
+      startfullscreen: document.getElementById("slideshow-startfullscreen")
     }
 
     this.video = {
@@ -57,6 +61,7 @@ export default class Settings {
     this._initInputNumber()
 
     this._initGeneralSettingsHandler()
+    this._initSlideshowSettingsHandler()
     this._initVideoSettingsHandler()
     this._initUISettingsHandler()
     this._initOsSettingsHandler()
@@ -70,7 +75,6 @@ export default class Settings {
     this.general.closeWithESC.checked = UserSettings.closeWithESC
     this.general.savePath.checked = UserSettings.savePath
     this.general.reopenLast.checked = UserSettings.reopenLastFile
-    this.general.slideshowInterval.value = UserSettings.slideshowInterval
     switch(UserSettings.folderEndBehaviour) {
       case "openselectfolder":
         this.general.folderendbehaviour.openselectfolder.checked = true
@@ -86,6 +90,13 @@ export default class Settings {
         UserSettings.folderEndBehaviour = "openselectfolder"
         break;
     }
+
+    /**
+     * Sldieshow
+     */
+    this.slideshow.interval.value = UserSettings.slideshowInterval
+    this.slideshow.waitforvideo.checked = UserSettings.slideshowVideoFull
+    this.slideshow.startfullscreen.checked = UserSettings.slideshowStartFullscreen
 
     /**
      * Video
@@ -201,7 +212,7 @@ export default class Settings {
 
   _initInputNumber() {
     this.incdec = {
-      slideshowInterval: new InputIncDec(this.general.slideshowInterval),
+      slideshowInterval: new InputIncDec(this.slideshow.interval),
       skipinterval: new InputIncDec(this.video.skipInterval)
     }
   }
@@ -215,28 +226,6 @@ export default class Settings {
     }
     this.general.reopenLast.onchange = () => {
       UserSettings.reopenLastFile = this.general.reopenLast.checked
-    }
-    this.general.slideshowInterval.onchange = () => {
-      UserSettings.slideshowInterval = parseInt(
-        this.general.slideshowInterval.value,
-        10
-      )
-    }
-
-    this.general.slideshowInterval.onwheel = (e) => {
-      e.stopPropagation()
-      e.preventDefault()
-      if (e.wheelDelta > 0) {
-        let val = parseInt(this.general.slideshowInterval.value)
-        val++
-        this.general.slideshowInterval.value = val
-        this.general.slideshowInterval.dispatchEvent(new Event("change"))
-      } else {
-        let val = parseInt(this.general.slideshowInterval.value)
-        val--
-        this.general.slideshowInterval.value = val
-        this.general.slideshowInterval.dispatchEvent(new Event("change"))
-      }
     }
 
     let {openselectfolder, loopfolder, donothing} = this.general.folderendbehaviour
@@ -252,6 +241,39 @@ export default class Settings {
     openselectfolder.onchange = folderEndBehaviourChanged
     loopfolder.onchange = folderEndBehaviourChanged
     donothing.onchange = folderEndBehaviourChanged
+  }
+
+  _initSlideshowSettingsHandler() {
+    this.slideshow.interval.onchange = () => {
+      UserSettings.slideshowInterval = parseInt(
+        this.slideshow.interval.value,
+        10
+      )
+    }
+
+    this.slideshow.interval.onwheel = (e) => {
+      e.stopPropagation()
+      e.preventDefault()
+      if (e.wheelDelta > 0) {
+        let val = parseInt(this.slideshow.interval.value)
+        val++
+        this.slideshow.interval.value = val
+        this.slideshow.interval.dispatchEvent(new Event("change"))
+      } else {
+        let val = parseInt(this.slideshow.interval.value)
+        val--
+        this.slideshow.interval.value = val
+        this.slideshow.interval.dispatchEvent(new Event("change"))
+      }
+    }
+
+    this.slideshow.waitforvideo.onchange = () => {
+      UserSettings.slideshowVideoFull = this.slideshow.waitforvideo.checked
+    }
+
+    this.slideshow.startfullscreen.onchange = () => {
+      UserSettings.slideshowStartFullscreen = this.slideshow.startfullscreen.checked
+    }
   }
 
   _initVideoSettingsHandler() {
