@@ -145,7 +145,7 @@ export default class AppMenu {
       accelerator: "Right",
       click() {
         if(Window.currentWindow.isFocused()) {
-          Viewer.next()          
+          Viewer.next()
         }
       }
     })
@@ -157,7 +157,7 @@ export default class AppMenu {
       accelerator: "Left",
       click() {
         if(Window.currentWindow.isFocused()) {
-          Viewer.previous()          
+          Viewer.previous()
         }
       }
     })

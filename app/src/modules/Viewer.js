@@ -226,11 +226,17 @@ class Viewer {
 
   next() {
     this._stopcurrent()
+    if(Window.selectFolderWindow) {
+      return
+    }
     return this.mediafiles.next
   }
 
   previous() {
     this._stopcurrent()
+    if(Window.selectFolderWindow) {
+      return
+    }
     return this.mediafiles.previous
   }
 
