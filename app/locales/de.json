@@ -67,7 +67,8 @@
 		"resetdefaultwin32": "Sind Sie sicher, dass sie die Einstellung zurücksetzen wollen? Dies entfernt auch den Kontextmenü-Eintrag im Windows Explorer! meView wird danach neu gestartet.",
 		"slideshow": {
 			"waitforvideo": "Auf Ende von Videos warten",
-			"startfullscreen": "Diashow im Vollbild starten"
+			"startfullscreen": "Diashow im Vollbild starten",
+			"loopvideo": "Kurze Videos wiederholt abspielen"
 		}
 	},
 	"contextmenu": {

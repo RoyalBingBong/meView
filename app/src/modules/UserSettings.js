@@ -92,7 +92,7 @@ class UserSettings extends EventEmitter {
   }
 
   set videoAutoplay(autoplay) {
-    settings.getSync("video.autoplay", autoplay)
+    settings.setSync("video.autoplay", autoplay)
   }
 
   get slideshowInterval() {

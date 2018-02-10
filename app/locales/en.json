@@ -67,7 +67,8 @@
 		"resetdefaultwin32": "Are you sure you want to reset to the default settings? Resetting will also remove the Windows Explorer context menu entry! meView will restart after the reset.",
 		"slideshow": {
 			"waitforvideo": "Wait for videos to end before viewing next file",
-			"startfullscreen": "Start slideshow in fullscreen"
+			"startfullscreen": "Start slideshow in fullscreen",
+			"loopvideo": "Loop short videos"
 		}
 	},
 	"contextmenu": {

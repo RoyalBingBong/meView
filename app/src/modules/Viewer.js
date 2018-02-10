@@ -70,6 +70,9 @@ class Viewer {
       console.log("is last last", last)
       if (this.slideshow) {
         this.slideshowStop()
+        Window.appmenu.slideshowstate.playing = false
+        Window.appmenu.slideshowstate.paused = false
+        Window.appmenu.reload()
         // TODO maybeshow a message that the queue ended
       } else {
         switch(UserSettings.folderEndBehaviour) {
@@ -130,8 +133,8 @@ class Viewer {
       }
       this.slideshow = {
         timeout,
-        loop: UserSettings.slideshowVideoLoop,
-        full: UserSettings.slideshowVideoFull
+        loopVideo: UserSettings.slideshowVideoLoop,
+        fullVideo: UserSettings.slideshowVideoFull
       }
       if (shuffled) {
         this.mediafiles.shuffle()
@@ -147,22 +150,26 @@ class Viewer {
   }
 
   slideshowNext(next) {
+    console.log(this.slideshow)
     if (!next) {
       clearTimeout(this.slideshow.timer)
       return
     }
     if (next.isVideo()) {
+      next.play()
       let duration = next.duration
-      if (this.slideshow.loop && duration < this.slideshow.timeout) {
+      if (this.slideshow.loopVideo && duration < this.slideshow.timeout) {
         // Video is shorter than the interval -> loop it until the interval ends
+        next.loop = true
         this.slideshowTimer()
-      } else if (this.slideshow.full && duration >= this.slideshow.timeout) {
-        // Video
+      } else if (this.slideshow.fullVideo && duration >= this.slideshow.timeout) {
+        // disable loop, wait for video to finish then view next
         next.loop = false
         next.once("ended", () => {
           this.slideshowNext(this.mediafiles.next)
         })
       } else {
+        // disable video loop for that video and wait
         next.loop = false
         this.slideshowTimer()
       }

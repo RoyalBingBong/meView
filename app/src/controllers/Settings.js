@@ -20,10 +20,12 @@ export default class Settings {
         donothing: document.getElementById("general-folderendbehaviour-donothing")
       }
     }
+
     this.slideshow = {
       interval: document.getElementById("slideshow-interval"),
+      startfullscreen: document.getElementById("slideshow-startfullscreen"),
       waitforvideo: document.getElementById("slideshow-waitforvideo"),
-      startfullscreen: document.getElementById("slideshow-startfullscreen")
+      loopvideo: document.getElementById("slideshow-loopvideo")
     }
 
     this.video = {
@@ -97,6 +99,7 @@ export default class Settings {
     this.slideshow.interval.value = UserSettings.slideshowInterval
     this.slideshow.waitforvideo.checked = UserSettings.slideshowVideoFull
     this.slideshow.startfullscreen.checked = UserSettings.slideshowStartFullscreen
+    this.slideshow.loopvideo.checked = UserSettings.slideshowVideoLoop
 
     /**
      * Video
@@ -269,6 +272,10 @@ export default class Settings {
 
     this.slideshow.waitforvideo.onchange = () => {
       UserSettings.slideshowVideoFull = this.slideshow.waitforvideo.checked
+    }
+
+    this.slideshow.loopvideo.onchange = () => {
+      UserSettings.slideshowVideoLoop = this.slideshow.loopvideo.checked
     }
 
     this.slideshow.startfullscreen.onchange = () => {
