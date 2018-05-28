@@ -403,7 +403,7 @@ export default class Settings {
 
   _initAdvancedSettingsHandler() {
     this.advanced.devmode.onchange = () => {
-      UserSettings.developerMode = this.general.devmode.checked
+      UserSettings.developerMode = this.advanced.devmode.checked
     }
 
     this.advanced.resetdefault.onclick = (e) => {

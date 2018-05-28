@@ -1,11 +1,18 @@
 import EventEmitter from "events"
-import { existsSync, statSync } from "fs"
-import { basename, join, relative } from "path"
+import { existsSync, statSync, stat } from "fs"
+import { basename, dirname, join, relative } from "path"
+import * as _ from "lodash"
 
+import Locale from "./Locale.js"
 import { MediaDirectory } from "./MediaDirectory.js"
 import MediaFile from "./MediaFile.js"
 
+
+import { promisify } from "util"
+
 import { PRELOADRANGE, supportedArchivesFormats } from "../../config.json"
+
+const statAsync = promisify(stat)
 
 export default class MediaList extends EventEmitter {
   constructor() {
@@ -60,6 +67,9 @@ export default class MediaList extends EventEmitter {
               .then((files) => {
                 this.root = root
                 this.opened = true
+                if (files.length === 0) {
+                  throw new Error(Locale.__("errors.nomediafilesinset"))
+                }
                 this.createMediaFileList(files, filename)
                 resolve()
               })
@@ -82,9 +92,50 @@ export default class MediaList extends EventEmitter {
     })
   }
 
+  async openSet(fileset) {
+    // let potentialFolders = _.remove(fileset, (file) => {
+    //   return file.type === "";
+    // })
+    // make dragndrop compatible with cmd and "open file/folder"
+    let filelist = fileset.map((f) => {
+      if(f.path) {
+        return f.path
+      }
+      return f
+    });
+    let purefiles = []
+    let subfolderfiles = []
+    if(filelist.length > 0) {      
+      for(let file of filelist) {
+        let stats = await statAsync(file)
+        console.log(file, stats.isDirectory())
+        if(stats.isDirectory()) {
+          let subfiles = await MediaDirectory.openDirectory(file, false)
+          console.log(subfiles)
+          subfolderfiles = subfolderfiles.concat(subfiles)
+        } else {
+          purefiles.push(file)
+        }
+      }
+    }
+
+    let files = await MediaDirectory.openSet(purefiles)
+    files = files.concat(subfolderfiles)
+    this.root = dirname(files[0].path)
+    this.recursive = false
+    this.opened = true
+    if (files.length === 0) {
+      throw new Error(Locale.__("errors.nomediafilesinset"))
+    }
+    this.createMediaFileList(files)
+    return null;
+  }
+
   createMediaFileList(list, watchfor) {
     this.files = []
     list.forEach((file, idx) => {
+      console.log(file)
+      console.log(file.name, file.path, file.mimetype)
       let mf = new MediaFile(file.name, file.path, file.mimetype)
       this.files.push(mf)
       this.emit("file.added", mf, this.files.length)

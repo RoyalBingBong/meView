@@ -26,9 +26,13 @@ class Viewer {
   }
 
   _initDropzoneListener() {
-    this.dropzone.on("drop", (file, recursive) => {
-      console.log("drop")
-      this.open(file.path, recursive)
+    this.dropzone.on("drop", (files, recursive) => {
+      if(files.length > 1) {
+        const fileSet = [...files]
+        this.openSet(fileSet)
+      } else {
+        this.open(files[0].path, recursive)
+      }
     })
   }
 
@@ -112,6 +116,23 @@ class Viewer {
       this.dropzone.hide()
       this.mediafiles
         .open(fileorpath, { recursive })
+        .then(() => {
+          this._stopcurrent(oldcurrent)
+          resolve()
+        })
+        .catch((err) => {
+          this.view.showError(err.message)
+          // reject(err)
+        })
+    })
+  }
+
+  openSet(files) {
+    return new Promise((resolve) => {
+      let oldcurrent = this.mediafiles.current
+      this.dropzone.hide()
+      this.mediafiles
+        .openSet(files)
         .then(() => {
           this._stopcurrent(oldcurrent)
           resolve()

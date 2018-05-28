@@ -24,6 +24,7 @@ commander
   .usage("<file or folder ...> [options] ")
   .option("-f, --fullscreen", "open meView in fullscreen mode")
   .option("-r, --recursive", "opens all files in a folder and is sub-folders")
+  .option("-u, --no-update", "disable update check and automatic download")
   .option(
     "-s, --slideshow [timer]",
     "start slideshow with **timer** seconds between each image (defaults to 7)",
@@ -47,7 +48,8 @@ if (
   !!commander.args.length ||
   commander.fullscreen ||
   !!commander.slideshow ||
-  commander.recursive
+  commander.recursive ||
+  commander.noUpdate
 ) {
   autoUpdater.autoDownload = false
 } else {
@@ -79,7 +81,53 @@ app.on("window-all-closed", () => {
   }
 })
 
+let shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
+  let [, filename] = commandLine;
+  commander.args.push(filename);
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    openFiles()
+    mainWindow.focus();
+  }
+});
+
+if (shouldQuit) {
+  app.quit();
+}
+
+function openFiles() {
+  let fileToOpen
+  if (commander.args.length > 0) {
+    let files = commander.args.map((file) => {
+      if(!isAbsolute(file)) {
+        return join(process.cwd(), file)
+      }
+      return file
+    })
+    if(files.length === 1) {
+      fileToOpen = files[0]
+    }
+    mainWindow.webContents.send("open", {
+      filepath: fileToOpen,
+      files,
+      recursive: commander.recursive,
+      slideshow: commander.slideshow
+    })
+  } else if (settings.getSync("reopenLastFile")) {
+    let reopen = {
+      reopen: true,
+      filepath: settings.getSync("lastFile.filepath")
+    }
+    mainWindow.webContents.send("open", reopen)
+  }
+
+  if (commander.fullscreen) {
+    mainWindow.webContents.send("fullscreen", commander.fullscreen)
+  }
+}
+
 app.on("ready", () => {
+  console.log("appusermodelid", app.appUserModelId)
   // skip version check in dev environment
   if (autoUpdater.autoDownload) {
     autoUpdater.checkForUpdates()
@@ -114,30 +162,7 @@ app.on("ready", () => {
 
   // pass args to renderer, needed for when we want to open a file/folder via context menu
   mainWindow.webContents.once("did-finish-load", () => {
-    let fileToOpen
-    if (commander.args.length === 1) {
-      if (isAbsolute(commander.args[0])) {
-        fileToOpen = commander.args[0]
-      } else {
-        fileToOpen = join(process.cwd(), commander.args[0])
-      }
-      mainWindow.webContents.send("open", {
-        filepath: fileToOpen,
-        recursive: commander.recursive,
-        slideshow: commander.slideshow
-      })
-    } else if (settings.getSync("reopenLastFile")) {
-      let reopen = {
-        reopen: true,
-        filepath: settings.getSync("lastFile.filepath")
-      }
-      console.log(reopen)
-      mainWindow.webContents.send("open", reopen)
-    }
-
-    if (commander.fullscreen) {
-      mainWindow.webContents.send("fullscreen", commander.fullscreen)
-    }
+    openFiles();
   })
 
   let index = url.format({

@@ -208,12 +208,12 @@ class Window extends EventEmitter {
     if (asFolder) {
       options = {
         defaultPath: searchPath,
-        properties: ["openDirectory"]
+        properties: ["openDirectory", "multiSelections"]
       }
     } else {
       options = {
         defaultPath: searchPath,
-        properties: ["openFile"],
+        properties: ["openFile", "multiSelections"],
         filters: fileFilter
       }
     }
@@ -222,6 +222,10 @@ class Window extends EventEmitter {
       if (files) {
         if (UserSettings.savePath) {
           UserSettings.lastSearchPath = files[0]
+        }
+        console.log(files)
+        if(files.length > 1) {
+          return Viewer.openSet(files);
         }
         Viewer.open(files[0], recursive)
       }
@@ -359,6 +363,9 @@ class Window extends EventEmitter {
 
     ipcRenderer.on("open", (event, data) => {
       console.log("ipc - open", data)
+      if (data.files && data.files.length > 1) {
+        Viewer.openSet(data.files)
+      }
       if (data.slideshow) {
         Viewer.open(data.filepath, data.recursive).then(() => {
           Viewer.slideshowStart(data.slideshow)

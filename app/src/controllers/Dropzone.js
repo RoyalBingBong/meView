@@ -45,8 +45,8 @@ export default class Dropzone extends EventEmitter {
     this.dropzone.ondrop = (e) => {
       e.preventDefault()
       this.hide()
-      let file = e.dataTransfer.files[0]
-      this.emit("drop", file, e.shiftKey)
+      const { files } = e.dataTransfer
+      this.emit("drop", files, e.shiftKey)
       return false
     }
   }

@@ -38,11 +38,11 @@ export const MediaDirectory = {
                 })
               }
             })
-            if (list.length === 0) {
-              reject(
-                new Error(Locale.__("errors.nomediafiles", basename(directory)))
-              )
-            }
+            // if (list.length === 0) {
+            //   reject(
+            //     new Error(Locale.__("errors.nomediafiles", basename(directory)))
+            //   )
+            // }
             resolve(MediaDirectory.sort(list))
           })
           .catch((err) => {
@@ -64,14 +64,36 @@ export const MediaDirectory = {
               })
             }
           })
-          if (list.length === 0) {
-            reject(
-              new Error(Locale.__("errors.nomediafiles", basename(directory)))
-            )
-          }
+          // if (list.length === 0) {
+          //   reject(
+          //     new Error(Locale.__("errors.nomediafiles", basename(directory)))
+          //   )
+          // }
           resolve(MediaDirectory.sort(list))
         })
       }
+    })
+  },
+  
+  openSet(files) {
+    return new Promise((resolve, reject) => {
+      let list = []
+      files.forEach((file) => {
+        if(helper.supportedFileFormat(file)) {
+          let mimetype = mime.lookup(file);
+          list.push({
+            name: basename(file),
+            path: file,
+            mimetype
+          })
+        }
+      })
+      // if (list.length === 0) {
+      //   reject(
+      //     new Error(Locale.__("errors.nomediafilesinset"))
+      //   )
+      // }
+      resolve(MediaDirectory.sort(list));
     })
   },
 
