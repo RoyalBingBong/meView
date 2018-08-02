@@ -15,9 +15,9 @@
   },
   "homepage": "https://github.com/RoyalBingBong/meView#readme",
   "dependencies": {
-    "commander": "^2.15.1",
+    "commander": "^2.16.0",
     "electron-settings": "^2.2.4",
-    "electron-updater": "^2.21.8",
+    "electron-updater": "^2.23.3",
     "font-awesome": "^4.7.0",
     "i18n": "^0.8.3",
     "lodash": "^4.17.10",

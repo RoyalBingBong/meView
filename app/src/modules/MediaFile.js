@@ -1,14 +1,16 @@
 import { EventEmitter } from "events"
+import url from "url"
 
 import UserSettings from "./UserSettings.js"
 
 export default class MediaFile extends EventEmitter {
-  constructor(name, fullpath, mimetype) {
+  constructor(name, fullpath, mimetype, isBase64 = false) {
     super()
     this.name = name
     this.path = fullpath
     this.mimetype = mimetype
     this.loaded = false
+    this.isBase64 = isBase64
     this._element
   }
 
@@ -120,6 +122,21 @@ export default class MediaFile extends EventEmitter {
     }
   }
 
+  get uri() {
+    if(this.isBase64) {
+      return url.format({
+        pathname: `${this.mimetype};base64, ${this.path}`,
+        protocol: "data:",
+        slashes: false
+      })
+    }
+    return url.format({
+      protocol: "file:",
+      pathname: this.path,
+      slashes: true,
+    })
+  }
+
   get element() {
     if (!this._element) {
       if (this.isImage()) {
@@ -140,7 +157,8 @@ export default class MediaFile extends EventEmitter {
       } else {
         return errorElement(this.filename)
       }
-      this._element.src = this.path
+      this._element.src = this.uri
+      
       this.loaded = true
     }
     return this._element

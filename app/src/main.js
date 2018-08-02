@@ -127,7 +127,6 @@ function openFiles() {
 }
 
 app.on("ready", () => {
-  console.log("appusermodelid", app.appUserModelId)
   // skip version check in dev environment
   if (autoUpdater.autoDownload) {
     autoUpdater.checkForUpdates()

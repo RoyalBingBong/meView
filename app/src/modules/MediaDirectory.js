@@ -120,8 +120,9 @@ export const MediaDirectory = {
             let buf = Buffer.from(unzipper.files[file]._data.getContent())
             list.push({
               name: file,
-              path: `data:${mimetype};base64, ${buf.toString("base64")}`,
-              mimetype
+              path: buf.toString("base64"),
+              mimetype,
+              base64: true,
             })
           }
         }

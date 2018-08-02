@@ -136,7 +136,7 @@ export default class MediaList extends EventEmitter {
     list.forEach((file, idx) => {
       console.log(file)
       console.log(file.name, file.path, file.mimetype)
-      let mf = new MediaFile(file.name, file.path, file.mimetype)
+      let mf = new MediaFile(file.name, file.path, file.mimetype, file.base64)
       this.files.push(mf)
       this.emit("file.added", mf, this.files.length)
       if (idx === 0 && !watchfor) {
