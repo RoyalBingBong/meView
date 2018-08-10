@@ -2,7 +2,7 @@
   "name": "meview",
   "description": "Image/Video viewer for typical web media formats. Also supports zip-archives.",
   "main": "app/js/main.js",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/RoyalBingBong/meView"
@@ -21,6 +21,9 @@
     "babel:w": "npm run clean && babel -w -d app/js/ app/src/",
     "prebabel:prod*": "npm run clean",
     "babel:prod": "cross-env BABEL_ENV=production babel -d app/js app/src/",
+    "devbuild:win": "npm run babel && npm run clean:dist && build -w -p never",
+    "devbuild:mac": "npm run babel && npm run clean:dist && build -m -p never",
+    "devbuild:linux": "npm run babel && npm run clean:dist && build -l -p never",
     "build:win": "npm run babel && npm run clean:dist && build -w",
     "build:mac": "npm run babel && npm run clean:dist && build -m",
     "build:linux": "npm run babel && npm run clean:dist && build -l",
