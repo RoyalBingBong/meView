@@ -63,8 +63,6 @@ const exifOrientationMap = {
 }
 
 export const getRotationFromExif = (filePath) => {
-  console.log(filePath)
-  console.log(exifOrientationMap)
   try {
     let data = exif.parseSync(filePath);
     if (data && data.Orientation) {
