@@ -1,6 +1,8 @@
 import { EventEmitter } from "events"
 import url from "url"
 
+import { getRotationFromExif } from "../helper"
+
 import UserSettings from "./UserSettings.js"
 
 export default class MediaFile extends EventEmitter {
@@ -141,6 +143,11 @@ export default class MediaFile extends EventEmitter {
     if (!this._element) {
       if (this.isImage()) {
         this._element = new Image()
+        const rotationCSS = getRotationFromExif(this.path)
+        console.log(rotationCSS)
+        if (rotationCSS) {
+          this._element.style.transform = rotationCSS
+        }
       } else if (this.isVideo()) {
         this._element = document.createElement("video")
         applyVideoSettings(this._element)

@@ -24,6 +24,7 @@
     "mime": "^1.4.0",
     "natural-compare-lite": "^1.4.0",
     "node-zip": "^1.1.1",
-    "recursive-readdir": "^2.2.2"
+    "recursive-readdir": "^2.2.2",
+    "jpeg-exif": "^1.1.4"
   }
 }
