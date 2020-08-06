@@ -1,6 +1,7 @@
 import UserSettings from "./modules/UserSettings.js"
 import { supportedMIMETypes } from "../config.json"
 import mime from "mime"
+import exif from "jpeg-exif"
 
 export function errorElement(obj) {
   let errElem = document.createElement("pre")
@@ -16,6 +17,64 @@ export function applyVideoSettings(videoelement) {
   // disable autoplay so we can preload files that might have auto
   videoelement.autoplay = false
   return videoelement
+}
+
+const exifOrientationMap = {
+  1: {
+    deg: 0,
+    scaleX: 1,
+    scaleY: 1
+  },
+  2: {
+    deg: 0,
+    scaleX: -1,
+    scaleY: 1
+  },
+  3: {
+    deg: 180,
+    scaleX: 1,
+    scaleY: 1
+  },
+  4: {
+    deg: 0,
+    scaleX: 1,
+    scaleY: -1
+  },
+  5: {
+    deg: 270,
+    scaleX: -1,
+    scaleY: 1
+  },
+  6: {
+    deg: 90,
+    scaleX: 1,
+    scaleY: 1
+  },
+  7: {
+    deg: 90,
+    scaleX: -1,
+    scaleY: 1
+  },
+  8: {
+    deg: 270,
+    scaleX: 1,
+    scaleY: 1
+  }
+}
+
+export const getRotationFromExif = (filePath) => {
+  try {
+    let data = exif.parseSync(filePath);
+    if (data && data.Orientation) {
+      let imageRotation = exifOrientationMap[data.Orientation]
+      let { deg, scaleX, scaleY } = imageRotation
+      console.log(`Image rotation for ${filePath} is: { deg: ${deg}, scaleX: ${scaleX}, scaleY: ${scaleY}}`)
+      return `rotate(${deg}deg) scale(${scaleX}, ${scaleY})`
+    }
+    return null
+  } catch (err) {
+    console.error(err)
+  }
 }
 
 export function applyImageSettings(imageelement) {

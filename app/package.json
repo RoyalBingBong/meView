@@ -3,7 +3,7 @@
   "productName": "meView",
   "description": "Image/Video viewer for typical web media formats. Also supports zip-archives.",
   "author": "David Koch <david-k@mail.de>",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "main": "js/main.js",
   "license": "ISC",
   "repository": {
@@ -24,6 +24,7 @@
     "mime": "^1.4.0",
     "natural-compare-lite": "^1.4.0",
     "node-zip": "^1.1.1",
-    "recursive-readdir": "^2.2.2"
+    "recursive-readdir": "^2.2.2",
+    "jpeg-exif": "^1.1.4"
   }
 }
